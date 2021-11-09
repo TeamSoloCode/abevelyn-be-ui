@@ -1,3 +1,5 @@
+import { SignInResDto } from "./dto/signin-res.dto";
+
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
 
 class ClientApi {
@@ -38,8 +40,9 @@ class ClientApi {
     const res = await this.publicPost(ClientApi.APIs.SIGNIN_URI, { username, password });
 
     if (res.status == 201 && res.body) {
-      const data = await res.json();
-      return { username: data["username"] };
+      const data: SignInResDto = await res.json();
+      this._token = data.accessToken;
+      return { username: data.username };
     }
 
     return null;

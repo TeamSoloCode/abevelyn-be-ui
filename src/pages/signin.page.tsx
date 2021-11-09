@@ -1,8 +1,10 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { useForm } from "react-hook-form";
+import Modal from "react-bootstrap/Modal";
+import { SubmitHandler, useForm } from "react-hook-form";
 import AppContext from "../context/app.context";
+import { SignInReqDto } from "../dto/signin-req.dto";
 
 export const SignInPage = React.memo(() => {
   const {
@@ -10,14 +12,14 @@ export const SignInPage = React.memo(() => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm<SignInReqDto>();
 
   const appContext = useContext(AppContext);
 
-  const onSubmit = useCallback(
-    (data) => {
+  const onSubmit: SubmitHandler<SignInReqDto> = useCallback(
+    ({ username, password }) => {
       if (!appContext?.login) return;
-      appContext.login(data["username"], data["password"]);
+      appContext.login(username, password);
     },
     [appContext.login]
   );
@@ -29,25 +31,33 @@ export const SignInPage = React.memo(() => {
   }, [appContext.state]);
 
   return (
-    <div>
+    <Modal.Dialog>
+      <Modal.Header closeButton>
+        <Modal.Title>Sign In</Modal.Title>
+      </Modal.Header>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Form.Group className="mb-3">
-          <Form.Label>Username</Form.Label>
-          <Form.Control type="username" placeholder="Enter email" {...register("username")} />
-          <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text>
-        </Form.Group>
+        <Modal.Body>
+          <Form.Group className="mb-3">
+            <Form.Label>Username</Form.Label>
+            <Form.Control type="username" placeholder="Enter email" {...register("username")} />
+            <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text>
+          </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" {...register("password")} />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Check type="checkbox" label="Remember me" />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
+          <Form.Group className="mb-3">
+            <Form.Label>Password</Form.Label>
+            <Form.Control type="password" placeholder="Password" {...register("password")} />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Check type="checkbox" label="Remember me" />
+          </Form.Group>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
+        </Modal.Footer>
       </Form>
-    </div>
+    </Modal.Dialog>
   );
 });
