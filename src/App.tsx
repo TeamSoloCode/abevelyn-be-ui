@@ -1,11 +1,23 @@
 import React from "react";
+import { Link, Outlet } from "react-router-dom";
 
-function App() {
+export const App = (props) => {
   return (
-    <div className="App">
-      <header className="App-header"></header>
+    <div>
+      <header>asdasd</header>
+      <div>
+        <ul>
+          <li>
+            <Link to="/home">Home</Link>
+          </li>
+          <li>
+            <Link to="/collection">Collection</Link>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <Outlet />
+      </div>
     </div>
   );
-}
-
-export default App;
+};
