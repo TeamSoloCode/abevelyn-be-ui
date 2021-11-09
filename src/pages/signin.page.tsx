@@ -31,18 +31,18 @@ export const SignInPage = React.memo(() => {
   return (
     <div>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Group className="mb-3">
           <Form.Label>Username</Form.Label>
           <Form.Control type="username" placeholder="Enter email" {...register("username")} />
           <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text>
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicPassword">
+        <Form.Group className="mb-3">
           <Form.Label>Password</Form.Label>
           <Form.Control type="password" placeholder="Password" {...register("password")} />
         </Form.Group>
-        <Form.Group className="mb-3" controlId="formBasicCheckbox">
-          <Form.Check type="checkbox" label="Check me out" />
+        <Form.Group className="mb-3">
+          <Form.Check type="checkbox" label="Remember me" />
         </Form.Group>
         <Button variant="primary" type="submit">
           Submit
