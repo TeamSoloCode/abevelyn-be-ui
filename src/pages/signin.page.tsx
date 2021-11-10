@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { SubmitHandler, useForm } from "react-hook-form";
 import AppContext from "../context/app.context";
-import { SignInReqDto } from "../dto/signin-req.dto";
+import { ISignInReqDto } from "../dto/signin/signin.req.dto";
 
 export const SignInPage = React.memo(() => {
   const {
@@ -12,11 +12,11 @@ export const SignInPage = React.memo(() => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<SignInReqDto>();
+  } = useForm<ISignInReqDto>();
 
   const appContext = useContext(AppContext);
 
-  const onSubmit: SubmitHandler<SignInReqDto> = useCallback(
+  const onSubmit: SubmitHandler<ISignInReqDto> = useCallback(
     ({ username, password }) => {
       if (!appContext?.login) return;
       appContext.login(username, password);

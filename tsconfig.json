@@ -2,11 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "outDir": "./dist/",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "sourceMap": true,
     "noImplicitAny": false,
     "allowJs": true,
@@ -20,10 +16,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     // "isolatedModules": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "noEmit": false,
     "jsx": "react-jsx"
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

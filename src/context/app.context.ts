@@ -1,6 +1,7 @@
 import React, { createContext, Dispatch, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router";
-import clientApi from "../client-api";
+import clientApi, { ClientApi } from "../api.client";
+import Cookie from "cookie-universal";
 
 interface IAppContextState {
   authenticated: boolean | undefined;
@@ -25,7 +26,7 @@ interface IActionChangeLanguage {
 interface IActionAuthenticated {
   type: Actions.AUTHENTICATED;
   authenticated: boolean;
-  username: string;
+  username?: string;
 }
 
 type ActionType = IActionChangeLanguage | IActionAuthenticated;
@@ -61,9 +62,16 @@ export const AppContextProvider = (props: IAppContextProps) => {
 
   useEffect(() => {
     if (state.authenticated == undefined) {
-      // TODO check token & username
-      // dispatch({ type: Actions.AUTHENTICATED, authenticated: true, username: result.username });
-      // if token is valid => navigate("/")
+      const token = Cookie().get(ClientApi.COOKIE_KEYS.TOKEN);
+      if (token) {
+        const username = Cookie().get(ClientApi.COOKIE_KEYS.USERNAME);
+        clientApi.verify_token().then((authenticated) => {
+          dispatch({ type: Actions.AUTHENTICATED, authenticated, username });
+          if (authenticated == false) navigate("/");
+        });
+      } else {
+        dispatch({ type: Actions.AUTHENTICATED, authenticated: false });
+      }
     }
   }, [state.authenticated]);
 

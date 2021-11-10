@@ -2,11 +2,13 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = (passedInConfig = {}, { mode = "production" }) => {
   const isProduction = mode === "production";
 
   let plugins = [
+    // new BundleAnalyzerPlugin(),
     new webpack.IgnorePlugin({
       resourceRegExp: /inspector|perf_hooks/,
     }),
@@ -60,6 +62,10 @@ module.exports = (passedInConfig = {}, { mode = "production" }) => {
               "@babel/preset-react",
               // { runtime: 'automatic', importSource: '@emotion/react' }
             ],
+          ],
+          plugins: [
+            ["@babel/plugin-proposal-decorators", { legacy: true }],
+            ["@babel/plugin-proposal-class-properties", { loose: true }],
           ],
           // ignore: ['./plugins/pageManager/**']
         },

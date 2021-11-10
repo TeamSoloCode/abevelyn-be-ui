@@ -4,9 +4,11 @@ import { TopBar } from "../components/topbar";
 
 export const HomePage = React.memo(() => {
   return (
-    <div>
+    <div className="home">
       <TopBar />
-      <Outlet />
+      <div className="home__content">
+        <Outlet />
+      </div>
     </div>
   );
 });

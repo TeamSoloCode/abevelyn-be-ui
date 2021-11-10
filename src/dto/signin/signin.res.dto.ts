@@ -1,4 +1,4 @@
-export interface SignInResDto {
+export interface ISignInResDto {
   username: string;
   accessToken: string;
 }
