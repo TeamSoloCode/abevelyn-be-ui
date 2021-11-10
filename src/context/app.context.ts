@@ -1,8 +1,9 @@
 import React, { createContext, Dispatch, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router";
 import clientApi from "../client-api";
 
 interface IAppContextState {
-  authenticated: boolean;
+  authenticated: boolean | undefined;
   username?: string;
 }
 
@@ -36,7 +37,7 @@ interface IAppContextValue {
 }
 
 const INITIAL_STATE: IAppContextState = {
-  authenticated: false,
+  authenticated: undefined,
 };
 
 const reducer = (state: IAppContextState, action: ActionType): IAppContextState => {
@@ -52,16 +53,26 @@ const reducer = (state: IAppContextState, action: ActionType): IAppContextState 
 const AppContext = createContext<IAppContextValue>({ state: INITIAL_STATE });
 
 export const AppContextProvider = (props: IAppContextProps) => {
+  const navigate = useNavigate();
   const [state, dispatch] = React.useReducer(reducer, {
     ...INITIAL_STATE,
     ...props.initValue,
   });
+
+  useEffect(() => {
+    if (state.authenticated == undefined) {
+      // TODO check token & username
+      // dispatch({ type: Actions.AUTHENTICATED, authenticated: true, username: result.username });
+      // if token is valid => navigate("/")
+    }
+  }, [state.authenticated]);
 
   const login = useCallback(
     async (username: string, password: string) => {
       const result = await clientApi.signin(username, password);
       if (result) {
         dispatch({ type: Actions.AUTHENTICATED, authenticated: true, username: result.username });
+        navigate("/");
       }
     },
     [state.authenticated, dispatch]

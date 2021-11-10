@@ -1,6 +1,12 @@
 import React from "react";
-import { AppContextProvider } from "../context/app.context";
+import { Outlet } from "react-router";
+import { TopBar } from "../components/topbar";
 
 export const HomePage = React.memo(() => {
-  return <h1>This is home page</h1>;
+  return (
+    <div>
+      <TopBar />
+      <Outlet />
+    </div>
+  );
 });

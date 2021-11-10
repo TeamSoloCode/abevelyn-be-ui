@@ -10,6 +10,7 @@ class ClientApi {
   static ROOT_API = "http://localhost:3000";
   static APIs = {
     SIGNIN_URI: "/auth/signin",
+    VERIFY_TOKEN: "/auth/verify_token",
   };
 
   private _token: string;
@@ -18,21 +19,21 @@ class ClientApi {
     return this._token;
   }
 
-  private publicPost(apiUri: string, body?: Object): Promise<Response> {
+  private publicPost(apiUri: string, body: Object = {}): Promise<Response> {
     const fullApiURL = ClientApi.ROOT_API + apiUri;
     return fetch(fullApiURL, {
       headers: { "Content-Type": "application/json" },
       method: "POST",
-      body: JSON.stringify(body || {}),
+      body: JSON.stringify(body),
     });
   }
 
-  private post(apiUri: string, body?: Object): Promise<Response> {
+  private post(apiUri: string, body: Object = {}): Promise<Response> {
     const fullApiURL = ClientApi.ROOT_API + apiUri;
     return fetch(fullApiURL, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "POST",
-      body: JSON.stringify(body || {}),
+      body: JSON.stringify(body),
     });
   }
 
@@ -46,6 +47,11 @@ class ClientApi {
     }
 
     return null;
+  }
+
+  async isAuthenticated(): Promise<boolean> {
+    const res = await this.post(ClientApi.APIs.VERIFY_TOKEN);
+    return res.status == 201;
   }
 }
 

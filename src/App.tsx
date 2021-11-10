@@ -1,32 +1,34 @@
-import React from "react";
-import Nav from "react-bootstrap/Nav";
-import { useLocation } from "react-router";
-import { Link, Outlet } from "react-router-dom";
+import React, { useContext, useEffect, useRef } from "react";
+import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router";
 import { AppRoutes } from "./constanst";
+import AppContext from "./context/app.context";
+import { CollectionPage } from "./pages/collection.page";
+import { HomePage } from "./pages/home.page";
+import { SignInPage } from "./pages/signin.page";
 
 export const App = (props) => {
-  let location = useLocation();
+  const navigate = useNavigate();
+  const appContext = useContext(AppContext);
+  const { authenticated } = appContext.state;
+
+  useEffect(() => {
+    if (authenticated == false) {
+      navigate(`/${AppRoutes.SIGNIN}`);
+    } else if (authenticated == undefined) {
+      // TODO navigate to loading page
+    }
+  }, [authenticated]);
+
   return (
     <div>
-      <Nav fill variant="tabs" defaultActiveKey={`/${AppRoutes.HOME}`} activeKey={location.pathname}>
-        <Nav.Item>
-          <Nav.Link href={`/${AppRoutes.HOME}`}>Home</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link href={`/${AppRoutes.COLLECTIONS}`}>Collection</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link eventKey="link-2">Link</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link eventKey="disabled" disabled>
-            Disabled
-          </Nav.Link>
-        </Nav.Item>
-      </Nav>
-      <div>
-        <Outlet />
-      </div>
+      <Routes>
+        <Route path={`/${AppRoutes.SIGNIN}`} element={<SignInPage />} />
+        <Route path="/" element={<HomePage />}>
+          <Route path={AppRoutes.COLLECTIONS} element={<CollectionPage />} />
+          <Route path={AppRoutes.PRODUCTS} element={<CollectionPage />} />
+          <Route path={AppRoutes.COLORS} element={<CollectionPage />} />
+        </Route>
+      </Routes>
     </div>
   );
 };
