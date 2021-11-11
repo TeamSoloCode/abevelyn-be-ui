@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from "re
 import Table from "react-bootstrap/Table";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
 import ColorContext from "../context/colors.context";
 import { CreateColor } from "../components/create-color";
 
@@ -56,17 +55,7 @@ export const ColorsPage = React.memo(() => {
         </thead>
         <tbody>{tableBody}</tbody>
       </Table>
-      <Modal show={showCreateModal} onHide={closeCreateModal}>
-        <Modal.Dialog>
-          <Modal.Header closeButton>
-            <Modal.Title>Create New Color</Modal.Title>
-          </Modal.Header>
-
-          <Modal.Body>
-            <CreateColor />
-          </Modal.Body>
-        </Modal.Dialog>
-      </Modal>
+      <CreateColor show={showCreateModal} close={closeCreateModal} />
     </div>
   );
 });

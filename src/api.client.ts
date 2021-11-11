@@ -3,6 +3,7 @@ import Cookie from "cookie-universal";
 import { FullApiUrl, PrependRootApi } from "./decorators";
 import { Color } from "./models/color.model";
 import { ICreateColorReqDto } from "./dto/colors/create-color.req.dto";
+import { showError } from "./utils";
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
 
@@ -70,6 +71,10 @@ export class ClientApi {
 
   async verify_token(): Promise<boolean> {
     const res = await this.post(ClientApi.APIs.VERIFY_TOKEN);
+    if (res?.status != 201) {
+      const result = await res.json();
+      showError(result?.message || "Your token is expired. Please signin !");
+    }
     return res?.status == 201;
   }
 

@@ -31,7 +31,7 @@ interface IColorContextValue {
   state: IColorState;
   dispatch?: Dispatch<ActionType>;
   loadColor?: () => void;
-  createColor?: (createColorDto: ICreateColorReqDto) => void;
+  createColor?: (createColorDto: ICreateColorReqDto) => Promise<boolean>;
 }
 
 export const ColorContext = createContext<IColorContextValue>({ state: INITIAL_STATE });
@@ -63,13 +63,15 @@ export const ColorContextProvider = (props: IContextProviderProps) => {
   }, [dispatch]);
 
   const createColor = useCallback(
-    async (createColorDto: ICreateColorReqDto) => {
+    async (createColorDto: ICreateColorReqDto): Promise<boolean> => {
       const res = await clientApi.createColor(createColorDto);
       const result = await res.json();
       if (res.status == 201) {
         loadColor();
+        return true;
       }
       showError(result?.message);
+      return false;
     },
     [dispatch]
   );

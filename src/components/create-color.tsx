@@ -5,11 +5,17 @@ import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
+import Modal from "react-bootstrap/Modal";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ICreateColorReqDto } from "../dto/colors/create-color.req.dto";
 import ColorContext from "../context/colors.context";
 
-export const CreateColor = memo(() => {
+interface ICreateColor {
+  show: boolean;
+  close: () => void;
+}
+
+export const CreateColor = memo((props: ICreateColor) => {
   const colorContext = useContext(ColorContext);
   const {
     register,
@@ -19,34 +25,45 @@ export const CreateColor = memo(() => {
   } = useForm<ICreateColorReqDto>();
 
   const onSubmit: SubmitHandler<ICreateColorReqDto> = useCallback(
-    ({ code, name }) => {
+    async ({ code, name }) => {
       if (!colorContext?.createColor) return;
-      colorContext.createColor({ code, name });
+      const isSuccess = await colorContext.createColor({ code, name });
+      isSuccess && props.close();
     },
-    [colorContext.createColor]
+    [colorContext.createColor, props.close]
   );
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <Row className="align-items-center">
-        <Col xs="auto">
-          <InputGroup className="mb-2">
-            <InputGroup.Text>Color name</InputGroup.Text>
-            <FormControl placeholder="Color name" {...register("name")} />
-          </InputGroup>
-        </Col>
-        <Col xs="auto">
-          <InputGroup className="mb-2">
-            <InputGroup.Text>Code</InputGroup.Text>
-            <FormControl placeholder="Code" {...register("code")} />
-          </InputGroup>
-        </Col>
-        <Col xs="auto">
-          <Button type="submit" className="mb-2">
-            Submit
-          </Button>
-        </Col>
-      </Row>
-    </Form>
+    <Modal show={props.show} onHide={props.close}>
+      <Modal.Dialog>
+        <Modal.Header closeButton>
+          <Modal.Title>Create New Color</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Row className="align-items-center">
+              <Col xs="auto">
+                <InputGroup className="mb-2">
+                  <InputGroup.Text>Color name</InputGroup.Text>
+                  <FormControl placeholder="Color name" {...register("name")} />
+                </InputGroup>
+              </Col>
+              <Col xs="auto">
+                <InputGroup className="mb-2">
+                  <InputGroup.Text>Code</InputGroup.Text>
+                  <FormControl placeholder="Code" {...register("code")} />
+                </InputGroup>
+              </Col>
+              <Col xs="auto">
+                <Button type="submit" className="mb-2">
+                  Submit
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Modal.Body>
+      </Modal.Dialog>
+    </Modal>
   );
 });
