@@ -3,13 +3,13 @@ import "reflect-metadata";
 
 const requiredMetadataKey = Symbol("pathName");
 
-export function getFullApiUrl(target: Object, propertyKey: string | symbol, parameterIndex: number) {
+export function FullApiUrl(target: Object, propertyKey: string | symbol, parameterIndex: number) {
   let existingRequiredParameters: number[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyKey) || [];
   existingRequiredParameters.push(parameterIndex);
   Reflect.defineMetadata(requiredMetadataKey, existingRequiredParameters, target, propertyKey);
 }
 
-export function prependRootApi(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>) {
+export function PrependRootApi(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>) {
   let method = descriptor.value!;
 
   descriptor.value = function () {

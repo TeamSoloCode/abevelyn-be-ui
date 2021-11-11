@@ -1,6 +1,6 @@
 import { ISignInResDto } from "./dto/signin/signin.res.dto";
 import Cookie from "cookie-universal";
-import { getFullApiUrl, prependRootApi } from "./decorators";
+import { FullApiUrl, PrependRootApi } from "./decorators";
 import { Color } from "./models/color.model";
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
@@ -26,8 +26,9 @@ export class ClientApi {
   public get token(): string {
     return this._token;
   }
-  @prependRootApi
-  private publicPost(@getFullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
+
+  @PrependRootApi
+  private publicPost(@FullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json" },
       method: "POST",
@@ -35,8 +36,8 @@ export class ClientApi {
     });
   }
 
-  @prependRootApi
-  private post(@getFullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
+  @PrependRootApi
+  private post(@FullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "POST",
@@ -44,8 +45,8 @@ export class ClientApi {
     });
   }
 
-  @prependRootApi
-  private get(@getFullApiUrl apiUri: string, params?: Object): Promise<Response> {
+  @PrependRootApi
+  private get(@FullApiUrl apiUri: string, params?: Object): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "GET",
