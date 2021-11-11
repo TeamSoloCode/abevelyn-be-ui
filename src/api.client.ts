@@ -2,6 +2,7 @@ import { ISignInResDto } from "./dto/signin/signin.res.dto";
 import Cookie from "cookie-universal";
 import { FullApiUrl, PrependRootApi } from "./decorators";
 import { Color } from "./models/color.model";
+import { ICreateColorReqDto } from "./dto/colors/create-color.req.dto";
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
 
@@ -53,7 +54,7 @@ export class ClientApi {
     });
   }
 
-  async signin(username: string, password: string): Promise<{ username: string } | null> {
+  async signin(username: string, password: string): Promise<{ username: string } | Response> {
     const res = await this.publicPost(ClientApi.APIs.SIGNIN_URI, { username, password });
 
     if (res.status == 201 && res.body) {
@@ -64,7 +65,7 @@ export class ClientApi {
       return { username: data.username };
     }
 
-    return null;
+    return res;
   }
 
   async verify_token(): Promise<boolean> {
@@ -72,8 +73,12 @@ export class ClientApi {
     return res?.status == 201;
   }
 
-  async fetchColors(): Promise<Response> {
-    return this.get(ClientApi.APIs.SIGNIN_URI);
+  fetchColors(): Promise<Response> {
+    return this.get(ClientApi.APIs.COLORS);
+  }
+
+  createColor(createColorDto: ICreateColorReqDto): Promise<Response> {
+    return this.post(ClientApi.APIs.COLORS, createColorDto);
   }
 }
 

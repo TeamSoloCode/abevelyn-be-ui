@@ -2,6 +2,7 @@ import React, { createContext, Dispatch, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router";
 import clientApi, { ClientApi } from "../api.client";
 import Cookie from "cookie-universal";
+import { showError } from "../utils";
 
 interface IAppContextState {
   authenticated: boolean | undefined;
@@ -77,9 +78,13 @@ export const AppContextProvider = (props: IAppContextProps) => {
 
   const login = useCallback(
     async (username: string, password: string) => {
-      const result = await clientApi.signin(username, password);
-      if (result) {
-        dispatch({ type: Actions.AUTHENTICATED, authenticated: true, username: result.username });
+      const response = await clientApi.signin(username, password);
+
+      if (response instanceof Response) {
+        const error = await response.json();
+        showError(error.message);
+      } else {
+        dispatch({ type: Actions.AUTHENTICATED, authenticated: true, username: response.username });
         navigate("/");
       }
     },

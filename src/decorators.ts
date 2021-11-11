@@ -14,7 +14,6 @@ export function PrependRootApi(target: any, propertyName: string, descriptor: Ty
 
   descriptor.value = function () {
     let requiredParameters: number[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyName);
-    console.log(requiredParameters);
     if (requiredParameters) {
       for (let parameterIndex of requiredParameters) {
         if (parameterIndex >= arguments.length || arguments[parameterIndex] !== undefined) {

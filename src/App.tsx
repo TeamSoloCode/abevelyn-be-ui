@@ -10,6 +10,7 @@ import { ProductStatusPage } from "./pages/product-status.page";
 import { ProductsPage } from "./pages/products.page";
 import { SignInPage } from "./pages/signin.page";
 import { SizePage } from "./pages/sizes.page";
+import { ToastContainer } from "react-toastify";
 
 export const App = (props) => {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ export const App = (props) => {
           </Route>
         )}
       </Routes>
+      <ToastContainer />
     </div>
   );
 };

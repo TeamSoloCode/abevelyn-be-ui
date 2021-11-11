@@ -24,12 +24,6 @@ export const SignInPage = React.memo(() => {
     [appContext.login]
   );
 
-  useEffect(() => {
-    if (appContext.state.authenticated) {
-      alert("Authenticated");
-    }
-  }, [appContext.state]);
-
   return (
     <Modal.Dialog>
       <Modal.Header closeButton>

@@ -4,6 +4,7 @@ import "./sass/main.scss";
 import { App } from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { AppContextProvider } from "./context/app.context";
+import "react-toastify/dist/ReactToastify.css";
 
 ReactDOM.render(
   <React.StrictMode>

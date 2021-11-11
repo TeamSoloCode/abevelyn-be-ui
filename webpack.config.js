@@ -57,7 +57,7 @@ module.exports = (passedInConfig = {}, { mode = "production" }) => {
                 shippedProposals: true,
               },
             ],
-            ["@babel/preset-typescript", { allowDeclareFields: true, onlyRemoveTypeImports: true }],
+            ["@babel/preset-typescript", { allowDeclareFields: true }],
             [
               "@babel/preset-react",
               // { runtime: 'automatic', importSource: '@emotion/react' }
