@@ -1,23 +1,27 @@
 import { ClientApi } from "./api.client";
+import "reflect-metadata";
 
-const requiredMetadataKey = Symbol("required");
+const requiredMetadataKey = Symbol("pathName");
 
-export function GetFullApi(target: Object, propertyKey: string | symbol, parameterIndex: number) {
-  console.log("abcd", target, propertyKey, parameterIndex);
+export function getFullApiUrl(target: Object, propertyKey: string | symbol, parameterIndex: number) {
   let existingRequiredParameters: number[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyKey) || [];
   existingRequiredParameters.push(parameterIndex);
   Reflect.defineMetadata(requiredMetadataKey, existingRequiredParameters, target, propertyKey);
 }
 
-export function updateApiCall(target: any, methodName: string, descriptor?: PropertyDescriptor) {
-  let originalFunction = target[methodName];
+export function prependRootApi(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>) {
+  let method = descriptor.value!;
 
-  let auditFunction = function (this: any) {
-    if (typeof arguments[0] == "string") {
-      arguments[0] = ClientApi.ROOT_API + arguments[0];
+  descriptor.value = function () {
+    let requiredParameters: number[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyName);
+    console.log(requiredParameters);
+    if (requiredParameters) {
+      for (let parameterIndex of requiredParameters) {
+        if (parameterIndex >= arguments.length || arguments[parameterIndex] !== undefined) {
+          arguments[parameterIndex] = ClientApi.ROOT_API + arguments[parameterIndex];
+        }
+      }
     }
-    return originalFunction.apply(this, arguments);
+    return method.apply(this, arguments);
   };
-  target[methodName] = auditFunction;
-  return originalFunction;
 }

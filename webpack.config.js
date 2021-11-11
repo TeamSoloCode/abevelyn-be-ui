@@ -57,7 +57,7 @@ module.exports = (passedInConfig = {}, { mode = "production" }) => {
                 shippedProposals: true,
               },
             ],
-            ["@babel/preset-typescript", { allowDeclareFields: true }],
+            ["@babel/preset-typescript", { allowDeclareFields: true, onlyRemoveTypeImports: true }],
             [
               "@babel/preset-react",
               // { runtime: 'automatic', importSource: '@emotion/react' }
@@ -66,6 +66,7 @@ module.exports = (passedInConfig = {}, { mode = "production" }) => {
           plugins: [
             ["@babel/plugin-proposal-decorators", { legacy: true }],
             ["@babel/plugin-proposal-class-properties", { loose: true }],
+            "babel-plugin-parameter-decorator",
           ],
           // ignore: ['./plugins/pageManager/**']
         },

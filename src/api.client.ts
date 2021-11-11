@@ -1,15 +1,9 @@
 import { ISignInResDto } from "./dto/signin/signin.res.dto";
 import Cookie from "cookie-universal";
-import { updateApiCall } from "./decorators";
+import { getFullApiUrl, prependRootApi } from "./decorators";
 import { Color } from "./models/color.model";
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
-
-function GetFullApi() {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    console.log(target, propertyKey, descriptor.value);
-  };
-}
 
 export class ClientApi {
   constructor() {
@@ -32,9 +26,8 @@ export class ClientApi {
   public get token(): string {
     return this._token;
   }
-
-  @updateApiCall
-  private publicPost(apiUri: string, body: Object = {}): Promise<Response> {
+  @prependRootApi
+  private publicPost(@getFullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json" },
       method: "POST",
@@ -42,8 +35,8 @@ export class ClientApi {
     });
   }
 
-  @updateApiCall
-  private post(apiUri: string, body: Object = {}): Promise<Response> {
+  @prependRootApi
+  private post(@getFullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "POST",
@@ -51,8 +44,8 @@ export class ClientApi {
     });
   }
 
-  @updateApiCall
-  private get(apiUri: string, params?: Object): Promise<Response> {
+  @prependRootApi
+  private get(@getFullApiUrl apiUri: string, params?: Object): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "GET",
