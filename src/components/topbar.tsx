@@ -35,12 +35,13 @@ export const TopBar = memo(() => {
           <Nav className="me-auto">
             <NavDropdown title={dropdownTitle} id="collasible-nav-dropdown" onClick={isActiveRoute}>
               <NavDropdown.Item href={`/`}>Home</NavDropdown.Item>
-              <NavDropdown.Item href={`/${AppRoutes.PRODUCTS}`}>Products</NavDropdown.Item>
               <NavDropdown.Divider />
+              <NavDropdown.Item href={`/${AppRoutes.PRODUCTS}`}>Products</NavDropdown.Item>
               <NavDropdown.Item href={`/${AppRoutes.COLLECTIONS}`}>Collection</NavDropdown.Item>
               <NavDropdown.Item href={`/${AppRoutes.COLORS}`}>Colors</NavDropdown.Item>
               <NavDropdown.Item href={`/${AppRoutes.SIZES}`}>Sizes</NavDropdown.Item>
               <NavDropdown.Item href={`/${AppRoutes.PRODUCT_STATUS}`}>Product Status</NavDropdown.Item>
+              <NavDropdown.Divider />
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

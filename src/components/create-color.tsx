@@ -21,6 +21,7 @@ export const CreateColor = memo((props: ICreateColor) => {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<ICreateColorReqDto>();
 
@@ -29,6 +30,7 @@ export const CreateColor = memo((props: ICreateColor) => {
       if (!colorContext?.createColor) return;
       const isSuccess = await colorContext.createColor({ code, name });
       isSuccess && props.close();
+      reset();
     },
     [colorContext.createColor, props.close]
   );

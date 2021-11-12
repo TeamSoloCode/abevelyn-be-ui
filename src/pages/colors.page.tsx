@@ -4,11 +4,14 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ColorContext from "../context/colors.context";
 import { CreateColor } from "../components/create-color";
+import { UpdateColor } from "../components/update-color";
 
 export const ColorsPage = React.memo(() => {
   const colorContext = useContext(ColorContext);
   const { colors } = colorContext.state;
   const [showCreateModal, setShowCreateModel] = useState(false);
+  const [showUpdateModal, setShowUpdateModel] = useState(false);
+  let [selectedId, setSelectdId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (!colorContext?.loadColor) return;
@@ -23,11 +26,27 @@ export const ColorsPage = React.memo(() => {
     setShowCreateModel(false);
   }, [setShowCreateModel]);
 
+  const openUpdateModal = useCallback(() => {
+    setShowUpdateModel(true);
+  }, [setShowCreateModel]);
+
+  const closeUpdateModal = useCallback(() => {
+    setShowUpdateModel(false);
+  }, [setShowCreateModel]);
+
+  const onClickRow = useCallback(
+    (e) => {
+      setSelectdId(e.currentTarget.dataset?.id);
+      openUpdateModal();
+    },
+    [openUpdateModal, setSelectdId, selectedId]
+  );
+
   const tableHeader = useMemo(() => {
     if (!colors || !colors?.[0]) return;
     const keys = Object.keys(colors[0]);
     return keys.map((key) => {
-      return <th>{key}</th>;
+      return <th key={key}>{key}</th>;
     });
   }, [colors]);
 
@@ -38,7 +57,11 @@ export const ColorsPage = React.memo(() => {
       const tds = values.map((value, index) => {
         return <td key={index}>{value}</td>;
       });
-      return <tr key={color.uuid}>{tds}</tr>;
+      return (
+        <tr data-id={color.uuid} key={color.uuid} onClick={onClickRow}>
+          {tds}
+        </tr>
+      );
     });
   }, [colors]);
 
@@ -56,6 +79,7 @@ export const ColorsPage = React.memo(() => {
         <tbody>{tableBody}</tbody>
       </Table>
       <CreateColor show={showCreateModal} close={closeCreateModal} />
+      {selectedId && <UpdateColor colorId={selectedId} show={showUpdateModal} close={closeUpdateModal} />}
     </div>
   );
 });

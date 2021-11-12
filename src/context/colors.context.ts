@@ -3,6 +3,7 @@ import { Color } from "../models/color.model";
 import clientApi, { ClientApi } from "../api.client";
 import { showError } from "../utils";
 import { ICreateColorReqDto } from "../dto/colors/create-color.req.dto";
+import { IUpdateColorReqDto } from "../dto/colors/update-color.req.dto";
 
 interface IContextProviderProps {
   children?: any;
@@ -31,7 +32,9 @@ interface IColorContextValue {
   state: IColorState;
   dispatch?: Dispatch<ActionType>;
   loadColor?: () => void;
-  createColor?: (createColorDto: ICreateColorReqDto) => Promise<boolean>;
+  createColor?: (createColorDto: ICreateColorReqDto) => Promise<Color | null>;
+  updateColor?: (id: string, updateColorDto: IUpdateColorReqDto) => Promise<Color | null>;
+  deleteColor?: (id: string) => Promise<Color | null>;
 }
 
 export const ColorContext = createContext<IColorContextValue>({ state: INITIAL_STATE });
@@ -63,15 +66,43 @@ export const ColorContextProvider = (props: IContextProviderProps) => {
   }, [dispatch]);
 
   const createColor = useCallback(
-    async (createColorDto: ICreateColorReqDto): Promise<boolean> => {
+    async (createColorDto: ICreateColorReqDto): Promise<Color | null> => {
       const res = await clientApi.createColor(createColorDto);
       const result = await res.json();
       if (res.status == 201) {
         loadColor();
-        return true;
+        return result;
       }
       showError(result?.message);
-      return false;
+      return null;
+    },
+    [dispatch]
+  );
+
+  const updateColor = useCallback(
+    async (id: string, updateColorDto: IUpdateColorReqDto): Promise<Color | null> => {
+      const res = await clientApi.updateColor(id, updateColorDto);
+      const result = await res.json();
+      if (res.status == 200) {
+        loadColor();
+        return result;
+      }
+      showError(result?.message);
+      return null;
+    },
+    [dispatch]
+  );
+
+  const deleteColor = useCallback(
+    async (id: string): Promise<Color | null> => {
+      const res = await clientApi.deleteColor(id);
+      const result = await res.json();
+      if (res.status == 200) {
+        loadColor();
+        return result;
+      }
+      showError(result?.message);
+      return null;
     },
     [dispatch]
   );
@@ -84,6 +115,8 @@ export const ColorContextProvider = (props: IContextProviderProps) => {
         dispatch,
         loadColor,
         createColor,
+        updateColor,
+        deleteColor,
       },
     },
     props.children
