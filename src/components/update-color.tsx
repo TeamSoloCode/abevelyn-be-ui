@@ -8,7 +8,7 @@ import FormControl from "react-bootstrap/FormControl";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
-import clientApi from "../api.client";
+import { colorApi } from "../api.client";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import ColorContext from "../context/colors.context";
@@ -59,7 +59,7 @@ export const UpdateColor = memo((props: IUpdateColor) => {
     }
 
     (async (id: string) => {
-      const response = await clientApi.fetchColorById(id);
+      const response = await colorApi.fetchColorById(id);
       const result = await response.json();
 
       if (response.status == 200) {

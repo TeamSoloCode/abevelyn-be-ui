@@ -1,11 +1,11 @@
 import React, { createContext, Dispatch, useCallback, useReducer } from "react";
 import { Color } from "../models/color.model";
-import clientApi, { ClientApi } from "../api.client";
+import { colorApi } from "../api.client";
 import { showError } from "../utils";
 import { ICreateColorReqDto } from "../dto/colors/create-color.req.dto";
 import { IUpdateColorReqDto } from "../dto/colors/update-color.req.dto";
 
-interface IContextProviderProps {
+interface IColorProviderProps {
   children?: any;
   initValue?: IColorState;
 }
@@ -49,14 +49,14 @@ const reducer = (state: IColorState, action: ActionType): IColorState => {
   }
 };
 
-export const ColorContextProvider = (props: IContextProviderProps) => {
+export const ColorContextProvider = (props: IColorProviderProps) => {
   const [state, dispatch] = useReducer(reducer, {
     ...INITIAL_STATE,
     ...props.initValue,
   });
 
   const loadColor = useCallback(async () => {
-    const res = await clientApi.fetchColors();
+    const res = await colorApi.fetchColors();
     const result = await res.json();
     if (res.status == 200) {
       dispatch({ type: Actions.LOAD_COLORS, colors: result });
@@ -67,7 +67,7 @@ export const ColorContextProvider = (props: IContextProviderProps) => {
 
   const createColor = useCallback(
     async (createColorDto: ICreateColorReqDto): Promise<Color | null> => {
-      const res = await clientApi.createColor(createColorDto);
+      const res = await colorApi.createColor(createColorDto);
       const result = await res.json();
       if (res.status == 201) {
         loadColor();
@@ -81,7 +81,7 @@ export const ColorContextProvider = (props: IContextProviderProps) => {
 
   const updateColor = useCallback(
     async (id: string, updateColorDto: IUpdateColorReqDto): Promise<Color | null> => {
-      const res = await clientApi.updateColor(id, updateColorDto);
+      const res = await colorApi.updateColor(id, updateColorDto);
       const result = await res.json();
       if (res.status == 200) {
         loadColor();
@@ -95,7 +95,7 @@ export const ColorContextProvider = (props: IContextProviderProps) => {
 
   const deleteColor = useCallback(
     async (id: string): Promise<Color | null> => {
-      const res = await clientApi.deleteColor(id);
+      const res = await colorApi.deleteColor(id);
       const result = await res.json();
       if (res.status == 200) {
         loadColor();

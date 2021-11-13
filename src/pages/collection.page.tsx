@@ -1,5 +1,85 @@
-import React from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import CollectionContext, { CollectionContextProvider } from "../context/collection.context";
+import Table from "react-bootstrap/Table";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import { CreateCollection } from "../components/create-collection";
+import { UpdateCollection } from "../components/update-collection";
 
 export const CollectionPage = React.memo(() => {
-  return <h1>This is collection page</h1>;
+  const collectionContext = useContext(CollectionContext);
+  const { collections } = collectionContext.state;
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  let [selectedId, setSelectdId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!collectionContext?.loadCollection) return;
+    collectionContext.loadCollection();
+  }, []);
+
+  const openCreateModal = useCallback(() => {
+    setShowCreateModal(true);
+  }, [setShowCreateModal]);
+
+  const closeCreateModal = useCallback(() => {
+    setShowCreateModal(false);
+  }, [setShowCreateModal]);
+
+  const openUpdateModal = useCallback(() => {
+    setShowUpdateModal(true);
+  }, [setShowCreateModal]);
+
+  const closeUpdateModal = useCallback(() => {
+    setShowUpdateModal(false);
+  }, [setShowCreateModal]);
+
+  const onClickRow = useCallback(
+    (e) => {
+      setSelectdId(e.currentTarget.dataset?.id);
+      openUpdateModal();
+    },
+    [openUpdateModal, setSelectdId, selectedId]
+  );
+
+  const tableHeader = useMemo(() => {
+    if (!collections || !collections?.[0]) return;
+    const keys = Object.keys(collections[0]);
+    return keys.map((key) => {
+      return <th key={key}>{key}</th>;
+    });
+  }, [collections]);
+
+  const tableBody = useMemo(() => {
+    if (!collections) return null;
+    return collections.map((collection) => {
+      const values = Object.values(collection);
+      const tds = values.map((value, index) => {
+        return <td key={index}>{value}</td>;
+      });
+      return (
+        <tr data-id={collection.uuid} key={collection.uuid} onClick={onClickRow}>
+          {tds}
+        </tr>
+      );
+    });
+  }, [collections]);
+
+  return (
+    <div>
+      <Col xs="auto">
+        <Button className="mb-2" onClick={openCreateModal}>
+          + New Collection
+        </Button>
+      </Col>
+      <Table striped bordered hover>
+        <thead>
+          <tr>{tableHeader}</tr>
+        </thead>
+        <tbody>{tableBody}</tbody>
+      </Table>
+      <CreateCollection show={showCreateModal} close={closeCreateModal} />
+      {selectedId && <UpdateCollection collectionId={selectedId} show={showUpdateModal} close={closeUpdateModal} />}
+    </div>
+  );
 });

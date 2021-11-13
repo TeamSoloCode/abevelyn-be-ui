@@ -5,6 +5,8 @@ import { Color } from "./models/color.model";
 import { ICreateColorReqDto } from "./dto/colors/create-color.req.dto";
 import { showError } from "./utils";
 import { IUpdateColorReqDto } from "./dto/colors/update-color.req.dto";
+import { ICreateCollectionDto } from "./dto/collections/create-collection.req.dto";
+import { IUpdateCollectionDto } from "./dto/collections/update-collection.req.dto";
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
 
@@ -22,6 +24,7 @@ export class ClientApi {
     SIGNIN_URI: "/auth/signin",
     VERIFY_TOKEN: "/auth/verify_token",
     COLORS: "/colors",
+    COLLECTIONS: "/collections",
   };
 
   private _token: string;
@@ -31,7 +34,7 @@ export class ClientApi {
   }
 
   @PrependRootApi
-  private publicPost(@FullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
+  protected publicPost(@FullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json" },
       method: "POST",
@@ -40,7 +43,7 @@ export class ClientApi {
   }
 
   @PrependRootApi
-  private post(@FullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
+  protected post(@FullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "POST",
@@ -49,7 +52,7 @@ export class ClientApi {
   }
 
   @PrependRootApi
-  private patch(@FullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
+  protected patch(@FullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "PATCH",
@@ -58,7 +61,7 @@ export class ClientApi {
   }
 
   @PrependRootApi
-  private delete(@FullApiUrl apiUri: string, params: Object = {}): Promise<Response> {
+  protected delete(@FullApiUrl apiUri: string, params: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "DELETE",
@@ -66,7 +69,7 @@ export class ClientApi {
   }
 
   @PrependRootApi
-  private get(@FullApiUrl apiUri: string, params?: Object): Promise<Response> {
+  get(@FullApiUrl apiUri: string, params?: Object): Promise<Response> {
     return fetch(apiUri, {
       headers: {
         "Content-Type": "application/json",
@@ -100,6 +103,12 @@ export class ClientApi {
     }
     return res?.status == 201;
   }
+}
+
+class ColorApi extends ClientApi {
+  constructor() {
+    super();
+  }
 
   fetchColors(): Promise<Response> {
     return this.get(ClientApi.APIs.COLORS);
@@ -122,4 +131,32 @@ export class ClientApi {
   }
 }
 
-export default new ClientApi();
+export class CollectionApi extends ClientApi {
+  constructor() {
+    super();
+  }
+
+  fetchCollections(): Promise<Response> {
+    return this.get(ClientApi.APIs.COLLECTIONS);
+  }
+
+  fetchCollectionById(id: string): Promise<Response> {
+    return this.get(ClientApi.APIs.COLLECTIONS + `/${id}`);
+  }
+
+  createCollection(createColorDto: ICreateCollectionDto): Promise<Response> {
+    return this.post(ClientApi.APIs.COLLECTIONS, createColorDto);
+  }
+
+  updateCollection(id: string, updateColorDto: IUpdateCollectionDto): Promise<Response> {
+    return this.patch(ClientApi.APIs.COLLECTIONS + `/${id}`, updateColorDto);
+  }
+
+  deleteCollection(id: string): Promise<Response> {
+    return this.delete(ClientApi.APIs.COLLECTIONS + `/${id}`);
+  }
+}
+
+export const clientApi = new ClientApi();
+export const colorApi = new ColorApi();
+export const collectionApi = new CollectionApi();

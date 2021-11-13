@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router";
 import { TopBar } from "../components/topbar";
+import { CollectionContextProvider } from "../context/collection.context";
 import { ColorContextProvider } from "../context/colors.context";
 
 export const HomePage = React.memo(() => {
@@ -9,7 +10,9 @@ export const HomePage = React.memo(() => {
       <TopBar />
       <div className="home__content">
         <ColorContextProvider>
-          <Outlet />
+          <CollectionContextProvider>
+            <Outlet />
+          </CollectionContextProvider>
         </ColorContextProvider>
       </div>
     </div>
