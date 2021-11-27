@@ -3,7 +3,7 @@ import { showError } from "../utils";
 import { Collection } from "../models/collection.model";
 import { ICreateCollectionDto } from "../dto/collections/create-collection.req.dto";
 import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.dto";
-import { collectionApi } from "../api.client";
+import { collectionApi } from "../client-api/api.client";
 
 interface ICollectionProviderProps {
   children?: any;
@@ -60,7 +60,7 @@ export const CollectionContextProvider = (props: ICollectionProviderProps) => {
     const res = await collectionApi.fetchCollections();
     const result = await res.json();
     if (res.status == 200) {
-      dispatch({ type: Actions.LOAD_COLLECTIONS, collections: result });
+      dispatch({ type: Actions.LOAD_COLLECTIONS, collections: result.data });
     }
 
     showError(result?.message);
@@ -72,7 +72,7 @@ export const CollectionContextProvider = (props: ICollectionProviderProps) => {
       const result = await res.json();
       if (res.status == 201) {
         loadCollection();
-        return result;
+        return result.data;
       }
       showError(result?.message);
       return null;
@@ -86,7 +86,7 @@ export const CollectionContextProvider = (props: ICollectionProviderProps) => {
       const result = await res.json();
       if (res.status == 200) {
         loadCollection();
-        return result;
+        return result.data;
       }
       showError(result?.message);
       return null;
@@ -100,7 +100,7 @@ export const CollectionContextProvider = (props: ICollectionProviderProps) => {
       const result = await res.json();
       if (res.status == 200) {
         loadCollection();
-        return result;
+        return result.data;
       }
       showError(result?.message);
       return null;

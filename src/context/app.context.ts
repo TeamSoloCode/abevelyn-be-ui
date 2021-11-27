@@ -1,6 +1,6 @@
 import React, { createContext, Dispatch, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { clientApi, ClientApi } from "../api.client";
+import { clientApi, ClientApi } from "../client-api/api.client";
 import Cookie from "cookie-universal";
 import { showError } from "../utils";
 

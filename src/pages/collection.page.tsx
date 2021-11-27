@@ -6,6 +6,18 @@ import Button from "react-bootstrap/Button";
 import { CreateCollection } from "../components/create-collection";
 import { UpdateCollection } from "../components/update-collection";
 
+const tableData = [
+  ["Name", "name"],
+  ["Name in French", "nameInFrench"],
+  ["Name in Vietnamese", "nameInVietnames"],
+  ["Description", "description"],
+  ["Description in French", "descriptionInFrench"],
+  ["Description in Vietnamese", "descriptionInVietnames"],
+  ["Available", "available"],
+  ["Create At", "createdAt"],
+  ["Update At", "updatedAt"],
+];
+
 export const CollectionPage = React.memo(() => {
   const collectionContext = useContext(CollectionContext);
   const { collections } = collectionContext.state;
@@ -43,9 +55,7 @@ export const CollectionPage = React.memo(() => {
   );
 
   const tableHeader = useMemo(() => {
-    if (!collections || !collections?.[0]) return;
-    const keys = Object.keys(collections[0]);
-    return keys.map((key) => {
+    return tableData.map(([key, _]) => {
       return <th key={key}>{key}</th>;
     });
   }, [collections]);
@@ -53,9 +63,8 @@ export const CollectionPage = React.memo(() => {
   const tableBody = useMemo(() => {
     if (!collections) return null;
     return collections.map((collection) => {
-      const values = Object.values(collection);
-      const tds = values.map((value, index) => {
-        return <td key={index}>{value}</td>;
+      const tds = tableData.map(([_, value], index) => {
+        return <td key={index}>{collection[value]}</td>;
       });
       return (
         <tr data-id={collection.uuid} key={collection.uuid} onClick={onClickRow}>

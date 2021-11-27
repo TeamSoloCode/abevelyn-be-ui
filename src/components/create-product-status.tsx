@@ -7,38 +7,38 @@ import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
 import Modal from "react-bootstrap/Modal";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ICreateColorReqDto } from "../dto/colors/create-color.req.dto";
-import ColorContext from "../context/colors.context";
+import ProductStatusContext from "../context/product-status.context";
+import { ICreateProductStatusDto } from "../dto/product-status/create-product-status.req.dto";
 
-interface ICreateColor {
+interface ICreateProductStatus {
   show: boolean;
   close: () => void;
 }
 
-export const CreateColor = memo((props: ICreateColor) => {
-  const colorContext = useContext(ColorContext);
+export const CreateProductStatus = memo((props: ICreateProductStatus) => {
+  const productStatusContext = useContext(ProductStatusContext);
+  const state = productStatusContext?.state;
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ICreateColorReqDto>();
+  } = useForm<ICreateProductStatusDto>();
 
-  const onSubmit: SubmitHandler<ICreateColorReqDto> = useCallback(
-    async ({ code, name }) => {
-      if (!colorContext?.createColor) return;
-      const isSuccess = await colorContext.createColor({ code, name });
+  const onSubmit: SubmitHandler<ICreateProductStatusDto> = useCallback(
+    async ({ name }) => {
+      const isSuccess = await productStatusContext?.createProductStatus({ name });
       isSuccess && props.close();
       reset();
     },
-    [colorContext.createColor, props.close]
+    [productStatusContext?.createProductStatus, props.close]
   );
 
   return (
     <Modal show={props.show} onHide={props.close}>
       <Modal.Dialog>
         <Modal.Header closeButton>
-          <Modal.Title>Create New Color</Modal.Title>
+          <Modal.Title>Create New Product Status</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -46,14 +46,8 @@ export const CreateColor = memo((props: ICreateColor) => {
             <Row className="align-items-center">
               <Col xs="auto">
                 <InputGroup className="mb-2">
-                  <InputGroup.Text>Color name</InputGroup.Text>
-                  <FormControl placeholder="Color name" {...register("name")} />
-                </InputGroup>
-              </Col>
-              <Col xs="auto">
-                <InputGroup className="mb-2">
-                  <InputGroup.Text>Code</InputGroup.Text>
-                  <FormControl placeholder="Code" {...register("code")} />
+                  <InputGroup.Text>Status name</InputGroup.Text>
+                  <FormControl placeholder="Status name" {...register("name")} />
                 </InputGroup>
               </Col>
               <Col xs="auto">

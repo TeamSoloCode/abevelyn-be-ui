@@ -1,12 +1,14 @@
-import { ISignInResDto } from "./dto/signin/signin.res.dto";
+import { ISignInResDto } from "../dto/signin/signin.res.dto";
 import Cookie from "cookie-universal";
-import { FullApiUrl, PrependRootApi } from "./decorators";
-import { Color } from "./models/color.model";
-import { ICreateColorReqDto } from "./dto/colors/create-color.req.dto";
-import { showError } from "./utils";
-import { IUpdateColorReqDto } from "./dto/colors/update-color.req.dto";
-import { ICreateCollectionDto } from "./dto/collections/create-collection.req.dto";
-import { IUpdateCollectionDto } from "./dto/collections/update-collection.req.dto";
+import { fullApiUrl, prependRootApi } from "../decorators";
+import { Color } from "../models/color.model";
+import { ICreateColorReqDto } from "../dto/colors/create-color.req.dto";
+import { showError } from "../utils";
+import { IUpdateColorReqDto } from "../dto/colors/update-color.req.dto";
+import { ICreateCollectionDto } from "../dto/collections/create-collection.req.dto";
+import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.dto";
+import { ICreateProductStatusDto } from "../dto/product-status/create-product-status.req.dto";
+import { IUpdateProductStatusDto } from "../dto/product-status/update-product-status.req.dto";
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
 
@@ -25,6 +27,7 @@ export class ClientApi {
     VERIFY_TOKEN: "/auth/verify_token",
     COLORS: "/colors",
     COLLECTIONS: "/collections",
+    PRODUCT_STATUS: "/product_status",
   };
 
   private _token: string;
@@ -33,8 +36,8 @@ export class ClientApi {
     return this._token;
   }
 
-  @PrependRootApi
-  protected publicPost(@FullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
+  @prependRootApi
+  protected publicPost(@fullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json" },
       method: "POST",
@@ -42,8 +45,8 @@ export class ClientApi {
     });
   }
 
-  @PrependRootApi
-  protected post(@FullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
+  @prependRootApi
+  protected post(@fullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "POST",
@@ -51,8 +54,8 @@ export class ClientApi {
     });
   }
 
-  @PrependRootApi
-  protected patch(@FullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
+  @prependRootApi
+  protected patch(@fullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "PATCH",
@@ -60,16 +63,16 @@ export class ClientApi {
     });
   }
 
-  @PrependRootApi
-  protected delete(@FullApiUrl apiUri: string, params: Object = {}): Promise<Response> {
+  @prependRootApi
+  protected delete(@fullApiUrl apiUri: string, params: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "DELETE",
     });
   }
 
-  @PrependRootApi
-  get(@FullApiUrl apiUri: string, params?: Object): Promise<Response> {
+  @prependRootApi
+  get(@fullApiUrl apiUri: string, params?: Object): Promise<Response> {
     return fetch(apiUri, {
       headers: {
         "Content-Type": "application/json",
@@ -140,6 +143,10 @@ export class CollectionApi extends ClientApi {
     return this.get(ClientApi.APIs.COLLECTIONS);
   }
 
+  fetchAvailableCollection(): Promise<Response> {
+    return this.get(ClientApi.APIs.COLLECTIONS + "/fetch_available");
+  }
+
   fetchCollectionById(id: string): Promise<Response> {
     return this.get(ClientApi.APIs.COLLECTIONS + `/${id}`);
   }
@@ -157,6 +164,37 @@ export class CollectionApi extends ClientApi {
   }
 }
 
+export class ProductStatusApi extends ClientApi {
+  constructor() {
+    super();
+  }
+
+  fetchProductStatus(): Promise<Response> {
+    return this.get(ClientApi.APIs.PRODUCT_STATUS);
+  }
+
+  fetchAvailableProductStatus(): Promise<Response> {
+    return this.get(ClientApi.APIs.PRODUCT_STATUS + "/fetch_available");
+  }
+
+  fetchProductStatusById(id: string): Promise<Response> {
+    return this.get(ClientApi.APIs.PRODUCT_STATUS + `/${id}`);
+  }
+
+  createProductStatus(createColorDto: ICreateProductStatusDto): Promise<Response> {
+    return this.post(ClientApi.APIs.PRODUCT_STATUS, createColorDto);
+  }
+
+  updateProductStatus(id: string, updateColorDto: IUpdateProductStatusDto): Promise<Response> {
+    return this.patch(ClientApi.APIs.PRODUCT_STATUS + `/${id}`, updateColorDto);
+  }
+
+  deleteProductStatus(id: string): Promise<Response> {
+    return this.delete(ClientApi.APIs.PRODUCT_STATUS + `/${id}`);
+  }
+}
+
 export const clientApi = new ClientApi();
 export const colorApi = new ColorApi();
 export const collectionApi = new CollectionApi();
+export const productStatusApi = new ProductStatusApi();

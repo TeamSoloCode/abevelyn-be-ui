@@ -11,6 +11,9 @@ import { ProductsPage } from "./pages/products.page";
 import { SignInPage } from "./pages/signin.page";
 import { SizePage } from "./pages/sizes.page";
 import { ToastContainer } from "react-toastify";
+import { ColorContextProvider } from "./context/colors.context";
+import { CollectionContextProvider } from "./context/collection.context";
+import { ProductStatusContextProvider } from "./context/product-status.context";
 
 export const App = (props) => {
   const navigate = useNavigate();
@@ -30,11 +33,32 @@ export const App = (props) => {
         <Route path={`/${AppRoutes.SIGNIN}`} element={<SignInPage />} />
         {authenticated && (
           <Route path="/" element={<HomePage />}>
-            <Route path={AppRoutes.COLLECTIONS} element={<CollectionPage />} />
+            <Route
+              path={AppRoutes.COLLECTIONS}
+              element={
+                <CollectionContextProvider>
+                  <CollectionPage />
+                </CollectionContextProvider>
+              }
+            />
             <Route path={AppRoutes.PRODUCTS} element={<ProductsPage />} />
-            <Route path={AppRoutes.COLORS} element={<ColorsPage />} />
+            <Route
+              path={AppRoutes.COLORS}
+              element={
+                <ColorContextProvider>
+                  <ColorsPage />
+                </ColorContextProvider>
+              }
+            />
             <Route path={AppRoutes.SIZES} element={<SizePage />} />
-            <Route path={AppRoutes.PRODUCT_STATUS} element={<ProductStatusPage />} />
+            <Route
+              path={AppRoutes.PRODUCT_STATUS}
+              element={
+                <ProductStatusContextProvider>
+                  <ProductStatusPage />
+                </ProductStatusContextProvider>
+              }
+            />
           </Route>
         )}
       </Routes>

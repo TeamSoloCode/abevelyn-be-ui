@@ -12,7 +12,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { showError } from "../utils";
 import CollectionContext from "../context/collection.context";
 import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.dto";
-import { collectionApi } from "../api.client";
+import { collectionApi } from "../client-api/api.client";
 
 interface IUpdateCollection {
   show: boolean;
@@ -29,7 +29,6 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
     handleSubmit,
     setValue,
     formState: { errors },
-    reset,
   } = useForm<IUpdateCollectionDto>();
 
   const onSubmit: SubmitHandler<IUpdateCollectionDto> = useCallback(
@@ -52,7 +51,6 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
         descriptionInFrench,
         descriptionInVietnames,
       });
-      reset();
       isSuccess && props.close();
     },
     [collectionContext.createCollection, props.close, props.collectionId]
@@ -78,7 +76,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
       const result = await response.json();
 
       if (response.status == 200) {
-        setSelectedCollection(result);
+        setSelectedCollection(result.data);
       }
 
       showError(result?.message);
@@ -138,27 +136,27 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
               </InputGroup>
               <hr />
               <InputGroup className="mb-2">
-                <InputGroup.Text>Name in French</InputGroup.Text>
+                <InputGroup.Text>Discription</InputGroup.Text>
                 <FormControl
-                  placeholder="Name in French"
+                  placeholder="Discription"
                   {...register("description")}
-                  {...setValue("description", selectedCollection.nameInFrench)}
+                  {...setValue("description", selectedCollection.description)}
                 />
               </InputGroup>
               <InputGroup className="mb-2">
-                <InputGroup.Text>Name in French</InputGroup.Text>
+                <InputGroup.Text>Discription in French</InputGroup.Text>
                 <FormControl
-                  placeholder="Name in French"
+                  placeholder="Discription in French"
                   {...register("descriptionInFrench")}
-                  {...setValue("descriptionInFrench", selectedCollection.nameInFrench)}
+                  {...setValue("descriptionInFrench", selectedCollection.descriptionInFrench)}
                 />
               </InputGroup>
               <InputGroup className="mb-2">
-                <InputGroup.Text>Name in Vietnamese</InputGroup.Text>
+                <InputGroup.Text>Discription in Vietnamese</InputGroup.Text>
                 <FormControl
-                  placeholder="Name in Vietnamese"
+                  placeholder="Discription   in Vietnamese"
                   {...register("descriptionInVietnames")}
-                  {...setValue("nameInVietnames", selectedCollection.nameInVietnames)}
+                  {...setValue("descriptionInVietnames", selectedCollection.descriptionInVietnames)}
                 />
               </InputGroup>
               <Row>

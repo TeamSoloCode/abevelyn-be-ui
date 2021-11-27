@@ -1,6 +1,6 @@
 import React, { createContext, Dispatch, useCallback, useReducer } from "react";
 import { Color } from "../models/color.model";
-import { colorApi } from "../api.client";
+import { colorApi } from "../client-api/api.client";
 import { showError } from "../utils";
 import { ICreateColorReqDto } from "../dto/colors/create-color.req.dto";
 import { IUpdateColorReqDto } from "../dto/colors/update-color.req.dto";
@@ -59,7 +59,7 @@ export const ColorContextProvider = (props: IColorProviderProps) => {
     const res = await colorApi.fetchColors();
     const result = await res.json();
     if (res.status == 200) {
-      dispatch({ type: Actions.LOAD_COLORS, colors: result });
+      dispatch({ type: Actions.LOAD_COLORS, colors: result?.data });
     }
 
     showError(result?.message);
@@ -71,7 +71,7 @@ export const ColorContextProvider = (props: IColorProviderProps) => {
       const result = await res.json();
       if (res.status == 201) {
         loadColor();
-        return result;
+        return result?.data;
       }
       showError(result?.message);
       return null;
@@ -85,7 +85,7 @@ export const ColorContextProvider = (props: IColorProviderProps) => {
       const result = await res.json();
       if (res.status == 200) {
         loadColor();
-        return result;
+        return result?.data;
       }
       showError(result?.message);
       return null;
@@ -99,7 +99,7 @@ export const ColorContextProvider = (props: IColorProviderProps) => {
       const result = await res.json();
       if (res.status == 200) {
         loadColor();
-        return result;
+        return result?.data;
       }
       showError(result?.message);
       return null;

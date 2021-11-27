@@ -8,22 +8,22 @@ import FormControl from "react-bootstrap/FormControl";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
-import { colorApi } from "../client-api/api.client";
+import { productStatusApi } from "../client-api/api.client";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import ColorContext from "../context/colors.context";
-import { IUpdateColorReqDto } from "../dto/colors/update-color.req.dto";
+import ProductStatusContext from "../context/product-status.context";
 import { showError } from "../utils";
+import { IUpdateProductStatusDto } from "../dto/product-status/update-product-status.req.dto";
 
-interface IUpdateColor {
+interface IUpdateProductStatus {
   show: boolean;
   close: () => void;
-  colorId: string;
+  statusId: string;
 }
 
-export const UpdateColor = memo((props: IUpdateColor) => {
-  const colorContext = useContext(ColorContext);
-  const [selectedColor, setSelectedColor] = useState<IUpdateColorReqDto | null>(null);
+export const UpdateProductStatus = memo((props: IUpdateProductStatus) => {
+  const productStatusContext = useContext(ProductStatusContext);
+  const [selectedStatus, setSelectedStatus] = useState<IUpdateProductStatusDto | null>(null);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const {
     register,
@@ -31,16 +31,19 @@ export const UpdateColor = memo((props: IUpdateColor) => {
     setValue,
     formState: { errors },
     reset,
-  } = useForm<IUpdateColorReqDto>();
+  } = useForm<IUpdateProductStatusDto>();
 
-  const onSubmit: SubmitHandler<IUpdateColorReqDto> = useCallback(
-    async ({ code, name, nameInFrench, nameInVietnames }) => {
-      if (!colorContext?.updateColor) return;
-      const isSuccess = await colorContext.updateColor(props.colorId, { code, name, nameInFrench, nameInVietnames });
+  const onSubmit: SubmitHandler<IUpdateProductStatusDto> = useCallback(
+    async ({ name, nameInFrench, nameInVietnames }) => {
+      const isSuccess = await productStatusContext?.updateProductStatus(props.statusId, {
+        name,
+        nameInFrench,
+        nameInVietnames,
+      });
       reset();
       isSuccess && props.close();
     },
-    [colorContext.updateColor, props.close, props.colorId]
+    [productStatusContext?.updateProductStatus, props.close, props.statusId]
   );
 
   const openConfirm = useCallback(async () => {
@@ -48,10 +51,9 @@ export const UpdateColor = memo((props: IUpdateColor) => {
   }, [setShowAlert]);
 
   const onDelete = useCallback(async () => {
-    if (!colorContext?.deleteColor) return;
-    const isSuccess = await colorContext.deleteColor(props.colorId);
+    const isSuccess = await productStatusContext?.deleteProductStatus(props.statusId);
     isSuccess && props.close();
-  }, [props.colorId, props.show]);
+  }, [props.statusId, props.show]);
 
   useEffect(() => {
     if (!props.show) {
@@ -59,19 +61,18 @@ export const UpdateColor = memo((props: IUpdateColor) => {
     }
 
     (async (id: string) => {
-      const response = await colorApi.fetchColorById(id);
+      const response = await productStatusApi.fetchProductStatusById(id);
       const result = await response.json();
-
       if (response.status == 200) {
-        setSelectedColor(result.data);
+        setSelectedStatus(result?.data);
       }
 
       showError(result?.message);
-    })(props.colorId);
+    })(props.statusId);
     setShowAlert(false);
-  }, [props.colorId, props.show]);
+  }, [props.statusId, props.show]);
 
-  if (!selectedColor) {
+  if (!selectedStatus) {
     return <Spinner animation="border" variant="primary" />;
   }
 
@@ -79,7 +80,7 @@ export const UpdateColor = memo((props: IUpdateColor) => {
     <Modal show={props.show} onHide={props.close}>
       <Modal.Dialog>
         <Modal.Header closeButton>
-          <Modal.Title>Update Color</Modal.Title>
+          <Modal.Title>Update Product Status</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -87,12 +88,8 @@ export const UpdateColor = memo((props: IUpdateColor) => {
             <Col>
               <Row className="align-items-center">
                 <InputGroup as={Col} className="mb-2">
-                  <InputGroup.Text>Color name</InputGroup.Text>
-                  <FormControl placeholder="Name" {...register("name")} {...setValue("name", selectedColor.name)} />
-                </InputGroup>
-                <InputGroup as={Col} className="mb-2">
-                  <InputGroup.Text>Code</InputGroup.Text>
-                  <FormControl placeholder="Code" {...register("code")} {...setValue("code", selectedColor.code)} />
+                  <InputGroup.Text>Status name</InputGroup.Text>
+                  <FormControl placeholder="Name" {...register("name")} {...setValue("name", selectedStatus.name)} />
                 </InputGroup>
               </Row>
 
@@ -101,7 +98,7 @@ export const UpdateColor = memo((props: IUpdateColor) => {
                 <FormControl
                   placeholder="Name in French"
                   {...register("nameInFrench")}
-                  {...setValue("nameInFrench", selectedColor.nameInFrench)}
+                  {...setValue("nameInFrench", selectedStatus.nameInFrench)}
                 />
               </InputGroup>
               <InputGroup className="mb-2">
@@ -109,7 +106,7 @@ export const UpdateColor = memo((props: IUpdateColor) => {
                 <FormControl
                   placeholder="Name in Vietnamese"
                   {...register("nameInVietnames")}
-                  {...setValue("nameInVietnames", selectedColor.nameInVietnames)}
+                  {...setValue("nameInVietnames", selectedStatus.nameInVietnames)}
                 />
               </InputGroup>
               <Row>
@@ -130,7 +127,7 @@ export const UpdateColor = memo((props: IUpdateColor) => {
           <>
             <Alert show={showAlert} variant="success" dismissible onClose={() => setShowAlert(false)}>
               <Alert.Heading>This action can not be undone !</Alert.Heading>
-              <p>Are you sure to delete this color ?</p>
+              <p>Are you sure to delete this status ?</p>
               <hr />
               <div className="d-flex justify-content-end">
                 <Button onClick={() => setShowAlert(false)} variant="outline-danger">

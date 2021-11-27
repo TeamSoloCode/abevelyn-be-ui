@@ -1,4 +1,4 @@
-export class Color {
+export class ProductStatus {
   constructor(color: IColor) {
     const { uuid, name, code } = color;
     this.uuid = uuid;

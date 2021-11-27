@@ -1,15 +1,15 @@
-import { ClientApi } from "./api.client";
+import { ClientApi } from "./client-api/api.client";
 import "reflect-metadata";
 
 const pathURLMetadataKey = Symbol("pathURL");
 
-export function FullApiUrl(target: Object, propertyKey: string | symbol, parameterIndex: number) {
+export function fullApiUrl(target: Object, propertyKey: string | symbol, parameterIndex: number) {
   let existingPathURLParameters: number[] = Reflect.getOwnMetadata(pathURLMetadataKey, target, propertyKey) || [];
   existingPathURLParameters.push(parameterIndex);
   Reflect.defineMetadata(pathURLMetadataKey, existingPathURLParameters, target, propertyKey);
 }
 
-export function PrependRootApi(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>) {
+export function prependRootApi(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>) {
   let method = descriptor.value!;
 
   descriptor.value = function () {
