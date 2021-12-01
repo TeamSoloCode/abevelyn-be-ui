@@ -15,6 +15,7 @@ import { ColorContextProvider } from "./context/colors.context";
 import { CollectionContextProvider } from "./context/collection.context";
 import { ProductStatusContextProvider } from "./context/product-status.context";
 import { SizeContextProvider } from "./context/size.context";
+import { ProductContextProvider } from "./context/product.context";
 
 export const App = (props) => {
   const navigate = useNavigate();
@@ -42,7 +43,14 @@ export const App = (props) => {
                 </CollectionContextProvider>
               }
             />
-            <Route path={AppRoutes.PRODUCTS} element={<ProductsPage />} />
+            <Route
+              path={AppRoutes.PRODUCTS}
+              element={
+                <ProductContextProvider>
+                  <ProductsPage />
+                </ProductContextProvider>
+              }
+            />
             <Route
               path={AppRoutes.COLORS}
               element={

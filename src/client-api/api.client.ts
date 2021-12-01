@@ -31,6 +31,7 @@ export class ClientApi {
     COLLECTIONS: "/collections",
     PRODUCT_STATUS: "/product_status",
     SIZE: "/sizes",
+    PRODUCTS: "/products",
   };
 
   private _token: string;
@@ -227,8 +228,39 @@ export class SizeApi extends ClientApi {
   }
 }
 
+export class ProductApi extends ClientApi {
+  constructor() {
+    super();
+  }
+
+  fetch(): Promise<Response> {
+    return this.get(ClientApi.APIs.PRODUCTS);
+  }
+
+  fetchAvailable(): Promise<Response> {
+    return this.get(ClientApi.APIs.PRODUCTS + "/fetch_available");
+  }
+
+  fetchById(id: string): Promise<Response> {
+    return this.get(ClientApi.APIs.PRODUCTS + `/${id}`);
+  }
+
+  create(createColorDto: ICreateSizeReqDto): Promise<Response> {
+    return this.post(ClientApi.APIs.PRODUCTS, createColorDto);
+  }
+
+  update(id: string, updateColorDto: IUpdateSizeReqDto): Promise<Response> {
+    return this.patch(ClientApi.APIs.PRODUCTS + `/${id}`, updateColorDto);
+  }
+
+  delete(id: string): Promise<Response> {
+    return this.delete(ClientApi.APIs.PRODUCTS + `/${id}`);
+  }
+}
+
 export const clientApi = new ClientApi();
 export const colorApi = new ColorApi();
 export const collectionApi = new CollectionApi();
 export const productStatusApi = new ProductStatusApi();
 export const sizeApi = new SizeApi();
+export const productApi = new ProductApi();

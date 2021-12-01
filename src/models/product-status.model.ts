@@ -1,15 +1,11 @@
 export class ProductStatus {
-  constructor(color: IColor) {
-    const { uuid, name, code } = color;
-    this.uuid = uuid;
+  constructor(name: string) {
     this.name = name;
-    this.code = code;
   }
 
-  readonly uuid: string;
   readonly name: string;
-  readonly code: string;
 
+  uuid?: string;
   createAt?: Date;
   updateAt?: Date;
   nameInFrench?: string;
