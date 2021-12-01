@@ -9,6 +9,8 @@ import { ICreateCollectionDto } from "../dto/collections/create-collection.req.d
 import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.dto";
 import { ICreateProductStatusDto } from "../dto/product-status/create-product-status.req.dto";
 import { IUpdateProductStatusDto } from "../dto/product-status/update-product-status.req.dto";
+import { ICreateSizeReqDto } from "../dto/size/create-size.req.dto";
+import { IUpdateSizeReqDto } from "../dto/size/update-size.req.dto";
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
 
@@ -28,6 +30,7 @@ export class ClientApi {
     COLORS: "/colors",
     COLLECTIONS: "/collections",
     PRODUCT_STATUS: "/product_status",
+    SIZE: "/sizes",
   };
 
   private _token: string;
@@ -139,27 +142,27 @@ export class CollectionApi extends ClientApi {
     super();
   }
 
-  fetchCollections(): Promise<Response> {
+  fetch(): Promise<Response> {
     return this.get(ClientApi.APIs.COLLECTIONS);
   }
 
-  fetchAvailableCollection(): Promise<Response> {
+  fetchAvailable(): Promise<Response> {
     return this.get(ClientApi.APIs.COLLECTIONS + "/fetch_available");
   }
 
-  fetchCollectionById(id: string): Promise<Response> {
+  fetchById(id: string): Promise<Response> {
     return this.get(ClientApi.APIs.COLLECTIONS + `/${id}`);
   }
 
-  createCollection(createColorDto: ICreateCollectionDto): Promise<Response> {
+  create(createColorDto: ICreateCollectionDto): Promise<Response> {
     return this.post(ClientApi.APIs.COLLECTIONS, createColorDto);
   }
 
-  updateCollection(id: string, updateColorDto: IUpdateCollectionDto): Promise<Response> {
+  update(id: string, updateColorDto: IUpdateCollectionDto): Promise<Response> {
     return this.patch(ClientApi.APIs.COLLECTIONS + `/${id}`, updateColorDto);
   }
 
-  deleteCollection(id: string): Promise<Response> {
+  delete(id: string): Promise<Response> {
     return this.delete(ClientApi.APIs.COLLECTIONS + `/${id}`);
   }
 }
@@ -194,7 +197,38 @@ export class ProductStatusApi extends ClientApi {
   }
 }
 
+export class SizeApi extends ClientApi {
+  constructor() {
+    super();
+  }
+
+  fetch(): Promise<Response> {
+    return this.get(ClientApi.APIs.SIZE);
+  }
+
+  fetchAvailable(): Promise<Response> {
+    return this.get(ClientApi.APIs.SIZE + "/fetch_available");
+  }
+
+  fetchById(id: string): Promise<Response> {
+    return this.get(ClientApi.APIs.SIZE + `/${id}`);
+  }
+
+  create(createColorDto: ICreateSizeReqDto): Promise<Response> {
+    return this.post(ClientApi.APIs.SIZE, createColorDto);
+  }
+
+  update(id: string, updateColorDto: IUpdateSizeReqDto): Promise<Response> {
+    return this.patch(ClientApi.APIs.SIZE + `/${id}`, updateColorDto);
+  }
+
+  delete(id: string): Promise<Response> {
+    return this.delete(ClientApi.APIs.SIZE + `/${id}`);
+  }
+}
+
 export const clientApi = new ClientApi();
 export const colorApi = new ColorApi();
 export const collectionApi = new CollectionApi();
 export const productStatusApi = new ProductStatusApi();
+export const sizeApi = new SizeApi();

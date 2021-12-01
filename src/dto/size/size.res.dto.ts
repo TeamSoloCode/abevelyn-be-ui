@@ -1,7 +1,7 @@
-interface IColor {
+interface ISize {
   uuid: string;
   name: string;
-  code: string;
+  description?: string;
   createAt?: Date;
   updateAt?: Date;
 }

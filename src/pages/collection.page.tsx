@@ -13,7 +13,7 @@ const tableData = [
   ["Description", "description"],
   ["Description in French", "descriptionInFrench"],
   ["Description in Vietnamese", "descriptionInVietnames"],
-  ["Available", "available"],
+  ["Status", "available", "_available"],
   ["Create At", "createdAt"],
   ["Update At", "updatedAt"],
 ];
@@ -63,7 +63,10 @@ export const CollectionPage = React.memo(() => {
   const tableBody = useMemo(() => {
     if (!collections) return null;
     return collections.map((collection) => {
-      const tds = tableData.map(([_, value], index) => {
+      const tds = tableData.map(([_, value, type], index) => {
+        if (type == "_available") {
+          return <td key={index}>{collection[value] ? "Available" : "Not Available"}</td>;
+        }
         return <td key={index}>{collection[value]}</td>;
       });
       return (

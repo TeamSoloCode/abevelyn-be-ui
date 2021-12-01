@@ -14,6 +14,7 @@ import { ToastContainer } from "react-toastify";
 import { ColorContextProvider } from "./context/colors.context";
 import { CollectionContextProvider } from "./context/collection.context";
 import { ProductStatusContextProvider } from "./context/product-status.context";
+import { SizeContextProvider } from "./context/size.context";
 
 export const App = (props) => {
   const navigate = useNavigate();
@@ -50,7 +51,14 @@ export const App = (props) => {
                 </ColorContextProvider>
               }
             />
-            <Route path={AppRoutes.SIZES} element={<SizePage />} />
+            <Route
+              path={AppRoutes.SIZES}
+              element={
+                <SizeContextProvider>
+                  <SizePage />
+                </SizeContextProvider>
+              }
+            />
             <Route
               path={AppRoutes.PRODUCT_STATUS}
               element={

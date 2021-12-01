@@ -1,5 +1,5 @@
 import React, { createContext, Dispatch, useCallback, useReducer } from "react";
-import { showError } from "../utils";
+import { showError, showSuccess } from "../utils";
 import { Collection } from "../models/collection.model";
 import { ICreateCollectionDto } from "../dto/collections/create-collection.req.dto";
 import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.dto";
@@ -57,7 +57,7 @@ export const CollectionContextProvider = (props: ICollectionProviderProps) => {
   });
 
   const loadCollection = useCallback(async () => {
-    const res = await collectionApi.fetchCollections();
+    const res = await collectionApi.fetch();
     const result = await res.json();
     if (res.status == 200) {
       dispatch({ type: Actions.LOAD_COLLECTIONS, collections: result.data });
@@ -68,7 +68,7 @@ export const CollectionContextProvider = (props: ICollectionProviderProps) => {
 
   const createCollection = useCallback(
     async (createCollectionDto: ICreateCollectionDto): Promise<Collection | null> => {
-      const res = await collectionApi.createCollection(createCollectionDto);
+      const res = await collectionApi.create(createCollectionDto);
       const result = await res.json();
       if (res.status == 201) {
         loadCollection();
@@ -82,10 +82,11 @@ export const CollectionContextProvider = (props: ICollectionProviderProps) => {
 
   const updateCollection = useCallback(
     async (id: string, updateCollectionDto: IUpdateCollectionDto): Promise<Collection | null> => {
-      const res = await collectionApi.updateCollection(id, updateCollectionDto);
+      const res = await collectionApi.update(id, updateCollectionDto);
       const result = await res.json();
       if (res.status == 200) {
         loadCollection();
+        showSuccess(result?.message);
         return result.data;
       }
       showError(result?.message);
@@ -96,7 +97,7 @@ export const CollectionContextProvider = (props: ICollectionProviderProps) => {
 
   const deleteCollection = useCallback(
     async (id: string): Promise<Collection | null> => {
-      const res = await collectionApi.deleteCollection(id);
+      const res = await collectionApi.delete(id);
       const result = await res.json();
       if (res.status == 200) {
         loadCollection();

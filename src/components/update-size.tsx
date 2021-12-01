@@ -9,51 +9,54 @@ import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { showError } from "../utils";
-import CollectionContext from "../context/collection.context";
-import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.dto";
-import { collectionApi } from "../client-api/api.client";
 
-interface IUpdateCollection {
+import { showError } from "../utils";
+import SizeContext from "../context/size.context";
+import { IUpdateSizeReqDto } from "../dto/size/update-size.req.dto";
+import { sizeApi } from "../client-api/api.client";
+import {} from "react-select";
+
+interface IUpdateSize {
   show: boolean;
   close: () => void;
-  collectionId: string;
+  statusId: string;
 }
 
-export const UpdateCollection = memo((props: IUpdateCollection) => {
-  const collectionContext = useContext(CollectionContext);
-  const [selectedCollection, setSelectedCollection] = useState<IUpdateCollectionDto | null>(null);
+export const UpdateSize = memo((props: IUpdateSize) => {
+  const sizeContext = useContext(SizeContext);
+  const [selectedSize, setSelectedSize] = useState<IUpdateSizeReqDto | null>(null);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<IUpdateCollectionDto>();
+    reset,
+  } = useForm<IUpdateSizeReqDto>();
 
-  const onSubmit: SubmitHandler<IUpdateCollectionDto> = useCallback(
+  const onSubmit: SubmitHandler<IUpdateSizeReqDto> = useCallback(
     async ({
-      available,
       name,
       nameInFrench,
       nameInVietnames,
       description,
       descriptionInFrench,
       descriptionInVietnames,
+      available,
     }) => {
-      if (!collectionContext?.updateCollection) return;
-      const isSuccess = await collectionContext.updateCollection(props.collectionId, {
-        available,
+      const isSuccess = await sizeContext?.updateSize(props.statusId, {
         name,
         nameInFrench,
         nameInVietnames,
         description,
         descriptionInFrench,
         descriptionInVietnames,
+        available,
       });
+      reset();
       isSuccess && props.close();
     },
-    [collectionContext.createCollection, props.close, props.collectionId]
+    [sizeContext?.updateSize, props.close, props.statusId]
   );
 
   const openConfirm = useCallback(async () => {
@@ -61,10 +64,9 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
   }, [setShowAlert]);
 
   const onDelete = useCallback(async () => {
-    if (!collectionContext?.deleteCollection) return;
-    const isSuccess = await collectionContext.deleteCollection(props.collectionId);
+    const isSuccess = await sizeContext?.deleteSize(props.statusId);
     isSuccess && props.close();
-  }, [props.collectionId, props.show]);
+  }, [props.statusId, props.show]);
 
   useEffect(() => {
     if (!props.show) {
@@ -72,20 +74,18 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
     }
 
     (async (id: string) => {
-      const response = await collectionApi.fetchById(id);
+      const response = await sizeApi.fetchById(id);
       const result = await response.json();
-
       if (response.status == 200) {
-        setSelectedCollection(result.data);
+        setSelectedSize(result?.data);
       }
 
       showError(result?.message);
-    })(props.collectionId);
-
+    })(props.statusId);
     setShowAlert(false);
-  }, [props.collectionId, props.show]);
+  }, [props.statusId, props.show]);
 
-  if (!selectedCollection) {
+  if (!selectedSize) {
     return <Spinner animation="border" variant="primary" />;
   }
 
@@ -93,7 +93,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
     <Modal show={props.show} onHide={props.close}>
       <Modal.Dialog>
         <Modal.Header closeButton>
-          <Modal.Title>Update Collection</Modal.Title>
+          <Modal.Title>Update Product Status</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -101,29 +101,26 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
             <Col>
               <Row className="align-items-center">
                 <InputGroup as={Col} className="mb-2">
-                  <InputGroup.Text>Collection name</InputGroup.Text>
-                  <FormControl
-                    placeholder="Name"
-                    {...register("name")}
-                    {...setValue("name", selectedCollection.name)}
-                  />
+                  <InputGroup.Text>Status name</InputGroup.Text>
+                  <FormControl placeholder="Name" {...register("name")} {...setValue("name", selectedSize.name)} />
                 </InputGroup>
+
                 <Form.Group className="mb-3" controlId="formBasicCheckbox">
                   <Form.Check
                     type="checkbox"
                     label="Available"
                     {...register("available")}
-                    {...setValue("available", selectedCollection.available)}
+                    {...setValue("available", selectedSize.available)}
                   />
                 </Form.Group>
               </Row>
-              <hr />
+
               <InputGroup className="mb-2">
                 <InputGroup.Text>Name in French</InputGroup.Text>
                 <FormControl
                   placeholder="Name in French"
                   {...register("nameInFrench")}
-                  {...setValue("nameInFrench", selectedCollection.nameInFrench)}
+                  {...setValue("nameInFrench", selectedSize.nameInFrench)}
                 />
               </InputGroup>
               <InputGroup className="mb-2">
@@ -131,7 +128,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
                 <FormControl
                   placeholder="Name in Vietnamese"
                   {...register("nameInVietnames")}
-                  {...setValue("nameInVietnames", selectedCollection.nameInVietnames)}
+                  {...setValue("nameInVietnames", selectedSize.nameInVietnames)}
                 />
               </InputGroup>
               <hr />
@@ -140,7 +137,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
                 <FormControl
                   placeholder="Description"
                   {...register("description")}
-                  {...setValue("description", selectedCollection.description)}
+                  {...setValue("description", selectedSize.description)}
                 />
               </InputGroup>
               <InputGroup className="mb-2">
@@ -148,7 +145,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
                 <FormControl
                   placeholder="Description in French"
                   {...register("descriptionInFrench")}
-                  {...setValue("descriptionInFrench", selectedCollection.descriptionInFrench)}
+                  {...setValue("descriptionInFrench", selectedSize.descriptionInFrench)}
                 />
               </InputGroup>
               <InputGroup className="mb-2">
@@ -156,11 +153,11 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
                 <FormControl
                   placeholder="Description   in Vietnamese"
                   {...register("descriptionInVietnames")}
-                  {...setValue("descriptionInVietnames", selectedCollection.descriptionInVietnames)}
+                  {...setValue("descriptionInVietnames", selectedSize.descriptionInVietnames)}
                 />
               </InputGroup>
               <Row>
-                <Col className="">
+                <Col>
                   <Button type="submit" className="mb-2">
                     Submit
                   </Button>
@@ -177,7 +174,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
           <>
             <Alert show={showAlert} variant="success" dismissible onClose={() => setShowAlert(false)}>
               <Alert.Heading>This action can not be undone !</Alert.Heading>
-              <p>Are you sure to delete this Collection ?</p>
+              <p>Are you sure to delete this status ?</p>
               <hr />
               <div className="d-flex justify-content-end">
                 <Button onClick={() => setShowAlert(false)} variant="outline-danger">
