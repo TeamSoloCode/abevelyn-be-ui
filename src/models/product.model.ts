@@ -21,9 +21,11 @@ export class Product {
     this.size = size;
   }
 
-  uuid?: string;
+  readonly uuid?: string;
 
   name: string;
+
+  quantity: number = 1;
 
   nameInFrench?: string;
 

@@ -3,8 +3,8 @@ import CollectionContext, { CollectionContextProvider } from "../context/collect
 import Table from "react-bootstrap/Table";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import { CreateCollection } from "../components/create-collection";
-import { UpdateCollection } from "../components/update-collection";
+import { CreateCollection } from "../modals/create-collection";
+import { UpdateCollection } from "../modals/update-collection";
 
 const tableData = [
   ["Name", "name"],

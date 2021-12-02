@@ -11,6 +11,8 @@ import { ICreateProductStatusDto } from "../dto/product-status/create-product-st
 import { IUpdateProductStatusDto } from "../dto/product-status/update-product-status.req.dto";
 import { ICreateSizeReqDto } from "../dto/size/create-size.req.dto";
 import { IUpdateSizeReqDto } from "../dto/size/update-size.req.dto";
+import { Option } from "../components/AsyncSelection";
+import { ProductStatus } from "../models/product-status.model";
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
 
@@ -121,6 +123,10 @@ class ColorApi extends ClientApi {
     return this.get(ClientApi.APIs.COLORS);
   }
 
+  fetchAvailable(): Promise<Response> {
+    return this.get(ClientApi.APIs.COLORS + "/fetch_available");
+  }
+
   fetchColorById(id: string): Promise<Response> {
     return this.get(ClientApi.APIs.COLORS + `/${id}`);
   }
@@ -135,6 +141,24 @@ class ColorApi extends ClientApi {
 
   deleteColor(id: string): Promise<Response> {
     return this.delete(ClientApi.APIs.COLORS + `/${id}`);
+  }
+
+  async loadColorAsOption(): Promise<Option[]> {
+    const res = await this.fetchAvailable();
+    if (res.status == 200) {
+      const result = await res.json();
+      const data: Color[] = result?.data || [];
+      const options: Option[] = data.map((color) => {
+        return {
+          label: `${color.name} (${color.code})`,
+          value: color.uuid,
+        };
+      });
+
+      return options;
+    }
+
+    return [];
   }
 }
 
@@ -177,7 +201,7 @@ export class ProductStatusApi extends ClientApi {
     return this.get(ClientApi.APIs.PRODUCT_STATUS);
   }
 
-  fetchAvailableProductStatus(): Promise<Response> {
+  fetchAvailable(): Promise<Response> {
     return this.get(ClientApi.APIs.PRODUCT_STATUS + "/fetch_available");
   }
 
@@ -195,6 +219,24 @@ export class ProductStatusApi extends ClientApi {
 
   deleteProductStatus(id: string): Promise<Response> {
     return this.delete(ClientApi.APIs.PRODUCT_STATUS + `/${id}`);
+  }
+
+  async loadProducStatusAsOption(): Promise<Option[]> {
+    const res = await this.fetchAvailable();
+    if (res.status == 200) {
+      const result = await res.json();
+      const data: ProductStatus[] = result?.data || [];
+      const options: Option[] = data.map((color) => {
+        return {
+          label: color.name,
+          value: color.uuid,
+        };
+      });
+
+      return options;
+    }
+
+    return [];
   }
 }
 

@@ -3,8 +3,8 @@ import Table from "react-bootstrap/Table";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ColorContext from "../context/colors.context";
-import { CreateColor } from "../components/create-color";
-import { UpdateColor } from "../components/update-color";
+import { CreateColor } from "../modals/create-color";
+import { UpdateColor } from "../modals/update-color";
 
 const tableData = [
   ["Code", "code"],

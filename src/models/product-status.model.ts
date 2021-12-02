@@ -5,7 +5,7 @@ export class ProductStatus {
 
   readonly name: string;
 
-  uuid?: string;
+  uuid: string = "";
   createAt?: Date;
   updateAt?: Date;
   nameInFrench?: string;

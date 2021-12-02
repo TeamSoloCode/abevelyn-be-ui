@@ -4,8 +4,8 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
 import ProductStatusContext from "../context/product-status.context";
-import { CreateProductStatus } from "../components/create-product-status";
-import { UpdateProductStatus } from "../components/update-product-status";
+import { CreateProductStatus } from "../modals/create-product-status";
+import { UpdateProductStatus } from "../modals/update-product-status";
 
 const tableData = [
   ["Name", "name"],

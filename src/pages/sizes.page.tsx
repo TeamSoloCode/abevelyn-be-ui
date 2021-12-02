@@ -3,8 +3,8 @@ import Table from "react-bootstrap/Table";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import SizeContext from "../context/size.context";
-import { CreateSize } from "../components/create-size";
-import { UpdateSize } from "../components/update-size";
+import { CreateSize } from "../modals/create-size";
+import { UpdateSize } from "../modals/update-size";
 
 const tableData = [
   ["Name", "name"],

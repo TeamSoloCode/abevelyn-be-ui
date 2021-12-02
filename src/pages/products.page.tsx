@@ -3,6 +3,7 @@ import Table from "react-bootstrap/Table";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ProductContext from "../context/product.context";
+import { CreateProduct } from "../modals/create-product";
 
 const tableData = [
   ["Name", "name"],
@@ -68,12 +69,9 @@ export const ProductsPage = React.memo(() => {
         return <td key={index}>{product[value]}</td>;
       });
       return (
-        <>
-          <tr data-id={product.uuid} key={product.uuid} onClick={onClickRow}>
-            {tds}
-          </tr>
-          {/* <div>ádasdasd</div> */}
-        </>
+        <tr data-id={product.uuid} key={product.uuid} onClick={onClickRow}>
+          {tds}
+        </tr>
       );
     });
   }, [products]);
@@ -91,8 +89,8 @@ export const ProductsPage = React.memo(() => {
         </thead>
         <tbody>{tableBody}</tbody>
       </Table>
-      {/* <CreateCollection show={showCreateModal} close={closeCreateModal} />
-      {selectedId && <UpdateCollection collectionId={selectedId} show={showUpdateModal} close={closeUpdateModal} />} */}
+      <CreateProduct show={showCreateModal} close={closeCreateModal} />
+      {/* {selectedId && <UpdateCollection collectionId={selectedId} show={showUpdateModal} close={closeUpdateModal} />} */}
     </div>
   );
 });
