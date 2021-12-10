@@ -1,3 +1,5 @@
+@import "~bootstrap/scss/bootstrap";
+
 @import "abstracts/functions";
 @import "abstracts/mixins";
 @import "abstracts/variables";
@@ -13,6 +15,7 @@
 @import "components/form";
 @import "components/popup";
 @import "components/toastify";
+@import "components/sidebar";
 
 @import "layout/footer";
 @import "layout/grid";
@@ -20,5 +23,3 @@
 @import "layout/navigation";
 
 @import "pages/home";
-
-@import "~bootstrap/scss/bootstrap";

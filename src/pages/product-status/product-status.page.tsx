@@ -3,9 +3,10 @@ import Table from "react-bootstrap/Table";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
-import ProductStatusContext from "../context/product-status.context";
-import { CreateProductStatus } from "../modals/create-product-status";
-import { UpdateProductStatus } from "../modals/update-product-status";
+import ProductStatusContext from "../../context/product-status.context";
+import { CreateProductStatus } from "./create-product-status";
+import { UpdateProductStatus } from "./update-product-status";
+import { AppRoutes } from "../../constanst";
 
 const tableData = [
   ["Name", "name"],
@@ -20,7 +21,6 @@ export const ProductStatusPage = React.memo(() => {
   const state = productStatusContext?.state;
   const productStatus = state?.productStatus;
 
-  const [showCreateModal, setShowCreateModel] = useState(false);
   const [showUpdateModal, setShowUpdateModel] = useState(false);
   let [selectedId, setSelectdId] = useState<string | undefined>(undefined);
 
@@ -28,21 +28,13 @@ export const ProductStatusPage = React.memo(() => {
     productStatusContext?.loadProductStatus();
   }, []);
 
-  const openCreateModal = useCallback(() => {
-    setShowCreateModel(true);
-  }, [setShowCreateModel]);
-
-  const closeCreateModal = useCallback(() => {
-    setShowCreateModel(false);
-  }, [setShowCreateModel]);
-
   const openUpdateModal = useCallback(() => {
     setShowUpdateModel(true);
-  }, [setShowCreateModel]);
+  }, [setShowUpdateModel]);
 
   const closeUpdateModal = useCallback(() => {
     setShowUpdateModel(false);
-  }, [setShowCreateModel]);
+  }, [setShowUpdateModel]);
 
   const onClickRow = useCallback(
     (e) => {
@@ -75,9 +67,9 @@ export const ProductStatusPage = React.memo(() => {
   return (
     <div>
       <Col xs="auto">
-        <Button className="mb-2" onClick={openCreateModal}>
-          + New Product Status
-        </Button>
+        <a className="btn" href={`/${AppRoutes.CREATE_PRODUCT_STATUS}`}>
+          <Button className="mt-1">+ New Product Status</Button>
+        </a>
       </Col>
       <Table striped bordered hover>
         <thead>
@@ -85,7 +77,6 @@ export const ProductStatusPage = React.memo(() => {
         </thead>
         <tbody>{tableBody}</tbody>
       </Table>
-      <CreateProductStatus show={showCreateModal} close={closeCreateModal} />
       {selectedId && <UpdateProductStatus statusId={selectedId} show={showUpdateModal} close={closeUpdateModal} />}
     </div>
   );

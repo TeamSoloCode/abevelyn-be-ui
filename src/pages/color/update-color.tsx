@@ -8,12 +8,12 @@ import FormControl from "react-bootstrap/FormControl";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
-import { colorApi } from "../client-api/api.client";
+import { colorApi } from "../../client-api/api.client";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import ColorContext from "../context/colors.context";
-import { IUpdateColorReqDto } from "../dto/colors/update-color.req.dto";
-import { showError } from "../utils";
+import ColorContext from "../../context/colors.context";
+import { IUpdateColorReqDto } from "../../dto/colors/update-color.req.dto";
+import { showError } from "../../utils";
 
 interface IUpdateColor {
   show: boolean;

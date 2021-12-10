@@ -17,7 +17,6 @@ export const FieldFile = memo((props: IFieldFile) => {
         <InputGroup.Text>{props.label}</InputGroup.Text>
       </Col>
       <Col xs="10">
-        <FormControl value={Number} placeholder={props.placeholder} {...props.reactFormRegister} />
         <FormControl
           type="file"
           required={props.required}

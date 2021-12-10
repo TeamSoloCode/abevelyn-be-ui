@@ -2,8 +2,10 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from "re
 import Table from "react-bootstrap/Table";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import ProductContext from "../context/product.context";
-import { CreateProduct } from "../modals/create-product";
+import SizeContext from "../../context/size.context";
+import { CreateSize } from "./create-size";
+import { UpdateSize } from "./update-size";
+import { AppRoutes } from "../../constanst";
 
 const tableData = [
   ["Name", "name"],
@@ -17,39 +19,39 @@ const tableData = [
   ["Update At", "updatedAt"],
 ];
 
-export const ProductsPage = React.memo(() => {
-  const productContext = useContext(ProductContext);
-  const products = productContext?.state?.products;
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
+export const SizePage = React.memo(() => {
+  const sizeContext = useContext(SizeContext);
+  const state = sizeContext?.state;
+  const sizes = state?.sizes;
+
+  const [showCreateModal, setShowCreateModel] = useState(false);
+  const [showUpdateModal, setShowUpdateModel] = useState(false);
   let [selectedId, setSelectdId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (!productContext?.loadProduct) return;
-    productContext.loadProduct();
+    sizeContext?.loadSizes();
   }, []);
 
   const openCreateModal = useCallback(() => {
-    setShowCreateModal(true);
-  }, [setShowCreateModal]);
+    setShowCreateModel(true);
+  }, [setShowCreateModel]);
 
   const closeCreateModal = useCallback(() => {
-    setShowCreateModal(false);
-  }, [setShowCreateModal]);
+    setShowCreateModel(false);
+  }, [setShowCreateModel]);
 
   const openUpdateModal = useCallback(() => {
-    setShowUpdateModal(true);
-  }, [setShowCreateModal]);
+    setShowUpdateModel(true);
+  }, [setShowCreateModel]);
 
   const closeUpdateModal = useCallback(() => {
-    setShowUpdateModal(false);
-  }, [setShowCreateModal]);
+    setShowUpdateModel(false);
+  }, [setShowCreateModel]);
 
   const onClickRow = useCallback(
     (e) => {
       setSelectdId(e.currentTarget.dataset?.id);
       openUpdateModal();
-      // useNavigate()
     },
     [openUpdateModal, setSelectdId, selectedId]
   );
@@ -58,31 +60,31 @@ export const ProductsPage = React.memo(() => {
     return tableData.map(([key, _]) => {
       return <th key={key}>{key}</th>;
     });
-  }, [products]);
+  }, [sizes]);
 
   const tableBody = useMemo(() => {
-    if (!products) return null;
-    return products.map((product) => {
+    if (!sizes) return null;
+    return sizes.map((size) => {
       const tds = tableData.map(([_, value, type], index) => {
         if (type == "_available") {
-          return <td key={index}>{product[value] ? "Available" : "Not Available"}</td>;
+          return <td key={index}>{size[value] ? "Available" : "Not Available"}</td>;
         }
-        return <td key={index}>{product[value]}</td>;
+        return <td key={index}>{size[value]}</td>;
       });
       return (
-        <tr data-id={product.uuid} key={product.uuid} onClick={onClickRow}>
+        <tr data-id={size.uuid} key={size.uuid} onClick={onClickRow}>
           {tds}
         </tr>
       );
     });
-  }, [products]);
+  }, [sizes]);
 
   return (
     <div>
       <Col xs="auto">
-        <Button className="mb-2" onClick={openCreateModal}>
-          + New Product
-        </Button>
+        <a className="btn" href={`/${AppRoutes.CREATE_SIZE}`}>
+          <Button className="mt-1">+ New Size</Button>
+        </a>
       </Col>
       <Table striped bordered hover>
         <thead>
@@ -90,8 +92,7 @@ export const ProductsPage = React.memo(() => {
         </thead>
         <tbody>{tableBody}</tbody>
       </Table>
-      <CreateProduct show={showCreateModal} close={closeCreateModal} />
-      {/* {selectedId && <UpdateCollection collectionId={selectedId} show={showUpdateModal} close={closeUpdateModal} />} */}
+      {selectedId && <UpdateSize statusId={selectedId} show={showUpdateModal} close={closeUpdateModal} />}
     </div>
   );
 });

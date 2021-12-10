@@ -8,23 +8,22 @@ import FormControl from "react-bootstrap/FormControl";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
+import { productStatusApi } from "../../client-api/api.client";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { showError } from "../utils";
-import SizeContext from "../context/size.context";
-import { IUpdateSizeReqDto } from "../dto/size/update-size.req.dto";
-import { sizeApi } from "../client-api/api.client";
-import {} from "react-select";
+import ProductStatusContext from "../../context/product-status.context";
+import { showError } from "../../utils";
+import { IUpdateProductStatusDto } from "../../dto/product-status/update-product-status.req.dto";
 
-interface IUpdateSize {
+interface IUpdateProductStatus {
   show: boolean;
   close: () => void;
   statusId: string;
 }
 
-export const UpdateSize = memo((props: IUpdateSize) => {
-  const sizeContext = useContext(SizeContext);
-  const [selectedSize, setSelectedSize] = useState<IUpdateSizeReqDto | null>(null);
+export const UpdateProductStatus = memo((props: IUpdateProductStatus) => {
+  const productStatusContext = useContext(ProductStatusContext);
+  const [selectedStatus, setSelectedStatus] = useState<IUpdateProductStatusDto | null>(null);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const {
     register,
@@ -32,31 +31,19 @@ export const UpdateSize = memo((props: IUpdateSize) => {
     setValue,
     formState: { errors },
     reset,
-  } = useForm<IUpdateSizeReqDto>();
+  } = useForm<IUpdateProductStatusDto>();
 
-  const onSubmit: SubmitHandler<IUpdateSizeReqDto> = useCallback(
-    async ({
-      name,
-      nameInFrench,
-      nameInVietnames,
-      description,
-      descriptionInFrench,
-      descriptionInVietnames,
-      available,
-    }) => {
-      const isSuccess = await sizeContext?.updateSize(props.statusId, {
+  const onSubmit: SubmitHandler<IUpdateProductStatusDto> = useCallback(
+    async ({ name, nameInFrench, nameInVietnames }) => {
+      const isSuccess = await productStatusContext?.updateProductStatus(props.statusId, {
         name,
         nameInFrench,
         nameInVietnames,
-        description,
-        descriptionInFrench,
-        descriptionInVietnames,
-        available,
       });
       reset();
       isSuccess && props.close();
     },
-    [sizeContext?.updateSize, props.close, props.statusId]
+    [productStatusContext?.updateProductStatus, props.close, props.statusId]
   );
 
   const openConfirm = useCallback(async () => {
@@ -64,7 +51,7 @@ export const UpdateSize = memo((props: IUpdateSize) => {
   }, [setShowAlert]);
 
   const onDelete = useCallback(async () => {
-    const isSuccess = await sizeContext?.deleteSize(props.statusId);
+    const isSuccess = await productStatusContext?.deleteProductStatus(props.statusId);
     isSuccess && props.close();
   }, [props.statusId, props.show]);
 
@@ -74,10 +61,10 @@ export const UpdateSize = memo((props: IUpdateSize) => {
     }
 
     (async (id: string) => {
-      const response = await sizeApi.fetchById(id);
+      const response = await productStatusApi.fetchProductStatusById(id);
       const result = await response.json();
       if (response.status == 200) {
-        setSelectedSize(result?.data);
+        setSelectedStatus(result?.data);
       }
 
       showError(result?.message);
@@ -85,7 +72,7 @@ export const UpdateSize = memo((props: IUpdateSize) => {
     setShowAlert(false);
   }, [props.statusId, props.show]);
 
-  if (!selectedSize) {
+  if (!selectedStatus) {
     return <Spinner animation="border" variant="primary" />;
   }
 
@@ -102,17 +89,8 @@ export const UpdateSize = memo((props: IUpdateSize) => {
               <Row className="align-items-center">
                 <InputGroup as={Col} className="mb-2">
                   <InputGroup.Text>Status name</InputGroup.Text>
-                  <FormControl placeholder="Name" {...register("name")} {...setValue("name", selectedSize.name)} />
+                  <FormControl placeholder="Name" {...register("name")} {...setValue("name", selectedStatus.name)} />
                 </InputGroup>
-
-                <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                  <Form.Check
-                    type="checkbox"
-                    label="Available"
-                    {...register("available")}
-                    {...setValue("available", selectedSize.available)}
-                  />
-                </Form.Group>
               </Row>
 
               <InputGroup className="mb-2">
@@ -120,7 +98,7 @@ export const UpdateSize = memo((props: IUpdateSize) => {
                 <FormControl
                   placeholder="Name in French"
                   {...register("nameInFrench")}
-                  {...setValue("nameInFrench", selectedSize.nameInFrench)}
+                  {...setValue("nameInFrench", selectedStatus.nameInFrench)}
                 />
               </InputGroup>
               <InputGroup className="mb-2">
@@ -128,32 +106,7 @@ export const UpdateSize = memo((props: IUpdateSize) => {
                 <FormControl
                   placeholder="Name in Vietnamese"
                   {...register("nameInVietnames")}
-                  {...setValue("nameInVietnames", selectedSize.nameInVietnames)}
-                />
-              </InputGroup>
-              <hr />
-              <InputGroup className="mb-2">
-                <InputGroup.Text>Description</InputGroup.Text>
-                <FormControl
-                  placeholder="Description"
-                  {...register("description")}
-                  {...setValue("description", selectedSize.description)}
-                />
-              </InputGroup>
-              <InputGroup className="mb-2">
-                <InputGroup.Text>Description in French</InputGroup.Text>
-                <FormControl
-                  placeholder="Description in French"
-                  {...register("descriptionInFrench")}
-                  {...setValue("descriptionInFrench", selectedSize.descriptionInFrench)}
-                />
-              </InputGroup>
-              <InputGroup className="mb-2">
-                <InputGroup.Text>Description in Vietnamese</InputGroup.Text>
-                <FormControl
-                  placeholder="Description   in Vietnamese"
-                  {...register("descriptionInVietnames")}
-                  {...setValue("descriptionInVietnames", selectedSize.descriptionInVietnames)}
+                  {...setValue("nameInVietnames", selectedStatus.nameInVietnames)}
                 />
               </InputGroup>
               <Row>

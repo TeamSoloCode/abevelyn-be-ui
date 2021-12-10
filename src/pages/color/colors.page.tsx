@@ -1,10 +1,10 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import Table from "react-bootstrap/Table";
-import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import ColorContext from "../context/colors.context";
-import { CreateColor } from "../modals/create-color";
-import { UpdateColor } from "../modals/update-color";
+import ColorContext from "../../context/colors.context";
+import { CreateColor } from "./create-color";
+import { UpdateColor } from "./update-color";
+import { AppRoutes } from "../../constanst";
 
 const tableData = [
   ["Code", "code"],
@@ -18,7 +18,6 @@ const tableData = [
 export const ColorsPage = React.memo(() => {
   const colorContext = useContext(ColorContext);
   const { colors } = colorContext.state;
-  const [showCreateModal, setShowCreateModel] = useState(false);
   const [showUpdateModal, setShowUpdateModel] = useState(false);
   let [selectedId, setSelectdId] = useState<string | undefined>(undefined);
 
@@ -27,21 +26,13 @@ export const ColorsPage = React.memo(() => {
     colorContext.loadColor();
   }, []);
 
-  const openCreateModal = useCallback(() => {
-    setShowCreateModel(true);
-  }, [setShowCreateModel]);
-
-  const closeCreateModal = useCallback(() => {
-    setShowCreateModel(false);
-  }, [setShowCreateModel]);
-
   const openUpdateModal = useCallback(() => {
     setShowUpdateModel(true);
-  }, [setShowCreateModel]);
+  }, []);
 
   const closeUpdateModal = useCallback(() => {
     setShowUpdateModel(false);
-  }, [setShowCreateModel]);
+  }, []);
 
   const onClickRow = useCallback(
     (e) => {
@@ -73,18 +64,16 @@ export const ColorsPage = React.memo(() => {
 
   return (
     <div>
-      <Col xs="auto">
-        <Button className="mb-2" onClick={openCreateModal}>
-          + New Color
-        </Button>
-      </Col>
+      <a className="btn" href={`/${AppRoutes.CREATE_COLORS}`}>
+        <Button className="mt-1">+ Add new</Button>
+      </a>
       <Table striped bordered hover>
         <thead>
           <tr>{tableHeader}</tr>
         </thead>
         <tbody>{tableBody}</tbody>
       </Table>
-      <CreateColor show={showCreateModal} close={closeCreateModal} />
+
       {selectedId && <UpdateColor colorId={selectedId} show={showUpdateModal} close={closeUpdateModal} />}
     </div>
   );

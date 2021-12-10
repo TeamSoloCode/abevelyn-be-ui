@@ -4,6 +4,8 @@ import AsyncSelect from "react-select/async";
 import InputGroup from "react-bootstrap/InputGroup";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import { useNavigate } from "react-router";
+import { AppRoutes } from "../constanst";
 
 const customStyles = {
   menu: (provided, state) => ({
@@ -45,28 +47,28 @@ interface IFieldSelect {
   placeholder?: string;
   options?: Option[];
   defaultValue?: Option;
-  loadOptions: (input: string, callback: (options: Option[]) => void) => void;
+  addNewURL?: string;
+  hideAddNewButton?: boolean;
+  loadOptions?: (input: string, callback: (options: Option[]) => void) => void;
   onChange?: (newValue: SingleValue<Option>) => void;
   onMenuOpen?: () => void;
 }
 
 export const FieldSelect = memo((props: IFieldSelect) => {
-  const onAddNew = useCallback((e) => {
-    console.log("onAddNew");
-  }, []);
-
   const MenuList = useCallback(
-    (props: MenuListProps<any, false, any>) => {
+    (menuProps: MenuListProps<any, false, any>) => {
       return (
-        <components.MenuList {...props}>
-          <Button className="mt-1 w-100" onClick={onAddNew}>
-            Add new
-          </Button>
-          {props.children}
+        <components.MenuList {...menuProps}>
+          {!props.hideAddNewButton && (
+            <a className="w-100 btn" href={`/${props.addNewURL}`} target="_blank">
+              <Button className="mt-1 w-100">Add new</Button>
+            </a>
+          )}
+          {menuProps.children}
         </components.MenuList>
       );
     },
-    [onAddNew]
+    [props.hideAddNewButton]
   );
 
   return (

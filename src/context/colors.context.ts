@@ -70,7 +70,7 @@ export const ColorContextProvider = (props: IColorProviderProps) => {
       const res = await colorApi.createColor(createColorDto);
       const result = await res.json();
       if (res.status == 201) {
-        loadColor();
+        // loadColor();
         return result?.data;
       }
       showError(result?.message);
