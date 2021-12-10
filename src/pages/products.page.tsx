@@ -49,6 +49,7 @@ export const ProductsPage = React.memo(() => {
     (e) => {
       setSelectdId(e.currentTarget.dataset?.id);
       openUpdateModal();
+      // useNavigate()
     },
     [openUpdateModal, setSelectdId, selectedId]
   );

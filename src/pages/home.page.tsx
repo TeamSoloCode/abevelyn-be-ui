@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router";
-import { TopBar } from "../components/topbar";
+import { TopBar } from "../components/TopBar";
 
 export const HomePage = React.memo(() => {
   return (

@@ -9,12 +9,14 @@ import Modal from "react-bootstrap/Modal";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ProductContext from "../context/product.context";
 import { ICreateProductDto } from "../dto/product/create-product-req.dto";
-import { AsyncSelection, Option } from "../components/AsyncSelection";
-import { colorApi, productStatusApi } from "../client-api/api.client";
+import { FieldSelect, Option } from "../components/FieldSelect";
+import { colorApi, productStatusApi, sizeApi } from "../client-api/api.client";
 import { Color } from "../models/color.model";
 import { showError } from "../utils";
 import debounce from "lodash.debounce";
 import { SingleValue } from "react-select";
+import { FieldText } from "../components/FieldText";
+import { FieldNumber } from "../components/FieldNumber";
 
 interface ICreateProduct {
   show: boolean;
@@ -33,13 +35,24 @@ export const CreateProduct = memo((props: ICreateProduct) => {
   } = useForm<ICreateProductDto>();
   const [colorOptions, setColorOptions] = useState<Option[]>([]);
   const [statusOptions, setStatusOptions] = useState<Option[]>([]);
+  const [sizeOptions, setSizeOptions] = useState<Option[]>([]);
 
   const onSubmit: SubmitHandler<ICreateProductDto> = useCallback(
-    async ({ name, colorId, statusId, sizeId }) => {
-      //   const isSuccess = await productContext?.createProduct({ name });
-      //   isSuccess && props.close();
-      console.log({ name, colorId, statusId, sizeId });
-      //   reset();
+    async ({ name, colorId, statusId, sizeId, price, description, image }) => {
+      const isSuccess = await productContext?.createProduct({
+        name,
+        colorId,
+        statusId,
+        sizeId,
+        price,
+        description,
+        image,
+      });
+      console.log({ name, colorId, statusId, sizeId, price, description, image });
+      if (isSuccess) {
+        props.close();
+        reset();
+      }
     },
     [productContext?.createProduct, props.close]
   );
@@ -60,6 +73,14 @@ export const CreateProduct = memo((props: ICreateProduct) => {
     callback(filteredOptions);
   }, []);
 
+  const loadSizeOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
+    const options = await sizeApi.loadSizeAsOption();
+    const filteredOptions = options.filter((op) =>
+      op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
+    );
+    callback(filteredOptions);
+  }, []);
+
   useEffect(() => {
     if (!props.show) return;
     (async () => {
@@ -67,8 +88,10 @@ export const CreateProduct = memo((props: ICreateProduct) => {
       setColorOptions(colorOptions);
       const statusOptions = await productStatusApi.loadProducStatusAsOption();
       setStatusOptions(statusOptions);
+      const sizesOptions = await sizeApi.loadSizeAsOption();
+      setSizeOptions(sizesOptions);
     })();
-  }, [setColorOptions, props.show]);
+  }, [props.show]);
 
   const onChangeStatus = useCallback(
     (newOption: SingleValue<Option>) => {
@@ -84,6 +107,13 @@ export const CreateProduct = memo((props: ICreateProduct) => {
     [setValue]
   );
 
+  const onChangeSize = useCallback(
+    (newOption: SingleValue<Option>) => {
+      newOption?.value && setValue("sizeId", newOption?.value);
+    },
+    [setValue]
+  );
+
   return (
     <Modal show={props.show} onHide={props.close}>
       <Modal.Dialog>
@@ -94,31 +124,40 @@ export const CreateProduct = memo((props: ICreateProduct) => {
         <Modal.Body>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Row className="align-items-center">
-              <InputGroup className="mb-2">
-                <InputGroup.Text>Name</InputGroup.Text>
-                <FormControl placeholder="Name" {...register("name")} />
-              </InputGroup>
-
-              <InputGroup className="mb-2 w-100">
-                <InputGroup.Text>Status</InputGroup.Text>
-                <AsyncSelection
-                  // defaultValue={options[0]}
-                  options={statusOptions}
-                  loadOptions={loadStatusOptions}
-                  onChange={onChangeStatus}
-                />
-              </InputGroup>
-
-              <InputGroup className="mb-2 w-100">
-                <InputGroup.Text>Color</InputGroup.Text>
-                <AsyncSelection
-                  // defaultValue={options[0]}
-                  options={colorOptions}
-                  loadOptions={loadColorOptions}
-                  onChange={onChangeColor}
-                />
-              </InputGroup>
+              <FieldText label="Name" placeholder="Name" reactFormRegister={register("name")} />
+              <FieldNumber
+                label="Price"
+                defaultValue={0}
+                placeholder="Price"
+                reactFormRegister={register("price", { valueAsNumber: true })}
+              />
+              <FieldText label="Description" placeholder="Description" reactFormRegister={register("description")} />
+              <hr />
+              <FieldSelect
+                label="Status"
+                placeholder="Select Status"
+                options={statusOptions}
+                loadOptions={loadStatusOptions}
+                onChange={onChangeStatus}
+              />
+              <FieldSelect
+                label="Color"
+                placeholder="Select Color"
+                options={colorOptions}
+                loadOptions={loadColorOptions}
+                onChange={onChangeColor}
+              />
+              <FieldSelect
+                label="Size"
+                placeholder="Select Size"
+                options={sizeOptions}
+                loadOptions={loadSizeOptions}
+                onChange={onChangeSize}
+              />
+              <hr />
+              <FieldText label="Main Image" placeholder="Main Image" reactFormRegister={register("image")} />
             </Row>
+            <hr />
             <Row>
               <Button type="submit" className="mb-2">
                 Submit

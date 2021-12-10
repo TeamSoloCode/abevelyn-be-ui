@@ -11,7 +11,7 @@ import { ICreateProductStatusDto } from "../dto/product-status/create-product-st
 import { IUpdateProductStatusDto } from "../dto/product-status/update-product-status.req.dto";
 import { ICreateSizeReqDto } from "../dto/size/create-size.req.dto";
 import { IUpdateSizeReqDto } from "../dto/size/update-size.req.dto";
-import { Option } from "../components/AsyncSelection";
+import { Option } from "../components/FieldSelect";
 import { ProductStatus } from "../models/product-status.model";
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
@@ -90,6 +90,10 @@ export class ClientApi {
     });
   }
 
+  fetchAvailable(api: string): Promise<Response> {
+    return this.get(api + "/fetch_available");
+  }
+
   async signin(username: string, password: string): Promise<{ username: string } | Response> {
     const res = await this.publicPost(ClientApi.APIs.SIGNIN_URI, { username, password });
 
@@ -112,6 +116,24 @@ export class ClientApi {
     }
     return res?.status == 201;
   }
+
+  protected async loadDataAsOption(api: string): Promise<Option[]> {
+    const res = await this.fetchAvailable(api);
+    if (res.status == 200) {
+      const result = await res.json();
+      const data: ProductStatus[] = result?.data || [];
+      const options: Option[] = data.map((color) => {
+        return {
+          label: color.name,
+          value: color.uuid,
+        };
+      });
+
+      return options;
+    }
+
+    return [];
+  }
 }
 
 class ColorApi extends ClientApi {
@@ -121,10 +143,6 @@ class ColorApi extends ClientApi {
 
   fetchColors(): Promise<Response> {
     return this.get(ClientApi.APIs.COLORS);
-  }
-
-  fetchAvailable(): Promise<Response> {
-    return this.get(ClientApi.APIs.COLORS + "/fetch_available");
   }
 
   fetchColorById(id: string): Promise<Response> {
@@ -144,7 +162,7 @@ class ColorApi extends ClientApi {
   }
 
   async loadColorAsOption(): Promise<Option[]> {
-    const res = await this.fetchAvailable();
+    const res = await this.fetchAvailable(ClientApi.APIs.COLORS);
     if (res.status == 200) {
       const result = await res.json();
       const data: Color[] = result?.data || [];
@@ -169,10 +187,6 @@ export class CollectionApi extends ClientApi {
 
   fetch(): Promise<Response> {
     return this.get(ClientApi.APIs.COLLECTIONS);
-  }
-
-  fetchAvailable(): Promise<Response> {
-    return this.get(ClientApi.APIs.COLLECTIONS + "/fetch_available");
   }
 
   fetchById(id: string): Promise<Response> {
@@ -201,10 +215,6 @@ export class ProductStatusApi extends ClientApi {
     return this.get(ClientApi.APIs.PRODUCT_STATUS);
   }
 
-  fetchAvailable(): Promise<Response> {
-    return this.get(ClientApi.APIs.PRODUCT_STATUS + "/fetch_available");
-  }
-
   fetchProductStatusById(id: string): Promise<Response> {
     return this.get(ClientApi.APIs.PRODUCT_STATUS + `/${id}`);
   }
@@ -222,21 +232,7 @@ export class ProductStatusApi extends ClientApi {
   }
 
   async loadProducStatusAsOption(): Promise<Option[]> {
-    const res = await this.fetchAvailable();
-    if (res.status == 200) {
-      const result = await res.json();
-      const data: ProductStatus[] = result?.data || [];
-      const options: Option[] = data.map((color) => {
-        return {
-          label: color.name,
-          value: color.uuid,
-        };
-      });
-
-      return options;
-    }
-
-    return [];
+    return await this.loadDataAsOption(ClientApi.APIs.PRODUCT_STATUS);
   }
 }
 
@@ -247,10 +243,6 @@ export class SizeApi extends ClientApi {
 
   fetch(): Promise<Response> {
     return this.get(ClientApi.APIs.SIZE);
-  }
-
-  fetchAvailable(): Promise<Response> {
-    return this.get(ClientApi.APIs.SIZE + "/fetch_available");
   }
 
   fetchById(id: string): Promise<Response> {
@@ -267,6 +259,10 @@ export class SizeApi extends ClientApi {
 
   delete(id: string): Promise<Response> {
     return this.delete(ClientApi.APIs.SIZE + `/${id}`);
+  }
+
+  async loadSizeAsOption(): Promise<Option[]> {
+    return await this.loadDataAsOption(ClientApi.APIs.SIZE);
   }
 }
 
