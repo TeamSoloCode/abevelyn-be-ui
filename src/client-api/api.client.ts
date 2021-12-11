@@ -34,6 +34,7 @@ export class ClientApi {
     PRODUCT_STATUS: "/product_status",
     SIZE: "/sizes",
     PRODUCTS: "/products",
+    UPLOAD_IMAGE: "/file/upload",
   };
 
   private _token: string;
@@ -90,7 +91,48 @@ export class ClientApi {
     });
   }
 
-  fetchAvailable(api: string): Promise<Response> {
+  @prependRootApi
+  protected postMultipart(@fullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
+    const formData = new FormData();
+    const bodyEntries = Object.entries(body);
+
+    if (bodyEntries.length == 0) {
+      throw "Can send empty body";
+    }
+
+    bodyEntries.map(([key, value]) => {
+      if (value instanceof FileList) {
+        formData.append(key, value?.[0]);
+      } else {
+        formData.append(key, value);
+      }
+    });
+
+    return fetch(apiUri, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+      body: formData,
+      method: "POST",
+    });
+  }
+
+  @prependRootApi
+  uploadImage(@fullApiUrl apiUri: string, file: File): Promise<Response> {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    return fetch(apiUri, {
+      headers: {
+        // "Content-Type": "image/jpeg",
+        Authorization: `Bearer ${this.token}`,
+      },
+      body: formData,
+      method: "POST",
+    });
+  }
+
+  protected fetchAvailable(api: string): Promise<Response> {
     return this.get(api + "/fetch_available");
   }
 
@@ -106,15 +148,6 @@ export class ClientApi {
     }
 
     return res;
-  }
-
-  async verify_token(): Promise<boolean> {
-    const res = await this.post(ClientApi.APIs.VERIFY_TOKEN);
-    if (res?.status != 201) {
-      const result = await res.json();
-      showError(result?.message || "Your token is expired. Please signin !");
-    }
-    return res?.status == 201;
   }
 
   protected async loadDataAsOption(api: string): Promise<Option[]> {
@@ -133,6 +166,15 @@ export class ClientApi {
     }
 
     return [];
+  }
+
+  async verify_token(): Promise<boolean> {
+    const res = await this.post(ClientApi.APIs.VERIFY_TOKEN);
+    if (res?.status != 201) {
+      const result = await res.json();
+      showError(result?.message || "Your token is expired. Please signin !");
+    }
+    return res?.status == 201;
   }
 }
 
@@ -284,7 +326,7 @@ export class ProductApi extends ClientApi {
   }
 
   create(createColorDto: ICreateSizeReqDto): Promise<Response> {
-    return this.post(ClientApi.APIs.PRODUCTS, createColorDto);
+    return this.postMultipart(ClientApi.APIs.PRODUCTS, createColorDto);
   }
 
   update(id: string, updateColorDto: IUpdateSizeReqDto): Promise<Response> {

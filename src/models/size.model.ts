@@ -1,15 +1,14 @@
-export class Size {
+import { RootModel } from "./root.model";
+
+export class Size extends RootModel {
   constructor(size: ISize) {
-    const { uuid, name } = size;
-    this.uuid = uuid;
+    super();
+    const { name } = size;
     this.name = name;
   }
 
-  readonly uuid: string;
   readonly name: string;
 
-  createAt?: Date;
-  updateAt?: Date;
   nameInFrench?: string;
   nameInVietnames?: string;
   description?: string;

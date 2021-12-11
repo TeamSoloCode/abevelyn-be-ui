@@ -24,7 +24,6 @@ export const SizePage = React.memo(() => {
   const state = sizeContext?.state;
   const sizes = state?.sizes;
 
-  const [showCreateModal, setShowCreateModel] = useState(false);
   const [showUpdateModal, setShowUpdateModel] = useState(false);
   let [selectedId, setSelectdId] = useState<string | undefined>(undefined);
 
@@ -32,21 +31,13 @@ export const SizePage = React.memo(() => {
     sizeContext?.loadSizes();
   }, []);
 
-  const openCreateModal = useCallback(() => {
-    setShowCreateModel(true);
-  }, [setShowCreateModel]);
-
-  const closeCreateModal = useCallback(() => {
-    setShowCreateModel(false);
-  }, [setShowCreateModel]);
-
   const openUpdateModal = useCallback(() => {
     setShowUpdateModel(true);
-  }, [setShowCreateModel]);
+  }, [setShowUpdateModel]);
 
   const closeUpdateModal = useCallback(() => {
     setShowUpdateModel(false);
-  }, [setShowCreateModel]);
+  }, [setShowUpdateModel]);
 
   const onClickRow = useCallback(
     (e) => {

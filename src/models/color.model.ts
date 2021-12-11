@@ -1,17 +1,16 @@
-export class Color {
+import { RootModel } from "./root.model";
+
+export class Color extends RootModel {
   constructor(color: IColor) {
-    const { uuid, name, code } = color;
-    this.uuid = uuid;
+    super();
+    const { name, code } = color;
     this.name = name;
     this.code = code;
   }
 
-  readonly uuid: string;
   readonly name: string;
   readonly code: string;
 
-  createAt?: Date;
-  updateAt?: Date;
   nameInFrench?: string;
   nameInVietnames?: string;
   description?: string;

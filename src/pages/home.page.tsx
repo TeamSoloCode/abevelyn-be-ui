@@ -12,10 +12,10 @@ export const HomePage = React.memo(() => {
         <TopBar />
       </Row>
       <Row className="h-100">
-        <Col xs="3">
+        <Col xs="2">
           <SideBar />
         </Col>
-        <Col className="home__content" xs="9">
+        <Col className="home__content" xs="10">
           <Outlet />
         </Col>
       </Row>

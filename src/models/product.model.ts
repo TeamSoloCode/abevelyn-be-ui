@@ -1,8 +1,9 @@
 import { Color } from "react-bootstrap/esm/types";
 import { ProductStatus } from "./product-status.model";
+import { RootModel } from "./root.model";
 import { Size } from "./size.model";
 
-export class Product {
+export class Product extends RootModel {
   constructor(
     name: string,
     image: string,
@@ -12,6 +13,7 @@ export class Product {
     status: ProductStatus,
     size: Size
   ) {
+    super();
     this.name = name;
     this.image = image;
     this.description = description;
@@ -20,8 +22,6 @@ export class Product {
     this.productStatus = status;
     this.size = size;
   }
-
-  readonly uuid?: string;
 
   name: string;
 

@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import Modal from "react-bootstrap/Modal";
+import Col from "react-bootstrap/Col";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ProductContext from "../../context/product.context";
 import { ICreateProductDto } from "../../dto/product/create-product-req.dto";
@@ -20,6 +20,7 @@ interface ICreateProduct {}
 export const CreateProduct = memo((props: ICreateProduct) => {
   const productContext = useContext(ProductContext);
   const state = productContext?.state;
+  const [refreshKey, setRefreshKey] = useState(Date.now());
   const {
     register,
     handleSubmit,
@@ -40,10 +41,20 @@ export const CreateProduct = memo((props: ICreateProduct) => {
         sizeId,
         price,
         description,
-        image,
+        image: image[0],
       });
-      console.log({ name, colorId, statusId, sizeId, price, description, image });
+
+      console.log({
+        name,
+        colorId,
+        statusId,
+        sizeId,
+        price,
+        description,
+        image: image[0],
+      });
       if (isSuccess) {
+        setRefreshKey(Date.now());
         reset();
       }
     },
@@ -110,8 +121,12 @@ export const CreateProduct = memo((props: ICreateProduct) => {
     [setValue]
   );
 
+  const onPriceChange = useCallback((value?: string, name?: string) => {
+    setValue("price", value ? Number(value) : 0);
+  }, []);
+
   return (
-    <Card className="m-1">
+    <Card key={refreshKey} className="m-1">
       <Card.Body>
         <Card.Title>Create New Product</Card.Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -119,12 +134,17 @@ export const CreateProduct = memo((props: ICreateProduct) => {
             <FieldText label="Name" placeholder="Name" reactFormRegister={register("name")} />
             <FieldNumber
               label="Price"
+              name="price"
               defaultValue={0}
               placeholder="Price"
-              reactFormRegister={register("price", { valueAsNumber: true })}
+              unit="USD"
+              prefix="$"
+              maxLength={7}
+              onValueChange={onPriceChange}
             />
-            <FieldText label="Description" placeholder="Description" reactFormRegister={register("description")} />
+
             <hr />
+            <FieldText label="Description" placeholder="Description" reactFormRegister={register("description")} />
             <FieldSelect
               label="Status"
               placeholder="Select Status"
@@ -154,6 +174,10 @@ export const CreateProduct = memo((props: ICreateProduct) => {
             />
             <hr />
             <FieldFile label="Main Image" placeholder="Main Image" reactFormRegister={register("image")} />
+            <Row>
+              <Col xs="9"></Col>
+              <Col xs="3"></Col>
+            </Row>
           </Row>
           <hr />
           <Row>

@@ -1,10 +1,11 @@
-export class Collection {
-  constructor(uuid: string, name: string) {
-    this.uuid = uuid;
+import { RootModel } from "./root.model";
+
+export class Collection extends RootModel {
+  constructor(name: string) {
+    super();
     this.name = name;
   }
 
-  uuid: string;
   name: string;
   available: boolean = true;
   deleted: boolean = false;

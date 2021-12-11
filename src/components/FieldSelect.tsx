@@ -37,7 +37,7 @@ const customStyles = {
 };
 
 export interface Option {
-  value: string;
+  value?: string;
   label: string;
   isDisabled?: boolean;
 }

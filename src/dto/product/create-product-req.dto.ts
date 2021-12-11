@@ -4,6 +4,6 @@ export interface ICreateProductDto {
   colorId: string;
   statusId: string;
   sizeId: string;
-  image: string;
+  image: any;
   description: string;
 }

@@ -72,6 +72,7 @@ export const ProductContextProvider = (props: IProductProviderProps) => {
       const result = await res.json();
       if (res.status == 201) {
         loadProduct();
+        showSuccess(result?.message);
         return result.data;
       }
       showError(result?.message);

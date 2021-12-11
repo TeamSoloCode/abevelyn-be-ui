@@ -5,6 +5,8 @@ import Button from "react-bootstrap/Button";
 import ProductContext from "../../context/product.context";
 import { CreateProduct } from "./create-product";
 import { AppRoutes } from "../../constanst";
+import { TSCTable, IColumn } from "../../components/TSCTable";
+import { Product } from "../../models/product.model";
 
 const tableData = [
   ["Name", "name"],
@@ -18,46 +20,57 @@ const tableData = [
   ["Update At", "updatedAt"],
 ];
 
+const columns: IColumn<Product>[] = [
+  {
+    headerTitle: "Name",
+    item: (item) => item.name,
+  },
+  {
+    headerTitle: "Name in French",
+    item: (item) => item.nameInFrench,
+  },
+  {
+    headerTitle: "Name in Vietnamese",
+    item: (item) => item.nameInVietnamese,
+  },
+  {
+    headerTitle: "Description",
+    item: (item) => item.description,
+  },
+  {
+    headerTitle: "Description in French",
+    item: (item) => item.descriptionInFrench,
+  },
+  {
+    headerTitle: "Description in Vietnamese",
+    item: (item) => item.descriptionInVietnamese,
+  },
+  {
+    headerTitle: "Status",
+    item: (item) => (item.available ? "Available" : "Not Available"),
+  },
+  {
+    headerTitle: "Create At",
+    item: (item) => item.createdAt,
+  },
+  {
+    headerTitle: "Update At",
+    item: (item) => item.updatedAt,
+  },
+];
+
 export const ProductsPage = React.memo(() => {
   const productContext = useContext(ProductContext);
   const products = productContext?.state?.products;
-  let [selectedId, setSelectdId] = useState<string | undefined>(undefined);
+
+  const onRowClick = useCallback((item: Product) => {
+    alert(item.name);
+  }, []);
 
   useEffect(() => {
     if (!productContext?.loadProduct) return;
     productContext.loadProduct();
   }, []);
-
-  const onClickRow = useCallback(
-    (e) => {
-      setSelectdId(e.currentTarget.dataset?.id);
-      // useNavigate()
-    },
-    [setSelectdId, selectedId]
-  );
-
-  const tableHeader = useMemo(() => {
-    return tableData.map(([key, _]) => {
-      return <th key={key}>{key}</th>;
-    });
-  }, [products]);
-
-  const tableBody = useMemo(() => {
-    if (!products) return null;
-    return products.map((product) => {
-      const tds = tableData.map(([_, value, type], index) => {
-        if (type == "_available") {
-          return <td key={index}>{product[value] ? "Available" : "Not Available"}</td>;
-        }
-        return <td key={index}>{product[value]}</td>;
-      });
-      return (
-        <tr data-id={product.uuid} key={product.uuid} onClick={onClickRow}>
-          {tds}
-        </tr>
-      );
-    });
-  }, [products]);
 
   return (
     <div>
@@ -66,12 +79,7 @@ export const ProductsPage = React.memo(() => {
           <Button className="mt-1">+ New Product</Button>
         </a>
       </Col>
-      <Table striped bordered hover>
-        <thead>
-          <tr>{tableHeader}</tr>
-        </thead>
-        <tbody>{tableBody}</tbody>
-      </Table>
+      <TSCTable data={products || []} columns={columns} onRowClick={onRowClick} />
     </div>
   );
 });
