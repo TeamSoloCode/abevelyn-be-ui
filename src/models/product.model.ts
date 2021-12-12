@@ -1,4 +1,4 @@
-import { Color } from "react-bootstrap/esm/types";
+import { Color } from "./color.model";
 import { ProductStatus } from "./product-status.model";
 import { RootModel } from "./root.model";
 import { Size } from "./size.model";

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { FunctionComponent, ReactElement, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import Table from "react-bootstrap/Table";
 import { Product } from "../models/product.model";
 import { RootModel } from "../models/root.model";
@@ -6,6 +6,9 @@ import { RootModel } from "../models/root.model";
 export interface IColumn<T> {
   headerTitle: string;
   item: (item: T) => any;
+  headerComponent?: (headerTitle: string) => ReactElement;
+  rowComponent?: (item: T) => ReactElement;
+  isHidden?: boolean;
 }
 
 export interface IDataTable<T> {
@@ -25,7 +28,11 @@ export const TSCTable = React.memo(<T extends object>(props: IDataTable<any>) =>
   );
 
   const tableHeader = useMemo(() => {
-    return props.columns.map(({ headerTitle }) => {
+    return props.columns.map(({ headerTitle, headerComponent, isHidden }) => {
+      if (isHidden) return null;
+      if (headerComponent) {
+        return <th key={headerTitle}>{headerComponent(headerTitle)}</th>;
+      }
       return <th key={headerTitle}>{headerTitle}</th>;
     });
   }, [props.columns]);
@@ -34,8 +41,12 @@ export const TSCTable = React.memo(<T extends object>(props: IDataTable<any>) =>
     const listData = props.data;
     const columns = props.columns;
     return listData.map((data) => {
-      const tds = columns.map(({ item }, index) => {
-        return <td key={data?.uuid || index}>{item(data)}</td>;
+      const tds = columns.map(({ item, rowComponent, isHidden }, index) => {
+        if (isHidden) return null;
+        if (rowComponent) {
+          return <td key={index}>{rowComponent(data)}</td>;
+        }
+        return <td key={index}>{item(data)}</td>;
       });
 
       return (

@@ -1,14 +1,25 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = (passedInConfig = {}, { mode = "production" }) => {
   const isProduction = mode === "production";
 
+  const copiedEntries = [
+    {
+      from: "assets",
+      to: "assets",
+    },
+  ];
+
   let plugins = [
     // new BundleAnalyzerPlugin(),
+    new CopyPlugin({
+      patterns: copiedEntries,
+    }),
     new webpack.IgnorePlugin({
       resourceRegExp: /inspector|perf_hooks/,
     }),
@@ -147,6 +158,7 @@ module.exports = (passedInConfig = {}, { mode = "production" }) => {
     },
     output: {
       filename: "bundle.js",
+      publicPath: "/",
       path: path.resolve(__dirname, "dist"),
     },
     plugins,

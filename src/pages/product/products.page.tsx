@@ -7,47 +7,65 @@ import { CreateProduct } from "./create-product";
 import { AppRoutes } from "../../constanst";
 import { TSCTable, IColumn } from "../../components/TSCTable";
 import { Product } from "../../models/product.model";
+import { BrowserRouter as Router, Routes, Route, Link, Outlet, useNavigate } from "react-router-dom";
+import { clientApi, ClientApi } from "../../client-api/api.client";
+import numeral from "numeral";
 
-const tableData = [
-  ["Name", "name"],
-  ["Name in French", "nameInFrench"],
-  ["Name in Vietnamese", "nameInVietnames"],
-  ["Description", "description"],
-  ["Description in French", "descriptionInFrench"],
-  ["Description in Vietnamese", "descriptionInVietnames"],
-  ["Status", "available", "_available"],
-  ["Create At", "createdAt"],
-  ["Update At", "updatedAt"],
-];
-
-const columns: IColumn<Product>[] = [
+const defaultColumns: IColumn<Product>[] = [
   {
     headerTitle: "Name",
     item: (item) => item.name,
   },
   {
-    headerTitle: "Name in French",
-    item: (item) => item.nameInFrench,
+    headerTitle: "Quantity",
+    item: (item) => item.quantity,
   },
   {
-    headerTitle: "Name in Vietnamese",
-    item: (item) => item.nameInVietnamese,
+    headerTitle: "Price",
+    item: (item) => numeral(item.price).format("$0,0.00"),
   },
   {
-    headerTitle: "Description",
-    item: (item) => item.description,
-  },
-  {
-    headerTitle: "Description in French",
-    item: (item) => item.descriptionInFrench,
-  },
-  {
-    headerTitle: "Description in Vietnamese",
-    item: (item) => item.descriptionInVietnamese,
+    headerTitle: "Color",
+    item: (item) => (
+      <div className="d-flex align-items-center justify-content-center">
+        <div
+          title={item.color.name}
+          style={{ width: 16, height: 16, borderRadius: 32, backgroundColor: item.color.code }}
+        />
+      </div>
+    ),
   },
   {
     headerTitle: "Status",
-    item: (item) => (item.available ? "Available" : "Not Available"),
+    item: (item) => item.productStatus.name,
+  },
+  {
+    headerTitle: "Size",
+    item: (item) => item.size.name,
+  },
+  {
+    headerTitle: "Material",
+    item: (item) => "TODO",
+  },
+  {
+    headerTitle: "",
+    item: (item) => (
+      <div className="d-flex align-items-center justify-content-center">
+        {item.available ? (
+          <div className="btn btn-success">Available</div>
+        ) : (
+          <div className="btn btn-danger">Not Available</div>
+        )}
+      </div>
+    ),
+  },
+  {
+    headerTitle: "Image",
+    item: (item) => (
+      <div className="rounded overflow-hidden" style={{ width: 150, height: 100 }}>
+        <img width={"100%"} height={"100%"} src={clientApi.getImageURLByName(ClientApi.APIs.FETCH_IMAGE, item.image)} />
+      </div>
+    ),
   },
   {
     headerTitle: "Create At",
@@ -62,9 +80,17 @@ const columns: IColumn<Product>[] = [
 export const ProductsPage = React.memo(() => {
   const productContext = useContext(ProductContext);
   const products = productContext?.state?.products;
+  const navigate = useNavigate();
 
-  const onRowClick = useCallback((item: Product) => {
-    alert(item.name);
+  const onRowClick = useCallback(
+    (item: Product) => {
+      navigate(`/${AppRoutes.UPDATE_PRODUCT}/${item.uuid}`);
+    },
+    [navigate]
+  );
+
+  const columns = useMemo(() => {
+    return defaultColumns;
   }, []);
 
   useEffect(() => {
@@ -75,10 +101,16 @@ export const ProductsPage = React.memo(() => {
   return (
     <div>
       <Col xs="auto">
-        <a className="btn" href={`/${AppRoutes.CREATE_PRODUCT}`}>
+        <Link className="btn" to={AppRoutes.CREATE_PRODUCT}>
           <Button className="mt-1">+ New Product</Button>
-        </a>
+        </Link>
       </Col>
+      {/* <Outlet /> */}
+      <Routes>
+        <Route path={AppRoutes.CREATE_PRODUCT} element={<CreateProduct />} />
+      </Routes>
+      <h2>Products</h2>
+      <hr />
       <TSCTable data={products || []} columns={columns} onRowClick={onRowClick} />
     </div>
   );

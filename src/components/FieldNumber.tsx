@@ -17,6 +17,7 @@ interface IFieldNumber {
   prefix?: string;
   suffix?: string;
   maxLength?: number;
+  value?: number;
   onValueChange?: (value: string | undefined, name?: string) => void;
 }
 
@@ -32,6 +33,7 @@ export const FieldNumber = memo((props: IFieldNumber) => {
         <CurrencyInput
           className="form-control"
           name={props.name}
+          value={props.value}
           prefix={props.prefix}
           suffix={props.suffix}
           maxLength={props.maxLength}

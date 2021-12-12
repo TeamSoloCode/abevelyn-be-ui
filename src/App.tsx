@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useRef } from "react";
 import Spinner from "react-bootstrap/Spinner";
-import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router";
+import { Navigate, useNavigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppRoutes } from "./constanst";
 import AppContext from "./context/app.context";
 import { HomePage } from "./pages/home.page";
 import { SignInPage } from "./pages/signin.page";
 import { ToastContainer } from "react-toastify";
+import { ProductsPage } from "./pages/product/products.page";
 import { routes } from "./routes";
 
 export const App = (props) => {
@@ -20,17 +22,11 @@ export const App = (props) => {
   }, [authenticated]);
 
   return (
-    <div className="text-center">
+    <div className="">
       {authenticated == undefined && <Spinner animation="border" variant="success" />}
       <Routes>
         <Route path={`/${AppRoutes.SIGNIN}`} element={<SignInPage />} />
-        {authenticated && (
-          <Route path="/" element={<HomePage />}>
-            {routes.map((route) => (
-              <Route key={route.path} {...route} />
-            ))}
-          </Route>
-        )}
+        {authenticated && <Route path="/*" element={<HomePage />} />}
       </Routes>
       <ToastContainer />
     </div>

@@ -4,7 +4,7 @@ import AsyncSelect from "react-select/async";
 import InputGroup from "react-bootstrap/InputGroup";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { AppRoutes } from "../constanst";
 
 const customStyles = {
@@ -13,6 +13,7 @@ const customStyles = {
     padding: 3,
     marginTop: 3,
   }),
+  menuPortal: (base) => ({ ...base, zIndex: 3 }),
   option: (styles, props) => {
     return {
       ...styles,
@@ -46,6 +47,7 @@ interface IFieldSelect {
   label: string;
   placeholder?: string;
   options?: Option[];
+  value?: Option;
   defaultValue?: Option;
   addNewURL?: string;
   hideAddNewButton?: boolean;
@@ -79,6 +81,8 @@ export const FieldSelect = memo((props: IFieldSelect) => {
       <Col xs="10">
         <AsyncSelect
           styles={customStyles}
+          menuPortalTarget={document.body}
+          value={props.value}
           placeholder={props.placeholder}
           defaultOptions={props.options}
           defaultValue={props.defaultValue}

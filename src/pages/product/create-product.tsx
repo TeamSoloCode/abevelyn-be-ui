@@ -14,23 +14,29 @@ import { FieldText } from "../../components/FieldText";
 import { FieldNumber } from "../../components/FieldNumber";
 import { AppRoutes } from "../../constanst";
 import { FieldFile } from "../../components/FieldFile";
+import { useNavigate } from "react-router-dom";
 
 interface ICreateProduct {}
 
 export const CreateProduct = memo((props: ICreateProduct) => {
   const productContext = useContext(ProductContext);
+  const navigate = useNavigate();
   const state = productContext?.state;
-  const [refreshKey, setRefreshKey] = useState(Date.now());
   const {
     register,
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<ICreateProductDto>();
   const [colorOptions, setColorOptions] = useState<Option[]>([]);
   const [statusOptions, setStatusOptions] = useState<Option[]>([]);
   const [sizeOptions, setSizeOptions] = useState<Option[]>([]);
+
+  const backToProduct = () => {
+    navigate("/" + AppRoutes.PRODUCTS);
+  };
 
   const onSubmit: SubmitHandler<ICreateProductDto> = useCallback(
     async ({ name, colorId, statusId, sizeId, price, description, image }) => {
@@ -43,18 +49,8 @@ export const CreateProduct = memo((props: ICreateProduct) => {
         description,
         image: image[0],
       });
-
-      console.log({
-        name,
-        colorId,
-        statusId,
-        sizeId,
-        price,
-        description,
-        image: image[0],
-      });
       if (isSuccess) {
-        setRefreshKey(Date.now());
+        backToProduct();
         reset();
       }
     },
@@ -126,67 +122,81 @@ export const CreateProduct = memo((props: ICreateProduct) => {
   }, []);
 
   return (
-    <Card key={refreshKey} className="m-1">
-      <Card.Body>
-        <Card.Title>Create New Product</Card.Title>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <Row className="align-items-center">
-            <FieldText label="Name" placeholder="Name" reactFormRegister={register("name")} />
-            <FieldNumber
-              label="Price"
-              name="price"
-              defaultValue={0}
-              placeholder="Price"
-              unit="USD"
-              prefix="$"
-              maxLength={7}
-              onValueChange={onPriceChange}
-            />
+    <Col xs="9">
+      <Card className="m-1">
+        <Card.Body>
+          <Card.Title>Create New Product</Card.Title>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Row className="align-items-center">
+              <FieldText label="Name" placeholder="Name" reactFormRegister={register("name")} />
+              <FieldNumber
+                label="Price"
+                name="price"
+                defaultValue={0}
+                placeholder="Price"
+                unit="USD"
+                prefix="$"
+                maxLength={7}
+                onValueChange={onPriceChange}
+              />
+              <FieldText label="Description" placeholder="Description" reactFormRegister={register("description")} />
 
+              <hr />
+              <FieldSelect
+                label="Status"
+                placeholder="Select Status"
+                addNewURL={AppRoutes.CREATE_PRODUCT_STATUS}
+                options={statusOptions}
+                onMenuOpen={onOpenStatusMenuOption}
+                loadOptions={loadStatusOptions}
+                onChange={onChangeStatus}
+              />
+              <FieldSelect
+                label="Color"
+                placeholder="Select Color"
+                addNewURL={AppRoutes.CREATE_COLORS}
+                onMenuOpen={onOpenColorMenuOption}
+                options={colorOptions}
+                loadOptions={loadColorOptions}
+                onChange={onChangeColor}
+              />
+              <FieldSelect
+                label="Size"
+                placeholder="Select Size"
+                addNewURL={AppRoutes.CREATE_SIZE}
+                options={sizeOptions}
+                onMenuOpen={onOpenSizeMenuOption}
+                loadOptions={loadSizeOptions}
+                onChange={onChangeSize}
+              />
+              <hr />
+              <FieldFile label="Main Image" placeholder="Main Image" reactFormRegister={register("image")} />
+              <Row>
+                <Col xs="9"></Col>
+                <Col xs="3"></Col>
+              </Row>
+            </Row>
             <hr />
-            <FieldText label="Description" placeholder="Description" reactFormRegister={register("description")} />
-            <FieldSelect
-              label="Status"
-              placeholder="Select Status"
-              addNewURL={AppRoutes.CREATE_PRODUCT_STATUS}
-              options={statusOptions}
-              onMenuOpen={onOpenStatusMenuOption}
-              loadOptions={loadStatusOptions}
-              onChange={onChangeStatus}
-            />
-            <FieldSelect
-              label="Color"
-              placeholder="Select Color"
-              addNewURL={AppRoutes.CREATE_COLORS}
-              onMenuOpen={onOpenColorMenuOption}
-              options={colorOptions}
-              loadOptions={loadColorOptions}
-              onChange={onChangeColor}
-            />
-            <FieldSelect
-              label="Size"
-              placeholder="Select Size"
-              addNewURL={AppRoutes.CREATE_SIZE}
-              options={sizeOptions}
-              onMenuOpen={onOpenSizeMenuOption}
-              loadOptions={loadSizeOptions}
-              onChange={onChangeSize}
-            />
-            <hr />
-            <FieldFile label="Main Image" placeholder="Main Image" reactFormRegister={register("image")} />
             <Row>
               <Col xs="9"></Col>
-              <Col xs="3"></Col>
+              <Col xs="3">
+                <Row>
+                  <Col xs="6">
+                    <Button type="submit" className="mb-2">
+                      Submit
+                    </Button>
+                  </Col>
+                  <Col xs="6">
+                    <Button variant="danger" className="mb-2 ml-2" onClick={backToProduct}>
+                      Close
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
             </Row>
-          </Row>
-          <hr />
-          <Row>
-            <Button type="submit" className="mb-2">
-              Submit
-            </Button>
-          </Row>
-        </Form>
-      </Card.Body>
-    </Card>
+          </Form>
+        </Card.Body>
+      </Card>
+    </Col>
   );
 });

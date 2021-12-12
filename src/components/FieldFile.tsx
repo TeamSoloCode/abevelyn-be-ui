@@ -1,13 +1,16 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import Spinner from "react-bootstrap/Spinner";
 import Form from "react-bootstrap/Form";
-import { ClientApi, clientApi } from "../client-api/api.client";
+import uploadImagePlaceholder from "../../assets/upload-image-placeholder.png";
+import Button from "react-bootstrap/Button";
 
 interface IFieldFile {
   label: string;
+  id?: string;
   placeholder: string;
+  defaultValue?: string;
   reactFormRegister: any;
   required?: boolean;
   pathOnServer?: string;
@@ -17,29 +20,35 @@ interface IFieldFile {
 
 export const FieldFile = memo((props: IFieldFile) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const defaultId = useMemo(() => Date.now() + "", []);
+  const [selectedImage, setSelectedImage] = useState<string>();
 
   const onChange = useCallback(
     async (e) => {
       props?.onChange?.(e);
       const file = e?.target?.files?.[0];
-      // if (file) {
-      //   setLoading(true);
-      //   const response = await clientApi.uploadImage(ClientApi.APIs.UPLOAD_IMAGE, file);
-      //   const { filename } = await response.json();
-      //   props.getUploadedFileURL?.call(this, filename);
-      //   setLoading(false);
-      // }
+      file && setSelectedImage(URL.createObjectURL(new Blob([file])));
     },
     [props.onChange, props.pathOnServer, props.getUploadedFileURL]
   );
 
   return (
-    <InputGroup className="mb-2">
+    <InputGroup className="field-file mb-2">
       <Col xs="2">
         <InputGroup.Text>{props.label}</InputGroup.Text>
       </Col>
       <Col xs="9">
+        <Col>
+          <img className="field-file__image" src={selectedImage || props.defaultValue || uploadImagePlaceholder} />
+        </Col>
+        <Col>
+          <Form.Label className="overflow-hidden" htmlFor={props.id || defaultId}>
+            <div className="btn btn-primary">Change file</div>
+          </Form.Label>
+        </Col>
         <Form.Control
+          id={props.id || defaultId}
+          hidden={true}
           type="file"
           required={props.required}
           name="file"

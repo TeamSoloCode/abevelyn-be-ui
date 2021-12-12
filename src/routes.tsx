@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef } from "react";
-import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router";
 import { AppRoutes } from "./constanst";
 import { CollectionPage } from "./pages/collection.page";
 import { ColorsPage } from "./pages/color/colors.page";
@@ -15,6 +14,7 @@ import { CreateColor } from "./pages/color/create-color";
 import { CreateSize } from "./pages/size/create-size";
 import { CreateProductStatus } from "./pages/product-status/create-product-status";
 import { CreateProduct } from "./pages/product/create-product";
+import { UpdateProduct } from "./pages/product/update-product";
 
 export const routes = [
   {
@@ -27,23 +27,21 @@ export const routes = [
   },
 
   {
-    path: AppRoutes.PRODUCTS,
+    path: AppRoutes.PRODUCTS + "/*",
     element: (
       <ProductContextProvider>
         <ProductsPage />
       </ProductContextProvider>
     ),
   },
-
   {
-    path: AppRoutes.CREATE_PRODUCT,
+    path: AppRoutes.UPDATE_PRODUCT + "/:productId",
     element: (
       <ProductContextProvider>
-        <CreateProduct />
+        <UpdateProduct />
       </ProductContextProvider>
     ),
   },
-
   {
     path: AppRoutes.COLORS,
     element: (

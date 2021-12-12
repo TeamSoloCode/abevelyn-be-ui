@@ -3,7 +3,7 @@ import { showError, showSuccess } from "../utils";
 import { productApi } from "../client-api/api.client";
 import { Product } from "../models/product.model";
 import { ICreateProductDto } from "../dto/product/create-product-req.dto";
-import { IUpdateProductStatusDto } from "../dto/product-status/update-product-status.req.dto";
+import { IUpdateProductDto } from "../dto/product/update-product-req-dto";
 
 interface IProductProviderProps {
   children?: any;
@@ -34,7 +34,7 @@ interface IProductContextValue {
   dispatch?: Dispatch<ActionType>;
   loadProduct: () => void;
   createProduct: (createProductDto: ICreateProductDto) => Promise<Product | null>;
-  updateProduct: (id: string, updateProductDto: IUpdateProductStatusDto) => Promise<Product | null>;
+  updateProduct: (id: string, updateProductDto: IUpdateProductDto) => Promise<Product | null>;
   deleteProduct: (id: string) => Promise<Product | null>;
 }
 
@@ -82,11 +82,11 @@ export const ProductContextProvider = (props: IProductProviderProps) => {
   );
 
   const updateProduct = useCallback(
-    async (id: string, updateProductDto: IUpdateProductStatusDto): Promise<Product | null> => {
+    async (id: string, updateProductDto: IUpdateProductDto): Promise<Product | null> => {
       const res = await productApi.update(id, updateProductDto);
       const result = await res.json();
       if (res.status == 200) {
-        loadProduct();
+        // loadProduct();
         showSuccess(result?.message);
         return result.data;
       }

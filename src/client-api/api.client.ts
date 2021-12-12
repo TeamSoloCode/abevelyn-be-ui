@@ -35,6 +35,7 @@ export class ClientApi {
     SIZE: "/sizes",
     PRODUCTS: "/products",
     UPLOAD_IMAGE: "/file/upload",
+    FETCH_IMAGE: "/file",
   };
 
   private _token: string;
@@ -92,7 +93,11 @@ export class ClientApi {
   }
 
   @prependRootApi
-  protected postMultipart(@fullApiUrl apiUri: string, body: Object = {}): Promise<Response> {
+  protected postMultipart(
+    @fullApiUrl apiUri: string,
+    body: Object = {},
+    method: "POST" | "PATCH" = "POST"
+  ): Promise<Response> {
     const formData = new FormData();
     const bodyEntries = Object.entries(body);
 
@@ -113,7 +118,7 @@ export class ClientApi {
         Authorization: `Bearer ${this.token}`,
       },
       body: formData,
-      method: "POST",
+      method,
     });
   }
 
@@ -130,6 +135,11 @@ export class ClientApi {
       body: formData,
       method: "POST",
     });
+  }
+
+  @prependRootApi
+  getImageURLByName(@fullApiUrl apiUri: string, imageName: string): string {
+    return apiUri + `/${imageName}`;
   }
 
   protected fetchAvailable(api: string): Promise<Response> {
@@ -330,7 +340,7 @@ export class ProductApi extends ClientApi {
   }
 
   update(id: string, updateColorDto: IUpdateSizeReqDto): Promise<Response> {
-    return this.patch(ClientApi.APIs.PRODUCTS + `/${id}`, updateColorDto);
+    return this.postMultipart(ClientApi.APIs.PRODUCTS + `/${id}`, updateColorDto, "PATCH");
   }
 
   delete(id: string): Promise<Response> {

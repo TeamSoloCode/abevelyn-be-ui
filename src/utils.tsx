@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
+import { Option } from "./components/FieldSelect";
 
 export function usePrevious(value) {
   // The ref object is a generic container whose current property is mutable ...
@@ -37,4 +38,8 @@ export const showSuccess = (message: string | string[]) => {
     return;
   }
   toast.success(message);
+};
+
+export const findOptionByValue = (options: Option[], value?: string): SingleValue<Option> | undefined => {
+  return options.find((op) => op.value === value);
 };
