@@ -36,7 +36,7 @@ export class ClientApi {
     PRODUCTS: "/products",
     UPLOAD_IMAGE: "/file/upload",
     FETCH_IMAGE: "/file",
-    LOGOUT: "/logout",
+    LOGOUT: "/auth/logout",
   };
 
   private _token: string;

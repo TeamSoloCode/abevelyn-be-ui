@@ -293,7 +293,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
                     loadDataFunction={onOpenCollectionMenuOption}
                     loadOnMount={true}
                     defaultValue={selectedProduct?.collections?.[0]?.uuid}
-                    addNewURL={AppRoutes.CREATE_SIZE}
+                    addNewURL={AppRoutes.COLLECTIONS}
                     loadOptions={loadCollectionOptions}
                     onChange={onChangeCollection}
                   />
