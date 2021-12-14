@@ -8,7 +8,15 @@ import Spinner from "react-bootstrap/Spinner";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ProductContext from "../../context/product.context";
 import { FieldSelect, Option } from "../../components/FieldSelect";
-import { ClientApi, clientApi, colorApi, productApi, productStatusApi, sizeApi } from "../../client-api/api.client";
+import {
+  ClientApi,
+  clientApi,
+  collectionApi,
+  colorApi,
+  productApi,
+  productStatusApi,
+  sizeApi,
+} from "../../client-api/api.client";
 import { IUpdateProductDto } from "../../dto/product/update-product-req-dto";
 import { SingleValue } from "react-select";
 import { FieldText } from "../../components/FieldText";
@@ -26,9 +34,6 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   const navigate = useNavigate();
   let { productId } = useParams();
   const [selectedProduct, setSelectedProduct] = useState<Product>();
-  const [colorOptions, setColorOptions] = useState<Option[]>([]);
-  const [statusOptions, setStatusOptions] = useState<Option[]>([]);
-  const [sizeOptions, setSizeOptions] = useState<Option[]>([]);
   const [refreshKey, setRefreshKey] = useState(Date.now());
   const {
     register,
@@ -45,7 +50,22 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   };
 
   const onSubmit: SubmitHandler<IUpdateProductDto> = useCallback(
-    async ({ name, colorId, statusId, sizeId, price, description, image, image1, image2, image3, image4, image5 }) => {
+    async ({
+      name,
+      colorId,
+      statusId,
+      sizeId,
+      price,
+      description,
+      image,
+      image1,
+      image2,
+      image3,
+      image4,
+      image5,
+      quantity,
+      colectionId,
+    }) => {
       if (!productId) return;
       const isSuccess = await productContext?.updateProduct(productId, {
         name,
@@ -54,6 +74,8 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
         sizeId,
         price,
         description,
+        quantity,
+        colectionId,
         image: image[0] ?? selectedProduct?.image,
         image1: image1?.[0] ?? selectedProduct?.image1,
         image2: image2?.[0] ?? selectedProduct?.image2,
@@ -78,7 +100,6 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
       const result = await response.json();
 
       if (response.status == 200) {
-        await Promise.all([onOpenColorMenuOption(), onOpenSizeMenuOption(), onOpenStatusMenuOption()]);
         setSelectedProduct(result.data);
       }
 
@@ -110,24 +131,40 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
     callback(filteredOptions);
   }, []);
 
-  const onOpenColorMenuOption = async () => {
-    const colorOptions = await colorApi.loadColorAsOption();
-    setColorOptions(colorOptions);
+  const loadCollectionOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
+    const options = await collectionApi.loadCollectionAsOption();
+    const filteredOptions = options.filter((op) =>
+      op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
+    );
+    callback(filteredOptions);
+  }, []);
+
+  const onOpenColorMenuOption = () => {
+    return colorApi.loadColorAsOption();
   };
 
-  const onOpenSizeMenuOption = async () => {
-    const sizesOptions = await sizeApi.loadSizeAsOption();
-    setSizeOptions(sizesOptions);
+  const onOpenSizeMenuOption = () => {
+    return sizeApi.loadSizeAsOption();
   };
 
-  const onOpenStatusMenuOption = async () => {
-    const statusOptions = await productStatusApi.loadProducStatusAsOption();
-    setStatusOptions(statusOptions);
+  const onOpenCollectionMenuOption = () => {
+    return collectionApi.loadCollectionAsOption();
+  };
+
+  const onOpenStatusMenuOption = () => {
+    return productStatusApi.loadProducStatusAsOption();
   };
 
   const onChangeStatus = useCallback(
     (newOption: SingleValue<Option>) => {
       newOption?.value && setValue("statusId", newOption?.value);
+    },
+    [setValue]
+  );
+
+  const onChangeCollection = useCallback(
+    (newOption: SingleValue<Option>) => {
+      newOption?.value && setValue("colectionId", newOption?.value);
     },
     [setValue]
   );
@@ -150,11 +187,9 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
     setValue("price", value ? Number(value) : 0);
   }, []);
 
-  const setDefaultOption = (options: Option[], defaultValue: string | undefined, onChange) => {
-    const defaultOption = findOptionByValue(options, defaultValue);
-    onChange(defaultOption);
-    return defaultOption;
-  };
+  const onQuantityChange = useCallback((value?: string, name?: string) => {
+    setValue("quantity", value ? Number(value) : 0);
+  }, []);
 
   const setDefaultFieldEffect = (defaulValue: any, name: keyof IUpdateProductDto): any => {
     setValue(name, defaulValue);
@@ -166,11 +201,10 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   }
 
   return (
-    <Col key={refreshKey} xs="9">
+    <Col xs="9">
       <Card className="m-1">
         <Card.Body>
           <Card.Title>Update Product</Card.Title>
-
           <Form onSubmit={handleSubmit(onSubmit)}>
             <hr />
             <Row>
@@ -207,6 +241,14 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
                 maxLength={7}
                 onValueChange={onPriceChange}
               />
+              <FieldNumber
+                label="Quantity"
+                name="quantity"
+                defaultValue={setDefaultFieldEffect(selectedProduct?.quantity, "quantity")}
+                placeholder="Quantity"
+                maxLength={7}
+                onValueChange={onQuantityChange}
+              />
               <FieldText
                 label="Description"
                 placeholder="Description"
@@ -217,36 +259,58 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
               />
 
               <hr />
-              <FieldSelect
-                label="Status"
-                placeholder="Select Status"
-                defaultValue={setDefaultOption(statusOptions, selectedProduct?.productStatus?.uuid, onChangeStatus)}
-                addNewURL={AppRoutes.CREATE_PRODUCT_STATUS}
-                options={statusOptions}
-                onMenuOpen={onOpenStatusMenuOption}
-                loadOptions={loadStatusOptions}
-                onChange={onChangeStatus}
-              />
-              <FieldSelect
-                label="Color"
-                placeholder="Select Color"
-                defaultValue={setDefaultOption(colorOptions, selectedProduct?.color?.uuid, onChangeColor)}
-                addNewURL={AppRoutes.CREATE_COLORS}
-                onMenuOpen={onOpenColorMenuOption}
-                options={colorOptions}
-                loadOptions={loadColorOptions}
-                onChange={onChangeColor}
-              />
-              <FieldSelect
-                label="Size"
-                placeholder="Select Size"
-                defaultValue={setDefaultOption(sizeOptions, selectedProduct?.size?.uuid, onChangeSize)}
-                addNewURL={AppRoutes.CREATE_SIZE}
-                options={sizeOptions}
-                onMenuOpen={onOpenSizeMenuOption}
-                loadOptions={loadSizeOptions}
-                onChange={onChangeSize}
-              />
+              <Row>
+                <Col>
+                  <FieldSelect
+                    label="Status"
+                    placeholder="Select Status"
+                    loadDataFunction={onOpenStatusMenuOption}
+                    loadOnMount={true}
+                    defaultValue={selectedProduct?.productStatus?.uuid}
+                    addNewURL={AppRoutes.CREATE_PRODUCT_STATUS}
+                    loadOptions={loadStatusOptions}
+                    onChange={onChangeStatus}
+                  />
+                </Col>
+                <Col>
+                  <FieldSelect
+                    label="Color"
+                    placeholder="Select Color"
+                    loadDataFunction={onOpenColorMenuOption}
+                    loadOnMount={true}
+                    defaultValue={selectedProduct?.color?.uuid}
+                    addNewURL={AppRoutes.CREATE_COLORS}
+                    loadOptions={loadColorOptions}
+                    onChange={onChangeColor}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <FieldSelect
+                    label="Collection"
+                    placeholder="Select Collection"
+                    loadDataFunction={onOpenCollectionMenuOption}
+                    loadOnMount={true}
+                    defaultValue={selectedProduct?.collections?.[0]?.uuid}
+                    addNewURL={AppRoutes.CREATE_SIZE}
+                    loadOptions={loadCollectionOptions}
+                    onChange={onChangeCollection}
+                  />
+                </Col>
+                <Col>
+                  <FieldSelect
+                    label="Size"
+                    placeholder="Select Size"
+                    loadDataFunction={onOpenSizeMenuOption}
+                    loadOnMount={true}
+                    defaultValue={selectedProduct?.size?.uuid}
+                    addNewURL={AppRoutes.CREATE_SIZE}
+                    onChange={onChangeSize}
+                    loadOptions={loadSizeOptions}
+                  />
+                </Col>
+              </Row>
               <hr />
               <FieldFile
                 label="Main Image"

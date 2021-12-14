@@ -36,6 +36,7 @@ export class ClientApi {
     PRODUCTS: "/products",
     UPLOAD_IMAGE: "/file/upload",
     FETCH_IMAGE: "/file",
+    LOGOUT: "/logout",
   };
 
   private _token: string;
@@ -144,6 +145,12 @@ export class ClientApi {
 
   protected fetchAvailable(api: string): Promise<Response> {
     return this.get(api + "/fetch_available");
+  }
+
+  async logout(): Promise<Response> {
+    Cookie().remove(ClientApi.COOKIE_KEYS.TOKEN);
+    Cookie().remove(ClientApi.COOKIE_KEYS.USERNAME);
+    return this.post(ClientApi.APIs.LOGOUT);
   }
 
   async signin(username: string, password: string): Promise<{ username: string } | Response> {
@@ -255,6 +262,10 @@ export class CollectionApi extends ClientApi {
 
   delete(id: string): Promise<Response> {
     return this.delete(ClientApi.APIs.COLLECTIONS + `/${id}`);
+  }
+
+  async loadCollectionAsOption(): Promise<Option[]> {
+    return await this.loadDataAsOption(ClientApi.APIs.COLLECTIONS);
   }
 }
 

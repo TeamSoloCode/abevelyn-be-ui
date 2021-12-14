@@ -3,6 +3,7 @@ import { ICreateProductDto } from "./create-product-req.dto";
 export interface IUpdateProductDto extends Partial<ICreateProductDto> {
   materialId?: string;
   colectionId?: string;
+  quantity?: number;
   couponId?: string;
   image1?: string;
   image2?: string;

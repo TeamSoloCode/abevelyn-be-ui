@@ -32,6 +32,7 @@ export const FieldNumber = memo((props: IFieldNumber) => {
       <Col xs="6">
         <CurrencyInput
           className="form-control"
+          autoComplete="off"
           name={props.name}
           value={props.value}
           prefix={props.prefix}

@@ -1,3 +1,4 @@
+import { Collection } from "./collection.model";
 import { Color } from "./color.model";
 import { ProductStatus } from "./product-status.model";
 import { RootModel } from "./root.model";
@@ -58,6 +59,8 @@ export class Product extends RootModel {
   size: Size;
 
   color: Color;
+
+  collections?: Collection[];
 
   //   coupon?: Coupon;
 

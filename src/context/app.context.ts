@@ -36,6 +36,7 @@ interface IAppContextValue {
   state: IAppContextState;
   dispatch?: Dispatch<ActionType>;
   login?: (username: string, password: string) => void;
+  logout?: () => void;
 }
 
 const INITIAL_STATE: IAppContextState = {
@@ -91,6 +92,12 @@ export const AppContextProvider = (props: IAppContextProps) => {
     [state.authenticated, dispatch]
   );
 
+  const logout = useCallback(async () => {
+    const response = await clientApi.logout();
+    dispatch({ type: Actions.AUTHENTICATED, authenticated: false });
+    navigate("/");
+  }, [state.authenticated, dispatch]);
+
   return React.createElement(
     AppContext.Provider,
     {
@@ -98,6 +105,7 @@ export const AppContextProvider = (props: IAppContextProps) => {
         state,
         dispatch,
         login,
+        logout,
       },
     },
     props.children
