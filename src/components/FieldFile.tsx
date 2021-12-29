@@ -4,7 +4,6 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Spinner from "react-bootstrap/Spinner";
 import Form from "react-bootstrap/Form";
 import uploadImagePlaceholder from "../../assets/upload-image-placeholder.png";
-import Button from "react-bootstrap/Button";
 
 interface IFieldFile {
   label: string;

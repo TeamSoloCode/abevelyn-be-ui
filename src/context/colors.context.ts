@@ -56,10 +56,11 @@ export const ColorContextProvider = (props: IColorProviderProps) => {
   });
 
   const loadColor = useCallback(async () => {
-    const res = await colorApi.fetchColors();
+    const res = await colorApi.fetch();
     const result = await res.json();
     if (res.status == 200) {
       dispatch({ type: Actions.LOAD_COLORS, colors: result?.data });
+      return;
     }
 
     showError(result?.message);
@@ -67,7 +68,7 @@ export const ColorContextProvider = (props: IColorProviderProps) => {
 
   const createColor = useCallback(
     async (createColorDto: ICreateColorReqDto): Promise<Color | null> => {
-      const res = await colorApi.createColor(createColorDto);
+      const res = await colorApi.create(createColorDto);
       const result = await res.json();
       if (res.status == 201) {
         // loadColor();
@@ -81,7 +82,7 @@ export const ColorContextProvider = (props: IColorProviderProps) => {
 
   const updateColor = useCallback(
     async (id: string, updateColorDto: IUpdateColorReqDto): Promise<Color | null> => {
-      const res = await colorApi.updateColor(id, updateColorDto);
+      const res = await colorApi.update(id, updateColorDto);
       const result = await res.json();
       if (res.status == 200) {
         loadColor();
@@ -96,7 +97,7 @@ export const ColorContextProvider = (props: IColorProviderProps) => {
 
   const deleteColor = useCallback(
     async (id: string): Promise<Color | null> => {
-      const res = await colorApi.deleteColor(id);
+      const res = await colorApi.delete(id);
       const result = await res.json();
       if (res.status == 200) {
         loadColor();

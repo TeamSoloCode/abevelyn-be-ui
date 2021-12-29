@@ -40,6 +40,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
     handleSubmit,
     reset,
     setValue,
+    getValues,
     watch,
     formState: { errors },
   } = useForm<IUpdateProductDto>();
@@ -64,7 +65,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
       image4,
       image5,
       quantity,
-      colectionId,
+      colectionIds,
     }) => {
       if (!productId) return;
       const isSuccess = await productContext?.updateProduct(productId, {
@@ -75,7 +76,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
         price,
         description,
         quantity,
-        colectionId,
+        colectionIds,
         image: image[0] ?? selectedProduct?.image,
         image1: image1?.[0] ?? selectedProduct?.image1,
         image2: image2?.[0] ?? selectedProduct?.image2,
@@ -116,7 +117,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   }, []);
 
   const loadStatusOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
-    const options = await productStatusApi.loadProducStatusAsOption();
+    const options = await productStatusApi.loadDataAsOption();
     const filteredOptions = options.filter((op) =>
       op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
     );
@@ -124,7 +125,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   }, []);
 
   const loadSizeOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
-    const options = await sizeApi.loadSizeAsOption();
+    const options = await sizeApi.loadDataAsOption();
     const filteredOptions = options.filter((op) =>
       op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
     );
@@ -132,7 +133,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   }, []);
 
   const loadCollectionOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
-    const options = await collectionApi.loadCollectionAsOption();
+    const options = await collectionApi.loadDataAsOption();
     const filteredOptions = options.filter((op) =>
       op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
     );
@@ -144,27 +145,30 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   };
 
   const onOpenSizeMenuOption = () => {
-    return sizeApi.loadSizeAsOption();
+    return sizeApi.loadDataAsOption();
   };
 
   const onOpenCollectionMenuOption = () => {
-    return collectionApi.loadCollectionAsOption();
+    return collectionApi.loadDataAsOption();
   };
 
   const onOpenStatusMenuOption = () => {
-    return productStatusApi.loadProducStatusAsOption();
+    return productStatusApi.loadDataAsOption();
   };
 
   const onChangeStatus = useCallback(
     (newOption: SingleValue<Option>) => {
-      newOption?.value && setValue("statusId", newOption?.value);
+      newOption?.value && setValue("statusId", newOption?.value, {});
     },
     [setValue]
   );
 
-  const onChangeCollection = useCallback(
-    (newOption: SingleValue<Option>) => {
-      newOption?.value && setValue("colectionId", newOption?.value);
+  const onChangeCollections = useCallback(
+    (newOption: SingleValue<Option>[]) => {
+      setValue(
+        "colectionIds",
+        (newOption || []).map((option) => option.value)
+      );
     },
     [setValue]
   );
@@ -191,6 +195,11 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
     setValue("quantity", value ? Number(value) : 0);
   }, []);
 
+  const defaultCollections = useMemo<(string | undefined)[]>(() => {
+    const collections = selectedProduct?.collections || [];
+    return collections?.map((col) => col.uuid);
+  }, [selectedProduct]);
+
   const setDefaultFieldEffect = (defaulValue: any, name: keyof IUpdateProductDto): any => {
     setValue(name, defaulValue);
     return defaulValue;
@@ -201,7 +210,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   }
 
   return (
-    <Col xs="9">
+    <Col key={refreshKey} xs="9">
       <Card className="m-1">
         <Card.Body>
           <Card.Title>Update Product</Card.Title>
@@ -259,58 +268,47 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
               />
 
               <hr />
-              <Row>
-                <Col>
-                  <FieldSelect
-                    label="Status"
-                    placeholder="Select Status"
-                    loadDataFunction={onOpenStatusMenuOption}
-                    loadOnMount={true}
-                    defaultValue={selectedProduct?.productStatus?.uuid}
-                    addNewURL={AppRoutes.CREATE_PRODUCT_STATUS}
-                    loadOptions={loadStatusOptions}
-                    onChange={onChangeStatus}
-                  />
-                </Col>
-                <Col>
-                  <FieldSelect
-                    label="Color"
-                    placeholder="Select Color"
-                    loadDataFunction={onOpenColorMenuOption}
-                    loadOnMount={true}
-                    defaultValue={selectedProduct?.color?.uuid}
-                    addNewURL={AppRoutes.CREATE_COLORS}
-                    loadOptions={loadColorOptions}
-                    onChange={onChangeColor}
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <FieldSelect
-                    label="Collection"
-                    placeholder="Select Collection"
-                    loadDataFunction={onOpenCollectionMenuOption}
-                    loadOnMount={true}
-                    defaultValue={selectedProduct?.collections?.[0]?.uuid}
-                    addNewURL={AppRoutes.COLLECTIONS}
-                    loadOptions={loadCollectionOptions}
-                    onChange={onChangeCollection}
-                  />
-                </Col>
-                <Col>
-                  <FieldSelect
-                    label="Size"
-                    placeholder="Select Size"
-                    loadDataFunction={onOpenSizeMenuOption}
-                    loadOnMount={true}
-                    defaultValue={selectedProduct?.size?.uuid}
-                    addNewURL={AppRoutes.CREATE_SIZE}
-                    onChange={onChangeSize}
-                    loadOptions={loadSizeOptions}
-                  />
-                </Col>
-              </Row>
+              <FieldSelect
+                label="Status"
+                placeholder="Select Status"
+                loadDataFunction={onOpenStatusMenuOption}
+                loadOnMount={true}
+                defaultValue={selectedProduct?.productStatus?.uuid}
+                addNewURL={AppRoutes.CREATE_PRODUCT_STATUS}
+                loadOptions={loadStatusOptions}
+                onChange={onChangeStatus}
+              />
+              <FieldSelect
+                label="Color"
+                placeholder="Select Color"
+                loadDataFunction={onOpenColorMenuOption}
+                loadOnMount={true}
+                defaultValue={selectedProduct?.color?.uuid}
+                addNewURL={AppRoutes.CREATE_COLORS}
+                loadOptions={loadColorOptions}
+                onChange={onChangeColor}
+              />
+              <FieldSelect
+                label="Collection"
+                placeholder="Select Collection"
+                loadDataFunction={onOpenCollectionMenuOption}
+                loadOnMount={true}
+                isMulti
+                defaultValue={defaultCollections}
+                addNewURL={AppRoutes.COLLECTIONS}
+                loadOptions={loadCollectionOptions}
+                onChange={onChangeCollections}
+              />
+              <FieldSelect
+                label="Size"
+                placeholder="Select Size"
+                loadDataFunction={onOpenSizeMenuOption}
+                loadOnMount={true}
+                defaultValue={selectedProduct?.size?.uuid}
+                addNewURL={AppRoutes.CREATE_SIZE}
+                onChange={onChangeSize}
+                loadOptions={loadSizeOptions}
+              />
               <hr />
               <FieldFile
                 label="Main Image"

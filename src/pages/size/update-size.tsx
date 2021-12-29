@@ -78,6 +78,7 @@ export const UpdateSize = memo((props: IUpdateSize) => {
       const result = await response.json();
       if (response.status == 200) {
         setSelectedSize(result?.data);
+        return;
       }
 
       showError(result?.message);

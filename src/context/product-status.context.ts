@@ -56,7 +56,7 @@ export const ProductStatusContextProvider = (props: IProductStatusProviderProps)
   });
 
   const loadProductStatus = useCallback(async () => {
-    const res = await productStatusApi.fetchProductStatus();
+    const res = await productStatusApi.fetch();
     const result = await res.json();
     if (res.status == 200) {
       dispatch({ type: Actions.LOAD_PRODUCT_STATUS, productStatus: result?.data });
@@ -67,7 +67,7 @@ export const ProductStatusContextProvider = (props: IProductStatusProviderProps)
 
   const createProductStatus = useCallback(
     async (createProductStatusDto: ICreateProductStatusDto): Promise<ProductStatus | null> => {
-      const res = await productStatusApi.createProductStatus(createProductStatusDto);
+      const res = await productStatusApi.create(createProductStatusDto);
       const result = await res.json();
       if (res.status == 201) {
         loadProductStatus();
@@ -81,7 +81,7 @@ export const ProductStatusContextProvider = (props: IProductStatusProviderProps)
 
   const updateProductStatus = useCallback(
     async (id: string, updateProductStatusDto: IUpdateProductStatusDto): Promise<ProductStatus | null> => {
-      const res = await productStatusApi.updateProductStatus(id, updateProductStatusDto);
+      const res = await productStatusApi.update(id, updateProductStatusDto);
       const result = await res.json();
       if (res.status == 200) {
         loadProductStatus();
@@ -95,7 +95,7 @@ export const ProductStatusContextProvider = (props: IProductStatusProviderProps)
 
   const deleteProductStatus = useCallback(
     async (id: string): Promise<ProductStatus | null> => {
-      const res = await productStatusApi.deleteProductStatus(id);
+      const res = await productStatusApi.delete(id);
       const result = await res.json();
       if (res.status == 200) {
         loadProductStatus();

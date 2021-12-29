@@ -61,10 +61,11 @@ export const UpdateProductStatus = memo((props: IUpdateProductStatus) => {
     }
 
     (async (id: string) => {
-      const response = await productStatusApi.fetchProductStatusById(id);
+      const response = await productStatusApi.fetchById(id);
       const result = await response.json();
       if (response.status == 200) {
         setSelectedStatus(result?.data);
+        return;
       }
 
       showError(result?.message);

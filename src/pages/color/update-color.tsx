@@ -59,11 +59,12 @@ export const UpdateColor = memo((props: IUpdateColor) => {
     }
 
     (async (id: string) => {
-      const response = await colorApi.fetchColorById(id);
+      const response = await colorApi.fetchById(id);
       const result = await response.json();
 
       if (response.status == 200) {
         setSelectedColor(result.data);
+        return;
       }
 
       showError(result?.message);

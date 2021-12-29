@@ -25,9 +25,9 @@ export const CreateCollection = memo((props: ICreateCollection) => {
   } = useForm<ICreateCollectionDto>();
 
   const onSubmit: SubmitHandler<ICreateCollectionDto> = useCallback(
-    async ({ available, name }) => {
+    async ({ name }) => {
       if (!collectionContext?.createCollection) return;
-      const isSuccess = await collectionContext.createCollection({ available, name });
+      const isSuccess = await collectionContext.createCollection({ name });
       isSuccess && props.close();
     },
     [collectionContext.createCollection, props.close]
@@ -44,13 +44,8 @@ export const CreateCollection = memo((props: ICreateCollection) => {
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Row className="align-items-center">
               <InputGroup className="mb-2">
-                <InputGroup.Text>Color name</InputGroup.Text>
-                <FormControl placeholder="Color name" {...register("name")} />
-              </InputGroup>
-              <InputGroup className="mb-2">
-                <Form.Group className="mb-3">
-                  <Form.Check type="checkbox" label="Available" {...register("available")} />
-                </Form.Group>
+                <InputGroup.Text>Collection name</InputGroup.Text>
+                <FormControl placeholder="Collection name" {...register("name")} />
               </InputGroup>
               <Col xs="auto">
                 <Button type="submit" className="mb-2">

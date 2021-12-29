@@ -13,21 +13,24 @@ import { ICreateSizeReqDto } from "../dto/size/create-size.req.dto";
 import { IUpdateSizeReqDto } from "../dto/size/update-size.req.dto";
 import { Option } from "../components/FieldSelect";
 import { ProductStatus } from "../models/product-status.model";
+import { IUpdateProductDto } from "../dto/product/update-product-req-dto";
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
 
-export class ClientApi {
-  constructor() {
+export class ClientApi<C, U> {
+  constructor(mainApi: string) {
     this._token = Cookie().get(ClientApi.COOKIE_KEYS.TOKEN);
+    this.mainApi = mainApi;
   }
 
   static COOKIE_KEYS = {
     TOKEN: "token",
     USERNAME: "username",
   };
+
   static ROOT_API = "http://localhost:3000";
   static APIs = {
-    SIGNIN_URI: "/auth/signin",
+    SIGNIN_URI: "/auth/admin_signin",
     VERIFY_TOKEN: "/auth/verify_token",
     COLORS: "/colors",
     COLLECTIONS: "/collections",
@@ -36,8 +39,11 @@ export class ClientApi {
     PRODUCTS: "/products",
     UPLOAD_IMAGE: "/file/upload",
     FETCH_IMAGE: "/file",
+    MATERIAL: "/materials",
     LOGOUT: "/auth/logout",
   };
+
+  private mainApi: string;
 
   private _token: string;
 
@@ -73,7 +79,7 @@ export class ClientApi {
   }
 
   @prependRootApi
-  protected delete(@fullApiUrl apiUri: string, params: Object = {}): Promise<Response> {
+  protected deleteMethod(@fullApiUrl apiUri: string, params: Object = {}): Promise<Response> {
     return fetch(apiUri, {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
       method: "DELETE",
@@ -143,8 +149,46 @@ export class ClientApi {
     return apiUri + `/${imageName}`;
   }
 
-  protected fetchAvailable(api: string): Promise<Response> {
-    return this.get(api + "/fetch_available");
+  protected fetchAvailable(): Promise<Response> {
+    return this.get(this.mainApi + "/fetch_available");
+  }
+
+  protected async loadDataAsOption(): Promise<Option[]> {
+    const res = await this.fetchAvailable();
+    if (res.status == 200) {
+      const result = await res.json();
+      const data: ProductStatus[] = result?.data || [];
+      const options: Option[] = data.map((color) => {
+        return {
+          label: color.name,
+          value: color.uuid,
+        };
+      });
+
+      return options;
+    }
+
+    return [];
+  }
+
+  protected fetch(): Promise<Response> {
+    return this.get(this.mainApi);
+  }
+
+  protected fetchById(id: string): Promise<Response> {
+    return this.get(this.mainApi + `/${id}`);
+  }
+
+  protected create(createDto: C): Promise<Response> {
+    return this.post(this.mainApi, createDto);
+  }
+
+  protected update(id: string, updateDto: U): Promise<Response> {
+    return this.patch(this.mainApi + `/${id}`, updateDto);
+  }
+
+  protected delete(id: string): Promise<Response> {
+    return this.deleteMethod(this.mainApi + `/${id}`);
   }
 
   async logout(): Promise<Response> {
@@ -167,24 +211,6 @@ export class ClientApi {
     return res;
   }
 
-  protected async loadDataAsOption(api: string): Promise<Option[]> {
-    const res = await this.fetchAvailable(api);
-    if (res.status == 200) {
-      const result = await res.json();
-      const data: ProductStatus[] = result?.data || [];
-      const options: Option[] = data.map((color) => {
-        return {
-          label: color.name,
-          value: color.uuid,
-        };
-      });
-
-      return options;
-    }
-
-    return [];
-  }
-
   async verify_token(): Promise<boolean> {
     const res = await this.post(ClientApi.APIs.VERIFY_TOKEN);
     if (res?.status != 201) {
@@ -195,33 +221,20 @@ export class ClientApi {
   }
 }
 
-class ColorApi extends ClientApi {
+class ColorApi extends ClientApi<ICreateColorReqDto, IUpdateColorReqDto> {
   constructor() {
-    super();
+    super(ClientApi.APIs.COLORS);
   }
 
-  fetchColors(): Promise<Response> {
-    return this.get(ClientApi.APIs.COLORS);
-  }
-
-  fetchColorById(id: string): Promise<Response> {
-    return this.get(ClientApi.APIs.COLORS + `/${id}`);
-  }
-
-  createColor(createColorDto: ICreateColorReqDto): Promise<Response> {
-    return this.post(ClientApi.APIs.COLORS, createColorDto);
-  }
-
-  updateColor(id: string, updateColorDto: IUpdateColorReqDto): Promise<Response> {
-    return this.patch(ClientApi.APIs.COLORS + `/${id}`, updateColorDto);
-  }
-
-  deleteColor(id: string): Promise<Response> {
-    return this.delete(ClientApi.APIs.COLORS + `/${id}`);
-  }
+  fetch = super.fetch;
+  fetchById = super.fetchById;
+  fetchAvailable = super.fetchAvailable;
+  create = super.create;
+  update = super.update;
+  delete = super.delete;
 
   async loadColorAsOption(): Promise<Option[]> {
-    const res = await this.fetchAvailable(ClientApi.APIs.COLORS);
+    const res = await this.fetchAvailable();
     if (res.status == 200) {
       const result = await res.json();
       const data: Color[] = result?.data || [];
@@ -239,127 +252,83 @@ class ColorApi extends ClientApi {
   }
 }
 
-export class CollectionApi extends ClientApi {
+export class CollectionApi extends ClientApi<ICreateCollectionDto, IUpdateCollectionDto> {
   constructor() {
-    super();
+    super(ClientApi.APIs.COLLECTIONS);
   }
 
-  fetch(): Promise<Response> {
-    return this.get(ClientApi.APIs.COLLECTIONS);
-  }
-
-  fetchById(id: string): Promise<Response> {
-    return this.get(ClientApi.APIs.COLLECTIONS + `/${id}`);
-  }
-
-  create(createColorDto: ICreateCollectionDto): Promise<Response> {
-    return this.post(ClientApi.APIs.COLLECTIONS, createColorDto);
-  }
-
-  update(id: string, updateColorDto: IUpdateCollectionDto): Promise<Response> {
-    return this.patch(ClientApi.APIs.COLLECTIONS + `/${id}`, updateColorDto);
-  }
-
-  delete(id: string): Promise<Response> {
-    return this.delete(ClientApi.APIs.COLLECTIONS + `/${id}`);
-  }
-
-  async loadCollectionAsOption(): Promise<Option[]> {
-    return await this.loadDataAsOption(ClientApi.APIs.COLLECTIONS);
-  }
+  fetch = super.fetch;
+  fetchById = super.fetchById;
+  fetchAvailable = super.fetchAvailable;
+  create = super.create;
+  update = super.update;
+  delete = super.delete;
+  loadDataAsOption = super.loadDataAsOption;
 }
 
-export class ProductStatusApi extends ClientApi {
+export class ProductStatusApi extends ClientApi<ICreateProductStatusDto, IUpdateProductStatusDto> {
   constructor() {
-    super();
+    super(ClientApi.APIs.PRODUCT_STATUS);
   }
 
-  fetchProductStatus(): Promise<Response> {
-    return this.get(ClientApi.APIs.PRODUCT_STATUS);
-  }
-
-  fetchProductStatusById(id: string): Promise<Response> {
-    return this.get(ClientApi.APIs.PRODUCT_STATUS + `/${id}`);
-  }
-
-  createProductStatus(createColorDto: ICreateProductStatusDto): Promise<Response> {
-    return this.post(ClientApi.APIs.PRODUCT_STATUS, createColorDto);
-  }
-
-  updateProductStatus(id: string, updateColorDto: IUpdateProductStatusDto): Promise<Response> {
-    return this.patch(ClientApi.APIs.PRODUCT_STATUS + `/${id}`, updateColorDto);
-  }
-
-  deleteProductStatus(id: string): Promise<Response> {
-    return this.delete(ClientApi.APIs.PRODUCT_STATUS + `/${id}`);
-  }
-
-  async loadProducStatusAsOption(): Promise<Option[]> {
-    return await this.loadDataAsOption(ClientApi.APIs.PRODUCT_STATUS);
-  }
+  fetch = super.fetch;
+  fetchById = super.fetchById;
+  fetchAvailable = super.fetchAvailable;
+  create = super.create;
+  update = super.update;
+  delete = super.delete;
+  loadDataAsOption = super.loadDataAsOption;
 }
 
-export class SizeApi extends ClientApi {
+export class SizeApi extends ClientApi<ICreateSizeReqDto, IUpdateSizeReqDto> {
   constructor() {
-    super();
+    super(ClientApi.APIs.SIZE);
   }
 
-  fetch(): Promise<Response> {
-    return this.get(ClientApi.APIs.SIZE);
-  }
-
-  fetchById(id: string): Promise<Response> {
-    return this.get(ClientApi.APIs.SIZE + `/${id}`);
-  }
-
-  create(createColorDto: ICreateSizeReqDto): Promise<Response> {
-    return this.post(ClientApi.APIs.SIZE, createColorDto);
-  }
-
-  update(id: string, updateColorDto: IUpdateSizeReqDto): Promise<Response> {
-    return this.patch(ClientApi.APIs.SIZE + `/${id}`, updateColorDto);
-  }
-
-  delete(id: string): Promise<Response> {
-    return this.delete(ClientApi.APIs.SIZE + `/${id}`);
-  }
-
-  async loadSizeAsOption(): Promise<Option[]> {
-    return await this.loadDataAsOption(ClientApi.APIs.SIZE);
-  }
+  fetch = super.fetch;
+  fetchById = super.fetchById;
+  fetchAvailable = super.fetchAvailable;
+  create = super.create;
+  update = super.update;
+  delete = super.delete;
+  loadDataAsOption = super.loadDataAsOption;
 }
 
-export class ProductApi extends ClientApi {
+export class ProductApi extends ClientApi<ICreateSizeReqDto, IUpdateProductDto> {
   constructor() {
-    super();
+    super(ClientApi.APIs.PRODUCTS);
   }
 
-  fetch(): Promise<Response> {
-    return this.get(ClientApi.APIs.PRODUCTS);
-  }
-
-  fetchAvailable(): Promise<Response> {
-    return this.get(ClientApi.APIs.PRODUCTS + "/fetch_available");
-  }
-
-  fetchById(id: string): Promise<Response> {
-    return this.get(ClientApi.APIs.PRODUCTS + `/${id}`);
-  }
+  fetch = super.fetch;
+  fetchById = super.fetchById;
+  fetchAvailable = super.fetchAvailable;
+  delete = super.delete;
+  loadDataAsOption = super.loadDataAsOption;
 
   create(createColorDto: ICreateSizeReqDto): Promise<Response> {
     return this.postMultipart(ClientApi.APIs.PRODUCTS, createColorDto);
   }
 
-  update(id: string, updateColorDto: IUpdateSizeReqDto): Promise<Response> {
-    return this.postMultipart(ClientApi.APIs.PRODUCTS + `/${id}`, updateColorDto, "PATCH");
-  }
-
-  delete(id: string): Promise<Response> {
-    return this.delete(ClientApi.APIs.PRODUCTS + `/${id}`);
+  update(id: string, updateProduct: IUpdateProductDto): Promise<Response> {
+    return this.postMultipart(ClientApi.APIs.PRODUCTS + `/${id}`, updateProduct, "PATCH");
   }
 }
 
-export const clientApi = new ClientApi();
+export class MaterialApi extends ClientApi<any, any> {
+  constructor() {
+    super(ClientApi.APIs.MATERIAL);
+  }
+
+  fetch = super.fetch;
+  fetchById = super.fetchById;
+  fetchAvailable = super.fetchAvailable;
+  create = super.create;
+  update = super.update;
+  delete = super.delete;
+  loadDataAsOption = super.loadDataAsOption;
+}
+
+export const clientApi = new ClientApi("");
 export const colorApi = new ColorApi();
 export const collectionApi = new CollectionApi();
 export const productStatusApi = new ProductStatusApi();

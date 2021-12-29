@@ -63,13 +63,35 @@ export const AppContextProvider = (props: IAppContextProps) => {
   });
 
   useEffect(() => {
+    if (!state.authenticated) return;
+    const intervalId = setInterval(() => {
+      const token = Cookie().get(ClientApi.COOKIE_KEYS.TOKEN);
+      if (token) {
+        clientApi.verify_token().then((authenticated) => {
+          if (authenticated == false) {
+            navigate("/");
+            Cookie().removeAll();
+          }
+        });
+      }
+    }, 10000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [state.authenticated]);
+
+  useEffect(() => {
     if (state.authenticated == undefined) {
       const token = Cookie().get(ClientApi.COOKIE_KEYS.TOKEN);
       if (token) {
         const username = Cookie().get(ClientApi.COOKIE_KEYS.USERNAME);
         clientApi.verify_token().then((authenticated) => {
           dispatch({ type: Actions.AUTHENTICATED, authenticated, username });
-          if (authenticated == false) navigate("/");
+          if (authenticated == false) {
+            location.reload();
+            Cookie().removeAll();
+          }
         });
       } else {
         dispatch({ type: Actions.AUTHENTICATED, authenticated: false });

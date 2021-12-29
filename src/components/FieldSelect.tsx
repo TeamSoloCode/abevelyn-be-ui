@@ -1,5 +1,5 @@
 import React, { Fragment, memo, useCallback, useEffect, useState, useRef } from "react";
-import { components, MenuListProps, MenuProps, SingleValue } from "react-select";
+import { components, MenuListProps, MenuProps, MultiValue, SingleValue } from "react-select";
 import AsyncSelect from "react-select/async";
 import InputGroup from "react-bootstrap/InputGroup";
 import Col from "react-bootstrap/Col";
@@ -17,6 +17,7 @@ const customStyles = {
     marginTop: 3,
   }),
   menuPortal: (base) => ({ ...base, zIndex: 3 }),
+  valueContainer: (base) => ({ ...base, outerHeight: 1300 }),
   option: (styles, props) => {
     return {
       ...styles,
@@ -27,7 +28,7 @@ const customStyles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    width: "30rem",
+    width: "50rem",
     minHeight: "3rem",
     height: "4rem",
   }),
@@ -52,10 +53,11 @@ interface IFieldSelect {
   options?: Option[];
   value?: Option;
   loadOnMount?: boolean;
-  defaultValue?: string;
+  defaultValue?: string | string[];
   addNewURL?: string;
   hideAddNewButton?: boolean;
   loadDataFunction?: Function;
+  isMulti?: any;
   loadOptions?: (input: string, callback: (options: Option[]) => void) => void;
   onChange?: (newValue: SingleValue<Option>) => void;
   onMenuOpen?: () => void;
@@ -87,9 +89,9 @@ export const FieldSelect = memo((props: IFieldSelect) => {
       (async () => {
         if (props.loadDataFunction && props.loadDataFunction instanceof Function) {
           const colorOptions = await props?.loadDataFunction?.();
-          const res = findOptionByValue(options || [], props.defaultValue);
+          // const res = findOptionByValue(options || [], props.defaultValue);
           setOptions(colorOptions);
-          res && ref.current?.setValue(res, "select-option");
+          // res && ref.current?.setValue(res, "select-option");
         }
       })();
     }
@@ -99,8 +101,19 @@ export const FieldSelect = memo((props: IFieldSelect) => {
     if (props.loadOnMount) {
       (async () => {
         if (options && !isEqual(options, prevOptions)) {
-          const res = findOptionByValue(options || [], props.defaultValue);
-          res && ref.current?.setValue(res, "select-option");
+          const defaultValue = props.defaultValue;
+          if (defaultValue instanceof Array) {
+            const ops = defaultValue.map((value) => {
+              return findOptionByValue(options || [], value);
+            });
+
+            ops && ref.current?.setValue(ops, "select-option");
+          }
+
+          if (typeof defaultValue === "string") {
+            const res = findOptionByValue(options || [], defaultValue);
+            res && ref.current?.setValue(res, "select-option");
+          }
         }
       })();
     }
@@ -125,6 +138,7 @@ export const FieldSelect = memo((props: IFieldSelect) => {
           ref={(selectRef) => (ref.current = selectRef)}
           styles={customStyles}
           isLoading={!(!!options || !!props.loadOnMount)}
+          isMulti={props.isMulti}
           menuPortalTarget={document.body}
           value={props.value}
           placeholder={props.placeholder}

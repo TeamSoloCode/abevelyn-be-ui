@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from "re
 import Table from "react-bootstrap/Table";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import ListGroup from "react-bootstrap/ListGroup";
 import ProductContext from "../../context/product.context";
 import { CreateProduct } from "./create-product";
 import { AppRoutes } from "../../constanst";
@@ -9,6 +10,7 @@ import { TSCTable, IColumn } from "../../components/TSCTable";
 import { Product } from "../../models/product.model";
 import { BrowserRouter as Router, Routes, Route, Link, Outlet, useNavigate } from "react-router-dom";
 import { clientApi, ClientApi } from "../../client-api/api.client";
+import map from "lodash.map";
 import numeral from "numeral";
 
 const defaultColumns: IColumn<Product>[] = [
@@ -48,6 +50,20 @@ const defaultColumns: IColumn<Product>[] = [
     item: (item) => "TODO",
   },
   {
+    headerTitle: "Collections",
+    item: (item) => {
+      return (
+        <div>
+          <ListGroup as="ol" numbered>
+            {map(item.collections, "name").map((name) => {
+              return <ListGroup.Item as="li">{name}</ListGroup.Item>;
+            })}
+          </ListGroup>
+        </div>
+      );
+    },
+  },
+  {
     headerTitle: "",
     item: (item) => (
       <div className="d-flex align-items-center justify-content-center">
@@ -74,6 +90,7 @@ const defaultColumns: IColumn<Product>[] = [
   {
     headerTitle: "Update At",
     item: (item) => item.updatedAt,
+    isHidden: true,
   },
 ];
 

@@ -11,7 +11,6 @@ export function fullApiUrl(target: Object, propertyKey: string | symbol, paramet
 
 export function prependRootApi(target: any, propertyName: string, descriptor: TypedPropertyDescriptor<any>) {
   let method = descriptor.value!;
-
   descriptor.value = function () {
     let pathURLParameters: number[] = Reflect.getOwnMetadata(pathURLMetadataKey, target, propertyName);
     if (pathURLParameters) {
