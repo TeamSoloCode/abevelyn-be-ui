@@ -8,42 +8,33 @@ import FormControl from "react-bootstrap/FormControl";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
+import { materialApi } from "../../client-api/api.client";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { showError } from "../utils";
-import CollectionContext from "../context/collection.context";
-import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.dto";
-import { collectionApi } from "../client-api/api.client";
 
-interface IUpdateCollection {
+import { showError } from "../../utils";
+import MaterialContext from "../../context/material.context";
+import { IUpdateMaterialDto } from "../../dto/materials/update-material.req.dto";
+
+interface IUpdateMaterial {
   show: boolean;
   close: () => void;
-  collectionId: string;
+  materialId: string;
 }
 
-export const UpdateCollection = memo((props: IUpdateCollection) => {
-  const collectionContext = useContext(CollectionContext);
-  const [selectedCollection, setSelectedCollection] = useState<IUpdateCollectionDto | null>(null);
-  const [showAlert, setShowAlert] = useState<boolean>(false);
+export const UpdateMaterial = memo((props: IUpdateMaterial) => {
+  const materialContext = useContext(MaterialContext);
+  const [selectedMaterial, setSelectedMaterial] = useState<IUpdateMaterialDto | null>(null);
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<IUpdateCollectionDto>();
+    reset,
+  } = useForm<IUpdateMaterialDto>();
 
-  const onSubmit: SubmitHandler<IUpdateCollectionDto> = useCallback(
-    async ({
-      available,
-      name,
-      nameInFrench,
-      nameInVietnames,
-      description,
-      descriptionInFrench,
-      descriptionInVietnames,
-    }) => {
-      if (!collectionContext?.updateCollection) return;
-      const isSuccess = await collectionContext.updateCollection(props.collectionId, {
-        available,
+  const onSubmit: SubmitHandler<IUpdateMaterialDto> = useCallback(
+    async ({ name, nameInFrench, nameInVietnames, description, descriptionInFrench, descriptionInVietnames }) => {
+      const isSuccess = await materialContext?.updateMaterial(props.materialId, {
         name,
         nameInFrench,
         nameInVietnames,
@@ -53,12 +44,8 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
       });
       isSuccess && props.close();
     },
-    [collectionContext.createCollection, props.close, props.collectionId]
+    [materialContext?.updateMaterial, props.close, props.materialId]
   );
-
-  const openConfirm = useCallback(async () => {
-    setShowAlert(true);
-  }, [setShowAlert]);
 
   useEffect(() => {
     if (!props.show) {
@@ -66,20 +53,18 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
     }
 
     (async (id: string) => {
-      const response = await collectionApi.fetchById(id);
+      const response = await materialApi.fetchById(id);
       const result = await response.json();
-
       if (response.status == 200) {
-        setSelectedCollection(result.data);
+        setSelectedMaterial(result?.data);
+        return;
       }
 
       showError(result?.message);
-    })(props.collectionId);
+    })(props.materialId);
+  }, [props.materialId, props.show]);
 
-    setShowAlert(false);
-  }, [props.collectionId, props.show]);
-
-  if (!selectedCollection) {
+  if (!selectedMaterial) {
     return <Spinner animation="border" variant="primary" />;
   }
 
@@ -87,37 +72,23 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
     <Modal show={props.show} onHide={props.close}>
       <Modal.Dialog>
         <Modal.Header closeButton>
-          <Modal.Title>Update Collection</Modal.Title>
+          <Modal.Title>Update Material</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Col>
-              <Row className="align-items-center">
-                <InputGroup as={Col} className="mb-2">
-                  <InputGroup.Text>Collection name</InputGroup.Text>
-                  <FormControl
-                    placeholder="Name"
-                    {...register("name")}
-                    {...setValue("name", selectedCollection.name)}
-                  />
-                </InputGroup>
-                <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                  <Form.Check
-                    type="checkbox"
-                    label="Available"
-                    {...register("available")}
-                    {...setValue("available", selectedCollection.available)}
-                  />
-                </Form.Group>
-              </Row>
-              <hr />
+              <InputGroup as={Col} className="mb-2">
+                <InputGroup.Text>Material name</InputGroup.Text>
+                <FormControl placeholder="Name" {...register("name")} {...setValue("name", selectedMaterial.name)} />
+              </InputGroup>
+
               <InputGroup className="mb-2">
                 <InputGroup.Text>Name in French</InputGroup.Text>
                 <FormControl
                   placeholder="Name in French"
                   {...register("nameInFrench")}
-                  {...setValue("nameInFrench", selectedCollection.nameInFrench)}
+                  {...setValue("nameInFrench", selectedMaterial.nameInFrench)}
                 />
               </InputGroup>
               <InputGroup className="mb-2">
@@ -125,36 +96,37 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
                 <FormControl
                   placeholder="Name in Vietnamese"
                   {...register("nameInVietnames")}
-                  {...setValue("nameInVietnames", selectedCollection.nameInVietnames)}
+                  {...setValue("nameInVietnames", selectedMaterial.nameInVietnames)}
                 />
               </InputGroup>
               <hr />
-              <InputGroup className="mb-2">
+              <InputGroup as={Col} className="mb-2">
                 <InputGroup.Text>Description</InputGroup.Text>
                 <FormControl
                   placeholder="Description"
                   {...register("description")}
-                  {...setValue("description", selectedCollection.description)}
+                  {...setValue("description", selectedMaterial.description)}
                 />
               </InputGroup>
+
               <InputGroup className="mb-2">
                 <InputGroup.Text>Description in French</InputGroup.Text>
                 <FormControl
                   placeholder="Description in French"
                   {...register("descriptionInFrench")}
-                  {...setValue("descriptionInFrench", selectedCollection.descriptionInFrench)}
+                  {...setValue("descriptionInFrench", selectedMaterial.descriptionInFrench)}
                 />
               </InputGroup>
               <InputGroup className="mb-2">
                 <InputGroup.Text>Description in Vietnamese</InputGroup.Text>
                 <FormControl
-                  placeholder="Description   in Vietnamese"
+                  placeholder="Description in Vietnamese"
                   {...register("descriptionInVietnames")}
-                  {...setValue("descriptionInVietnames", selectedCollection.descriptionInVietnames)}
+                  {...setValue("descriptionInVietnames", selectedMaterial.descriptionInVietnames)}
                 />
               </InputGroup>
               <Row>
-                <Col className="">
+                <Col>
                   <Button type="submit" className="mb-2">
                     Submit
                   </Button>

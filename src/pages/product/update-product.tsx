@@ -13,6 +13,7 @@ import {
   clientApi,
   collectionApi,
   colorApi,
+  materialApi,
   productApi,
   productStatusApi,
   sizeApi,
@@ -66,6 +67,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
       image5,
       quantity,
       colectionIds,
+      materialIds,
     }) => {
       if (!productId) return;
       const isSuccess = await productContext?.updateProduct(productId, {
@@ -77,6 +79,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
         description,
         quantity,
         colectionIds,
+        materialIds,
         image: image[0] ?? selectedProduct?.image,
         image1: image1?.[0] ?? selectedProduct?.image1,
         image2: image2?.[0] ?? selectedProduct?.image2,
@@ -140,6 +143,14 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
     callback(filteredOptions);
   }, []);
 
+  const loadMaterialOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
+    const options = await materialApi.loadDataAsOption();
+    const filteredOptions = options.filter((op) =>
+      op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
+    );
+    callback(filteredOptions);
+  }, []);
+
   const onOpenColorMenuOption = () => {
     return colorApi.loadColorAsOption();
   };
@@ -150,6 +161,10 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
 
   const onOpenCollectionMenuOption = () => {
     return collectionApi.loadDataAsOption();
+  };
+
+  const onOpenMaterialMenuOption = () => {
+    return materialApi.loadDataAsOption();
   };
 
   const onOpenStatusMenuOption = () => {
@@ -167,6 +182,16 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
     (newOption: SingleValue<Option>[]) => {
       setValue(
         "colectionIds",
+        (newOption || []).map((option) => option.value)
+      );
+    },
+    [setValue]
+  );
+
+  const onChangeMaterials = useCallback(
+    (newOption: SingleValue<Option>[]) => {
+      setValue(
+        "materialIds",
         (newOption || []).map((option) => option.value)
       );
     },
@@ -198,6 +223,11 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   const defaultCollections = useMemo<(string | undefined)[]>(() => {
     const collections = selectedProduct?.collections || [];
     return collections?.map((col) => col.uuid);
+  }, [selectedProduct]);
+
+  const defaultMaterials = useMemo<(string | undefined)[]>(() => {
+    const materials = selectedProduct?.materials || [];
+    return materials?.map((col) => col.uuid);
   }, [selectedProduct]);
 
   const setDefaultFieldEffect = (defaulValue: any, name: keyof IUpdateProductDto): any => {
@@ -288,8 +318,19 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
                 loadOptions={loadColorOptions}
                 onChange={onChangeColor}
               />
+
               <FieldSelect
-                label="Collection"
+                label="Size"
+                placeholder="Select Size"
+                loadDataFunction={onOpenSizeMenuOption}
+                loadOnMount={true}
+                defaultValue={selectedProduct?.size?.uuid}
+                addNewURL={AppRoutes.CREATE_SIZE}
+                onChange={onChangeSize}
+                loadOptions={loadSizeOptions}
+              />
+              <FieldSelect
+                label="Collections"
                 placeholder="Select Collection"
                 loadDataFunction={onOpenCollectionMenuOption}
                 loadOnMount={true}
@@ -300,14 +341,15 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
                 onChange={onChangeCollections}
               />
               <FieldSelect
-                label="Size"
-                placeholder="Select Size"
-                loadDataFunction={onOpenSizeMenuOption}
+                label="Materials"
+                placeholder="Select Material"
+                loadDataFunction={onOpenMaterialMenuOption}
                 loadOnMount={true}
-                defaultValue={selectedProduct?.size?.uuid}
-                addNewURL={AppRoutes.CREATE_SIZE}
-                onChange={onChangeSize}
-                loadOptions={loadSizeOptions}
+                isMulti
+                defaultValue={defaultMaterials}
+                addNewURL={AppRoutes.MATERIAL}
+                loadOptions={loadMaterialOptions}
+                onChange={onChangeMaterials}
               />
               <hr />
               <FieldFile

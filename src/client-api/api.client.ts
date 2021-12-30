@@ -334,3 +334,4 @@ export const collectionApi = new CollectionApi();
 export const productStatusApi = new ProductStatusApi();
 export const sizeApi = new SizeApi();
 export const productApi = new ProductApi();
+export const materialApi = new MaterialApi();

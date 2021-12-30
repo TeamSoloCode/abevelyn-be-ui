@@ -18,11 +18,11 @@ const INITIAL_STATE: ISizeState = {
 };
 
 enum Actions {
-  LOAD_PRODUCT_STATUS = "loadSizes",
+  LOAD_SIZE = "loadSizes",
 }
 
 interface IActionLoadSizes {
-  type: Actions.LOAD_PRODUCT_STATUS;
+  type: Actions.LOAD_SIZE;
   sizes: Size[];
 }
 
@@ -41,7 +41,7 @@ export const SizeContext = createContext<ISizeContextValue | null>(null);
 
 const reducer = (state: ISizeState, action: ActionType): ISizeState => {
   switch (action.type) {
-    case Actions.LOAD_PRODUCT_STATUS: {
+    case Actions.LOAD_SIZE: {
       return { ...state, sizes: action.sizes };
     }
     default:
@@ -59,7 +59,7 @@ export const SizeContextProvider = (props: ISizeProviderProps) => {
     const res = await sizeApi.fetch();
     const result = await res.json();
     if (res.status == 200) {
-      dispatch({ type: Actions.LOAD_PRODUCT_STATUS, sizes: result?.data });
+      dispatch({ type: Actions.LOAD_SIZE, sizes: result?.data });
     }
 
     showError(result?.message);

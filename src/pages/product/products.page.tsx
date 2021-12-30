@@ -13,6 +13,45 @@ import { clientApi, ClientApi } from "../../client-api/api.client";
 import map from "lodash.map";
 import numeral from "numeral";
 
+export const ProductsPage = React.memo(() => {
+  const productContext = useContext(ProductContext);
+  const products = productContext?.state?.products;
+  const navigate = useNavigate();
+
+  const onRowClick = useCallback(
+    (item: Product) => {
+      navigate(`/${AppRoutes.UPDATE_PRODUCT}/${item.uuid}`);
+    },
+    [navigate]
+  );
+
+  const columns = useMemo(() => {
+    return defaultColumns;
+  }, []);
+
+  useEffect(() => {
+    if (!productContext?.loadProduct) return;
+    productContext.loadProduct();
+  }, []);
+
+  return (
+    <div>
+      <Col xs="auto">
+        <Link className="btn" to={AppRoutes.CREATE_PRODUCT}>
+          <Button className="mt-1">+ New Product</Button>
+        </Link>
+      </Col>
+      {/* <Outlet /> */}
+      <Routes>
+        <Route path={AppRoutes.CREATE_PRODUCT} element={<CreateProduct />} />
+      </Routes>
+      <h2>Products</h2>
+      <hr />
+      <TSCTable data={products || []} columns={columns} onRowClick={onRowClick} />
+    </div>
+  );
+});
+
 const defaultColumns: IColumn<Product>[] = [
   {
     headerTitle: "Name",
@@ -64,6 +103,20 @@ const defaultColumns: IColumn<Product>[] = [
     },
   },
   {
+    headerTitle: "Materials",
+    item: (item) => {
+      return (
+        <div>
+          <ListGroup as="ol" numbered>
+            {map(item.materials, "name").map((name) => {
+              return <ListGroup.Item as="li">{name}</ListGroup.Item>;
+            })}
+          </ListGroup>
+        </div>
+      );
+    },
+  },
+  {
     headerTitle: "",
     item: (item) => (
       <div className="d-flex align-items-center justify-content-center">
@@ -93,42 +146,3 @@ const defaultColumns: IColumn<Product>[] = [
     isHidden: true,
   },
 ];
-
-export const ProductsPage = React.memo(() => {
-  const productContext = useContext(ProductContext);
-  const products = productContext?.state?.products;
-  const navigate = useNavigate();
-
-  const onRowClick = useCallback(
-    (item: Product) => {
-      navigate(`/${AppRoutes.UPDATE_PRODUCT}/${item.uuid}`);
-    },
-    [navigate]
-  );
-
-  const columns = useMemo(() => {
-    return defaultColumns;
-  }, []);
-
-  useEffect(() => {
-    if (!productContext?.loadProduct) return;
-    productContext.loadProduct();
-  }, []);
-
-  return (
-    <div>
-      <Col xs="auto">
-        <Link className="btn" to={AppRoutes.CREATE_PRODUCT}>
-          <Button className="mt-1">+ New Product</Button>
-        </Link>
-      </Col>
-      {/* <Outlet /> */}
-      <Routes>
-        <Route path={AppRoutes.CREATE_PRODUCT} element={<CreateProduct />} />
-      </Routes>
-      <h2>Products</h2>
-      <hr />
-      <TSCTable data={products || []} columns={columns} onRowClick={onRowClick} />
-    </div>
-  );
-});

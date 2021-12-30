@@ -50,11 +50,6 @@ export const UpdateProductStatus = memo((props: IUpdateProductStatus) => {
     setShowAlert(true);
   }, [setShowAlert]);
 
-  const onDelete = useCallback(async () => {
-    const isSuccess = await productStatusContext?.deleteProductStatus(props.statusId);
-    isSuccess && props.close();
-  }, [props.statusId, props.show]);
-
   useEffect(() => {
     if (!props.show) {
       return;
@@ -116,30 +111,10 @@ export const UpdateProductStatus = memo((props: IUpdateProductStatus) => {
                     Submit
                   </Button>
                 </Col>
-                <Col>
-                  <Button className="mb-2" variant={"danger"} onClick={openConfirm}>
-                    Delete
-                  </Button>
-                </Col>
+                <Col></Col>
               </Row>
             </Col>
           </Form>
-
-          <>
-            <Alert show={showAlert} variant="success" dismissible onClose={() => setShowAlert(false)}>
-              <Alert.Heading>This action can not be undone !</Alert.Heading>
-              <p>Are you sure to delete this status ?</p>
-              <hr />
-              <div className="d-flex justify-content-end">
-                <Button onClick={() => setShowAlert(false)} variant="outline-danger">
-                  Nope
-                </Button>
-                <Button onClick={onDelete} variant="outline-success">
-                  Yes, I'm sure
-                </Button>
-              </div>
-            </Alert>
-          </>
         </Modal.Body>
       </Modal.Dialog>
     </Modal>

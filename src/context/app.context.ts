@@ -117,6 +117,7 @@ export const AppContextProvider = (props: IAppContextProps) => {
   const logout = useCallback(async () => {
     const response = await clientApi.logout();
     dispatch({ type: Actions.AUTHENTICATED, authenticated: false });
+    Cookie().removeAll();
     navigate("/");
   }, [state.authenticated, dispatch]);
 

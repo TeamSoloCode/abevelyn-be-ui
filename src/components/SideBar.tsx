@@ -16,6 +16,7 @@ export const SideBar = memo(() => {
       case AppRoutes.COLORS:
       case AppRoutes.SIZES:
       case AppRoutes.PRODUCT_STATUS:
+      case AppRoutes.MATERIAL:
         return AppRoutes.PRODUCTS;
       default:
         return AppRoutes.HOME;
@@ -39,6 +40,7 @@ export const SideBar = memo(() => {
             <NavDropdown.Item href={`/${AppRoutes.COLORS}`}>Colors</NavDropdown.Item>
             <NavDropdown.Item href={`/${AppRoutes.SIZES}`}>Sizes</NavDropdown.Item>
             <NavDropdown.Item href={`/${AppRoutes.PRODUCT_STATUS}`}>Product Status</NavDropdown.Item>
+            <NavDropdown.Item href={`/${AppRoutes.MATERIAL}`}>Materials</NavDropdown.Item>
           </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item eventKey="orders">
@@ -52,6 +54,7 @@ export const SideBar = memo(() => {
           <Accordion.Header>Account</Accordion.Header>
           <Accordion.Body>
             <NavDropdown.Item href="#accounts">Accounts</NavDropdown.Item>
+            <NavDropdown.Item href="#address">Addresses</NavDropdown.Item>
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>

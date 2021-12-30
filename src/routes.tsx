@@ -13,8 +13,11 @@ import { ProductContextProvider } from "./context/product.context";
 import { CreateColor } from "./pages/color/create-color";
 import { CreateSize } from "./pages/size/create-size";
 import { CreateProductStatus } from "./pages/product-status/create-product-status";
-import { CreateProduct } from "./pages/product/create-product";
 import { UpdateProduct } from "./pages/product/update-product";
+import { MaterialContextProvider } from "./context/material.context";
+import { MaterialPage } from "./pages/material/material.page";
+import { CreateMaterial } from "./pages/material/create-material";
+import { UpdateMaterial } from "./pages/material/update-material";
 
 export const routes = [
   {
@@ -92,6 +95,22 @@ export const routes = [
       <ProductStatusContextProvider>
         <CreateProductStatus />
       </ProductStatusContextProvider>
+    ),
+  },
+  {
+    path: AppRoutes.MATERIAL,
+    element: (
+      <MaterialContextProvider>
+        <MaterialPage />
+      </MaterialContextProvider>
+    ),
+  },
+  {
+    path: AppRoutes.CREATE_MATERIAL,
+    element: (
+      <MaterialContextProvider>
+        <CreateMaterial />
+      </MaterialContextProvider>
     ),
   },
 ];

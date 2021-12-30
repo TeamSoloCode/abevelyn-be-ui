@@ -9,13 +9,17 @@ export enum AppRoutes {
   CREATE_SIZE = "create-size",
   UPDATE_SIZE = "update-size",
 
-  PRODUCT_STATUS = "productStatus",
+  PRODUCT_STATUS = "product-status",
   CREATE_PRODUCT_STATUS = "create-product-status",
   UPDATE_PRODUCT_STATUS = "update-product-status",
 
   PRODUCTS = "products",
   CREATE_PRODUCT = "create-product",
   UPDATE_PRODUCT = "update-product",
+
+  MATERIAL = "materials",
+  CREATE_MATERIAL = "create-material",
+  UPDATE_MATERIAL = "update-material",
 
   HOME = "home",
   SIGNIN = "signin",
