@@ -18,6 +18,9 @@ import { MaterialContextProvider } from "./context/material.context";
 import { MaterialPage } from "./pages/material/material.page";
 import { CreateMaterial } from "./pages/material/create-material";
 import { UpdateMaterial } from "./pages/material/update-material";
+import { SaleContextProvider } from "./context/sale.context";
+import { SalePage } from "./pages/sale/sale.page";
+import { CreateSale } from "./pages/sale/create-sale";
 
 export const routes = [
   {
@@ -111,6 +114,22 @@ export const routes = [
       <MaterialContextProvider>
         <CreateMaterial />
       </MaterialContextProvider>
+    ),
+  },
+  {
+    path: AppRoutes.SALE,
+    element: (
+      <SaleContextProvider>
+        <SalePage />
+      </SaleContextProvider>
+    ),
+  },
+  {
+    path: AppRoutes.CREATE_SALE,
+    element: (
+      <SaleContextProvider>
+        <CreateSale />
+      </SaleContextProvider>
     ),
   },
 ];

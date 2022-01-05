@@ -41,6 +41,7 @@ export class ClientApi<C, U> {
     FETCH_IMAGE: "/file",
     MATERIAL: "/materials",
     LOGOUT: "/auth/logout",
+    SALE: "/sales",
   };
 
   private mainApi: string;
@@ -328,6 +329,20 @@ export class MaterialApi extends ClientApi<any, any> {
   loadDataAsOption = super.loadDataAsOption;
 }
 
+export class SaleApi extends ClientApi<any, any> {
+  constructor() {
+    super(ClientApi.APIs.SALE);
+  }
+
+  fetch = super.fetch;
+  fetchById = super.fetchById;
+  fetchAvailable = super.fetchAvailable;
+  create = super.create;
+  update = super.update;
+  delete = super.delete;
+  loadDataAsOption = super.loadDataAsOption;
+}
+
 export const clientApi = new ClientApi("");
 export const colorApi = new ColorApi();
 export const collectionApi = new CollectionApi();
@@ -335,3 +350,4 @@ export const productStatusApi = new ProductStatusApi();
 export const sizeApi = new SizeApi();
 export const productApi = new ProductApi();
 export const materialApi = new MaterialApi();
+export const saleApi = new SaleApi();

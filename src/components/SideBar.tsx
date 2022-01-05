@@ -41,6 +41,7 @@ export const SideBar = memo(() => {
             <NavDropdown.Item href={`/${AppRoutes.SIZES}`}>Sizes</NavDropdown.Item>
             <NavDropdown.Item href={`/${AppRoutes.PRODUCT_STATUS}`}>Product Status</NavDropdown.Item>
             <NavDropdown.Item href={`/${AppRoutes.MATERIAL}`}>Materials</NavDropdown.Item>
+            <NavDropdown.Item href={`/${AppRoutes.SALE}`}>Sales</NavDropdown.Item>
           </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item eventKey="orders">

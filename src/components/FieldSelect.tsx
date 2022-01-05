@@ -16,7 +16,7 @@ const customStyles = {
     padding: 3,
     marginTop: 3,
   }),
-  menuPortal: (base) => ({ ...base, zIndex: 3 }),
+  menuPortal: (base) => ({ ...base, zIndex: 1056 }),
   valueContainer: (base) => ({ ...base, outerHeight: 1300 }),
   option: (styles, props) => {
     return {
@@ -28,7 +28,7 @@ const customStyles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    width: "50rem",
+    // width: "50rem",
     minHeight: "3rem",
     height: "4rem",
   }),
@@ -64,7 +64,7 @@ interface IFieldSelect {
 }
 
 export const FieldSelect = memo((props: IFieldSelect) => {
-  const [options, setOptions] = useState<Option[]>();
+  const [options, setOptions] = useState<Option[]>(() => props?.options || []);
   const ref = useRef<Select<Option, false, any> | null>();
   const prevOptions = usePrevious(options);
 
@@ -98,26 +98,24 @@ export const FieldSelect = memo((props: IFieldSelect) => {
   }, [props.loadOnMount]);
 
   useEffect(() => {
-    if (props.loadOnMount) {
-      (async () => {
-        if (options && !isEqual(options, prevOptions)) {
-          const defaultValue = props.defaultValue;
-          if (defaultValue instanceof Array) {
-            const ops = defaultValue.map((value) => {
-              return findOptionByValue(options || [], value);
-            });
+    (async () => {
+      if (options && !isEqual(options, prevOptions)) {
+        const defaultValue = props.defaultValue;
+        if (defaultValue instanceof Array) {
+          const ops = defaultValue.map((value) => {
+            return findOptionByValue(options || [], value);
+          });
 
-            ops && ref.current?.setValue(ops, "select-option");
-          }
-
-          if (typeof defaultValue === "string") {
-            const res = findOptionByValue(options || [], defaultValue);
-            res && ref.current?.setValue(res, "select-option");
-          }
+          ops && ref.current?.setValue(ops, "select-option");
         }
-      })();
-    }
-  }, [props.loadOnMount, props.defaultValue, ref.current, options]);
+
+        if (typeof defaultValue === "string") {
+          const res = findOptionByValue(options || [], defaultValue);
+          res && ref.current?.setValue(res, "select-option");
+        }
+      }
+    })();
+  }, [props.defaultValue, ref.current, options]);
 
   const onOpenMenuOption = useCallback(async () => {
     if (props.onMenuOpen) props.onMenuOpen();
@@ -142,7 +140,7 @@ export const FieldSelect = memo((props: IFieldSelect) => {
           menuPortalTarget={document.body}
           value={props.value}
           placeholder={props.placeholder}
-          defaultOptions={props.options || options}
+          defaultOptions={options}
           loadOptions={props.loadOptions}
           onChange={props.onChange}
           onMenuOpen={onOpenMenuOption}

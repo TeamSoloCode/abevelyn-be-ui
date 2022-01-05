@@ -41,8 +41,6 @@ export class Product extends RootModel {
 
   price: number;
 
-  saleOf: number = 0;
-
   image: string;
 
   image1?: string;

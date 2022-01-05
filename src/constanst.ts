@@ -21,6 +21,15 @@ export enum AppRoutes {
   CREATE_MATERIAL = "create-material",
   UPDATE_MATERIAL = "update-material",
 
+  SALE = "sales",
+  CREATE_SALE = "create-sale",
+  UPDATE_SALE = "update-sale",
+
   HOME = "home",
   SIGNIN = "signin",
+}
+
+export enum SaleUnit {
+  PERCENTAGE = "%",
+  USD = "usd",
 }

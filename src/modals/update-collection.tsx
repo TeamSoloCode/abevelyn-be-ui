@@ -13,6 +13,7 @@ import { showError } from "../utils";
 import CollectionContext from "../context/collection.context";
 import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.dto";
 import { collectionApi } from "../client-api/api.client";
+import { FieldNumber } from "../components/FieldNumber";
 
 interface IUpdateCollection {
   show: boolean;
@@ -107,7 +108,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
                     type="checkbox"
                     label="Available"
                     {...register("available")}
-                    {...setValue("available", selectedCollection.available)}
+                    {...setValue("available", selectedCollection?.available)}
                   />
                 </Form.Group>
               </Row>

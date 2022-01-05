@@ -6,4 +6,5 @@ export interface IUpdateCollectionDto extends ICreateCollectionDto {
   description?: string;
   descriptionInFrench?: string;
   descriptionInVietnames?: string;
+  available?: boolean;
 }

@@ -85,10 +85,6 @@ const defaultColumns: IColumn<Product>[] = [
     item: (item) => item.size.name,
   },
   {
-    headerTitle: "Material",
-    item: (item) => "TODO",
-  },
-  {
     headerTitle: "Collections",
     item: (item) => {
       return (

@@ -18,7 +18,7 @@ interface IFieldNumber {
   suffix?: string;
   maxLength?: number;
   value?: number;
-  onValueChange?: (value: string | undefined, name?: string) => void;
+  onValueChange?: (value: string | undefined, name: any) => void;
 }
 
 export const FieldNumber = memo((props: IFieldNumber) => {
@@ -29,8 +29,9 @@ export const FieldNumber = memo((props: IFieldNumber) => {
           {props.label} {props.unit ? `( ${props.unit} )` : ""}
         </InputGroup.Text>
       </Col>
-      <Col xs="6">
+      <Col xs="10">
         <CurrencyInput
+          key={`${props.name} + ${props.defaultValue}`}
           className="form-control"
           autoComplete="off"
           name={props.name}

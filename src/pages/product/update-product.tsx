@@ -66,7 +66,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
       image4,
       image5,
       quantity,
-      colectionIds,
+      collectionIds,
       materialIds,
     }) => {
       if (!productId) return;
@@ -78,8 +78,8 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
         price,
         description,
         quantity,
-        colectionIds,
-        materialIds,
+        collectionIds: collectionIds || [],
+        materialIds: materialIds || [],
         image: image[0] ?? selectedProduct?.image,
         image1: image1?.[0] ?? selectedProduct?.image1,
         image2: image2?.[0] ?? selectedProduct?.image2,
@@ -181,7 +181,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   const onChangeCollections = useCallback(
     (newOption: SingleValue<Option>[]) => {
       setValue(
-        "colectionIds",
+        "collectionIds",
         (newOption || []).map((option) => option.value)
       );
     },

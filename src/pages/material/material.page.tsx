@@ -1,23 +1,11 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import Table from "react-bootstrap/Table";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-
-import ProductStatusContext from "../../context/product-status.context";
-import { CreateMaterial } from "./create-material";
 import { UpdateMaterial } from "./update-material";
 import { AppRoutes } from "../../constanst";
 import MaterialContext from "../../context/material.context";
 import { IColumn, TSCTable } from "../../components/TSCTable";
 import { Material } from "../../models/material.models";
-
-const tableData = [
-  ["Name", "name"],
-  ["Name in French", "nameInFrench"],
-  ["Name in Vietnamese", "nameInVietnames"],
-  ["Create At", "createdAt"],
-  ["Update At", "updatedAt"],
-];
 
 export const MaterialPage = React.memo(() => {
   const materialContext = useContext(MaterialContext);
