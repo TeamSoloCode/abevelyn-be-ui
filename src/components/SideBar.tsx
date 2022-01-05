@@ -17,6 +17,7 @@ export const SideBar = memo(() => {
       case AppRoutes.SIZES:
       case AppRoutes.PRODUCT_STATUS:
       case AppRoutes.MATERIAL:
+      case AppRoutes.SALE:
         return AppRoutes.PRODUCTS;
       default:
         return AppRoutes.HOME;

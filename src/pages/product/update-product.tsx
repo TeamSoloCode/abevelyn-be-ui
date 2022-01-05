@@ -16,6 +16,7 @@ import {
   materialApi,
   productApi,
   productStatusApi,
+  saleApi,
   sizeApi,
 } from "../../client-api/api.client";
 import { IUpdateProductDto } from "../../dto/product/update-product-req-dto";
@@ -68,6 +69,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
       quantity,
       collectionIds,
       materialIds,
+      saleIds,
     }) => {
       if (!productId) return;
       const isSuccess = await productContext?.updateProduct(productId, {
@@ -78,8 +80,9 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
         price,
         description,
         quantity,
-        collectionIds: collectionIds || [],
-        materialIds: materialIds || [],
+        collectionIds,
+        materialIds,
+        saleIds,
         image: image[0] ?? selectedProduct?.image,
         image1: image1?.[0] ?? selectedProduct?.image1,
         image2: image2?.[0] ?? selectedProduct?.image2,
@@ -151,6 +154,14 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
     callback(filteredOptions);
   }, []);
 
+  const loadSaleOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
+    const options = await saleApi.loadDataAsOption();
+    const filteredOptions = options.filter((op) =>
+      op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
+    );
+    callback(filteredOptions);
+  }, []);
+
   const onOpenColorMenuOption = () => {
     return colorApi.loadColorAsOption();
   };
@@ -165,6 +176,10 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
 
   const onOpenMaterialMenuOption = () => {
     return materialApi.loadDataAsOption();
+  };
+
+  const onOpenSaleMenuOption = () => {
+    return saleApi.loadDataAsOption();
   };
 
   const onOpenStatusMenuOption = () => {
@@ -192,6 +207,16 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
     (newOption: SingleValue<Option>[]) => {
       setValue(
         "materialIds",
+        (newOption || []).map((option) => option.value)
+      );
+    },
+    [setValue]
+  );
+
+  const onChangeSales = useCallback(
+    (newOption: SingleValue<Option>[]) => {
+      setValue(
+        "saleIds",
         (newOption || []).map((option) => option.value)
       );
     },
@@ -228,6 +253,11 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   const defaultMaterials = useMemo<(string | undefined)[]>(() => {
     const materials = selectedProduct?.materials || [];
     return materials?.map((col) => col.uuid);
+  }, [selectedProduct]);
+
+  const defaultSales = useMemo<(string | undefined)[]>(() => {
+    const sales = selectedProduct?.sales || [];
+    return sales?.map((col) => col.uuid);
   }, [selectedProduct]);
 
   const setDefaultFieldEffect = (defaulValue: any, name: keyof IUpdateProductDto): any => {
@@ -350,6 +380,17 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
                 addNewURL={AppRoutes.MATERIAL}
                 loadOptions={loadMaterialOptions}
                 onChange={onChangeMaterials}
+              />
+              <FieldSelect
+                label="Sales"
+                placeholder="Select sale"
+                loadDataFunction={onOpenSaleMenuOption}
+                loadOnMount={true}
+                isMulti
+                defaultValue={defaultSales}
+                addNewURL={AppRoutes.CREATE_SALE}
+                loadOptions={loadSaleOptions}
+                onChange={onChangeSales}
               />
               <hr />
               <FieldFile

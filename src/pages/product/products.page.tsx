@@ -66,6 +66,25 @@ const defaultColumns: IColumn<Product>[] = [
     item: (item) => numeral(item.price).format("$0,0.00"),
   },
   {
+    headerTitle: "Sales",
+    item: (item) => {
+      return (
+        <div>
+          <ListGroup as="ol" numbered style={{ maxWidth: 200 }}>
+            {(item?.sales || []).map((sale) => {
+              return (
+                <ListGroup.Item as="li">
+                  {sale.name} ({sale.saleOff} {sale.unit})<div>Start: {sale.startedDate}</div>
+                  <div>Expire: {sale.expiredDate}</div>
+                </ListGroup.Item>
+              );
+            })}
+          </ListGroup>
+        </div>
+      );
+    },
+  },
+  {
     headerTitle: "Color",
     item: (item) => (
       <div className="d-flex align-items-center justify-content-center">

@@ -14,6 +14,7 @@ import { IUpdateSizeReqDto } from "../dto/size/update-size.req.dto";
 import { Option } from "../components/FieldSelect";
 import { ProductStatus } from "../models/product-status.model";
 import { IUpdateProductDto } from "../dto/product/update-product-req-dto";
+import { Sale } from "../models/sale.model";
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
 
@@ -340,7 +341,24 @@ export class SaleApi extends ClientApi<any, any> {
   create = super.create;
   update = super.update;
   delete = super.delete;
-  loadDataAsOption = super.loadDataAsOption;
+
+  async loadDataAsOption(): Promise<Option[]> {
+    const res = await this.fetchAvailable();
+    if (res.status == 200) {
+      const result = await res.json();
+      const data: Sale[] = result?.data || [];
+      const options: Option[] = data.map((sale) => {
+        return {
+          label: `${sale.name || "No Name"} (${sale.saleOff} ${sale.unit})`,
+          value: sale.uuid,
+        };
+      });
+
+      return options;
+    }
+
+    return [];
+  }
 }
 
 export const clientApi = new ClientApi("");
