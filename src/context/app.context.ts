@@ -86,13 +86,18 @@ export const AppContextProvider = (props: IAppContextProps) => {
       const token = Cookie().get(ClientApi.COOKIE_KEYS.TOKEN);
       if (token) {
         const username = Cookie().get(ClientApi.COOKIE_KEYS.USERNAME);
-        clientApi.verify_token().then((authenticated) => {
-          dispatch({ type: Actions.AUTHENTICATED, authenticated, username });
-          if (authenticated == false) {
-            location.reload();
-            Cookie().removeAll();
-          }
-        });
+        clientApi
+          .verify_token()
+          .then((authenticated) => {
+            dispatch({ type: Actions.AUTHENTICATED, authenticated, username });
+            if (authenticated == false) {
+              location.reload();
+              Cookie().removeAll();
+            }
+          })
+          .catch((reason) => {
+            console.error(reason);
+          });
       } else {
         dispatch({ type: Actions.AUTHENTICATED, authenticated: false });
       }

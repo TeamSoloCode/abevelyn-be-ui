@@ -1,4 +1,5 @@
 import { RootModel } from "./root.model";
+import { Sale } from "./sale.model";
 
 export class Collection extends RootModel {
   constructor(name: string) {
@@ -14,4 +15,5 @@ export class Collection extends RootModel {
   description?: string;
   descriptionInFrench?: string;
   descriptionInVietnames?: string;
+  sales?: Sale[];
 }

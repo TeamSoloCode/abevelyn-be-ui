@@ -1,10 +1,12 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
 import Modal from "react-bootstrap/Modal";
 import { SubmitHandler, useForm } from "react-hook-form";
 import AppContext from "../context/app.context";
 import { ISignInReqDto } from "../dto/signin/signin.req.dto";
+import { ClientApi } from "../client-api/api.client";
 
 export const SignInPage = React.memo(() => {
   const {
@@ -23,6 +25,10 @@ export const SignInPage = React.memo(() => {
     },
     [appContext.login]
   );
+
+  const onLoginGoogle = useCallback(() => {
+    location.replace(ClientApi.ROOT_API + ClientApi.APIs.LOGIN_WITH_GOOGLE);
+  }, []);
 
   return (
     <Modal.Dialog>
@@ -51,6 +57,12 @@ export const SignInPage = React.memo(() => {
             Submit
           </Button>
         </Modal.Footer>
+
+        <Col>
+          <Button variant="primary" onClick={onLoginGoogle}>
+            Login with GOOGLE
+          </Button>
+        </Col>
       </Form>
     </Modal.Dialog>
   );

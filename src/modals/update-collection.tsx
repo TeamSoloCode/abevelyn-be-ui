@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useState } from "react";
+import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -12,8 +12,12 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { showError } from "../utils";
 import CollectionContext from "../context/collection.context";
 import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.dto";
-import { collectionApi } from "../client-api/api.client";
+import { collectionApi, saleApi } from "../client-api/api.client";
 import { FieldNumber } from "../components/FieldNumber";
+import { FieldSelect, Option } from "../components/FieldSelect";
+import { AppRoutes } from "../constanst";
+import { SingleValue } from "react-select";
+import { Collection } from "../models/collection.model";
 
 interface IUpdateCollection {
   show: boolean;
@@ -23,7 +27,7 @@ interface IUpdateCollection {
 
 export const UpdateCollection = memo((props: IUpdateCollection) => {
   const collectionContext = useContext(CollectionContext);
-  const [selectedCollection, setSelectedCollection] = useState<IUpdateCollectionDto | null>(null);
+  const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const {
     register,
@@ -41,6 +45,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
       description,
       descriptionInFrench,
       descriptionInVietnames,
+      saleIds,
     }) => {
       if (!collectionContext?.updateCollection) return;
       const isSuccess = await collectionContext.updateCollection(props.collectionId, {
@@ -51,15 +56,43 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
         description,
         descriptionInFrench,
         descriptionInVietnames,
+        saleIds,
       });
       isSuccess && props.close();
     },
     [collectionContext.createCollection, props.close, props.collectionId]
   );
 
+  const defaultSales = useMemo<(string | undefined)[]>(() => {
+    const sales = selectedCollection?.sales || [];
+    return sales?.map((col) => col.uuid);
+  }, [selectedCollection]);
+
   const openConfirm = useCallback(async () => {
     setShowAlert(true);
   }, [setShowAlert]);
+
+  const onOpenSaleMenuOption = () => {
+    return saleApi.loadDataAsOption();
+  };
+
+  const loadSaleOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
+    const options = await saleApi.loadDataAsOption();
+    const filteredOptions = options.filter((op) =>
+      op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
+    );
+    callback(filteredOptions);
+  }, []);
+
+  const onChangeSales = useCallback(
+    (newOption: SingleValue<Option>[]) => {
+      setValue(
+        "saleIds",
+        (newOption || []).map((option) => option.value)
+      );
+    },
+    [setValue]
+  );
 
   useEffect(() => {
     if (!props.show) {
@@ -112,6 +145,18 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
                   />
                 </Form.Group>
               </Row>
+
+              <FieldSelect
+                label="Sales"
+                placeholder="Select sale"
+                loadDataFunction={onOpenSaleMenuOption}
+                loadOnMount={true}
+                isMulti
+                defaultValue={defaultSales}
+                addNewURL={AppRoutes.CREATE_SALE}
+                loadOptions={loadSaleOptions}
+                onChange={onChangeSales}
+              />
               <hr />
               <InputGroup className="mb-2">
                 <InputGroup.Text>Name in French</InputGroup.Text>

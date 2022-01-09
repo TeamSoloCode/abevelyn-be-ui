@@ -3,6 +3,7 @@ import CollectionContext, { CollectionContextProvider } from "../context/collect
 import Table from "react-bootstrap/Table";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import get from "lodash.get";
 import { CreateCollection } from "../modals/create-collection";
 import { UpdateCollection } from "../modals/update-collection";
 
@@ -13,6 +14,7 @@ const tableData = [
   ["Description", "description"],
   ["Description in French", "descriptionInFrench"],
   ["Description in Vietnamese", "descriptionInVietnames"],
+  // ["Sales", "sales"],
   ["Status", "available", "_available"],
   ["Create At", "createdAt"],
   ["Update At", "updatedAt"],
@@ -65,9 +67,9 @@ export const CollectionPage = React.memo(() => {
     return collections.map((collection) => {
       const tds = tableData.map(([_, value, type], index) => {
         if (type == "_available") {
-          return <td key={index}>{collection[value] ? "Available" : "Not Available"}</td>;
+          return <td key={index}>{get(collection, value) ? "Available" : "Not Available"}</td>;
         }
-        return <td key={index}>{collection[value]}</td>;
+        return <td key={index}>{get(collection, value)}</td>;
       });
       return (
         <tr data-id={collection.uuid} key={collection.uuid} onClick={onClickRow}>

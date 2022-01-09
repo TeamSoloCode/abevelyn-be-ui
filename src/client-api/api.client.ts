@@ -32,7 +32,7 @@ export class ClientApi<C, U> {
   static ROOT_API = "http://localhost:3000";
   static APIs = {
     SIGNIN_URI: "/auth/admin_signin",
-    VERIFY_TOKEN: "/auth/verify_token",
+    VERIFY_TOKEN: "/auth/admin_verify_token",
     COLORS: "/colors",
     COLLECTIONS: "/collections",
     PRODUCT_STATUS: "/product_status",
@@ -43,6 +43,7 @@ export class ClientApi<C, U> {
     MATERIAL: "/materials",
     LOGOUT: "/auth/logout",
     SALE: "/sales",
+    LOGIN_WITH_GOOGLE: "/auth/google",
   };
 
   private mainApi: string;
@@ -349,7 +350,7 @@ export class SaleApi extends ClientApi<any, any> {
       const data: Sale[] = result?.data || [];
       const options: Option[] = data.map((sale) => {
         return {
-          label: `${sale.name || "No Name"} (${sale.saleOff} ${sale.unit})`,
+          label: `${sale.name || "-"} (${sale.saleOff} ${sale.unit})`,
           value: sale.uuid,
         };
       });
