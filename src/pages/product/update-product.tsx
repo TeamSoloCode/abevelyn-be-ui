@@ -23,7 +23,7 @@ import { IUpdateProductDto } from "../../dto/product/update-product-req-dto";
 import { SingleValue } from "react-select";
 import { FieldText } from "../../components/FieldText";
 import { FieldNumber } from "../../components/FieldNumber";
-import { AppRoutes } from "../../constanst";
+import { AppRoutes, SaleType } from "../../constanst";
 import { FieldFile } from "../../components/FieldFile";
 import { useNavigate, useParams } from "react-router-dom";
 import { Product } from "../../models/product.model";
@@ -155,7 +155,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   }, []);
 
   const loadSaleOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
-    const options = await saleApi.loadDataAsOption();
+    const options = await saleApi.loadOptionByType(SaleType.PRODUCT);
     const filteredOptions = options.filter((op) =>
       op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
     );
@@ -179,7 +179,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
   };
 
   const onOpenSaleMenuOption = () => {
-    return saleApi.loadDataAsOption();
+    return saleApi.loadOptionByType(SaleType.PRODUCT);
   };
 
   const onOpenStatusMenuOption = () => {
@@ -197,7 +197,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
     (newOption: SingleValue<Option>[]) => {
       setValue(
         "collectionIds",
-        (newOption || []).map((option) => option.value)
+        (newOption || []).map((option) => option?.value)
       );
     },
     [setValue]
@@ -207,7 +207,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
     (newOption: SingleValue<Option>[]) => {
       setValue(
         "materialIds",
-        (newOption || []).map((option) => option.value)
+        (newOption || []).map((option) => option?.value)
       );
     },
     [setValue]
@@ -217,7 +217,7 @@ export const UpdateProduct = memo((props: IUpdateProduct) => {
     (newOption: SingleValue<Option>[]) => {
       setValue(
         "saleIds",
-        (newOption || []).map((option) => option.value)
+        (newOption || []).map((option) => option?.value)
       );
     },
     [setValue]

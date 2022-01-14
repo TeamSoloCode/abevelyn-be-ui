@@ -1,4 +1,4 @@
-import { SaleUnit } from "../constanst";
+import { SaleType, SaleUnit } from "../constanst";
 import { Collection } from "./collection.model";
 import { Product } from "./product.model";
 import { RootModel } from "./root.model";
@@ -18,7 +18,9 @@ export class Sale extends RootModel {
 
   saleOff?: number;
 
-  maxOff?: number;
+  applyPrice?: number;
+
+  saleType?: SaleType;
 
   unit?: SaleUnit;
 

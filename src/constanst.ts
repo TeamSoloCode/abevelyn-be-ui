@@ -33,3 +33,12 @@ export enum SaleUnit {
   PERCENTAGE = "%",
   USD = "usd",
 }
+
+export enum SaleType {
+  ORDER = "order",
+  COLLECTION = "collection",
+  PRODUCT = "product",
+  COMBO = "combo",
+}
+
+export const DEFAULT_DATETIME_FORMAT = "MM-DD-YYYY HH:mm";

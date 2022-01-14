@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from "re
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import moment from "moment";
-import { AppRoutes } from "../../constanst";
+import { AppRoutes, SaleType } from "../../constanst";
 import { IColumn, TSCTable } from "../../components/TSCTable";
 import { UpdateSale } from "./update-sale";
 import SaleContext from "../../context/sale.context";
@@ -63,6 +63,19 @@ const defaultColumns: IColumn<Sale>[] = [
     item: (item) => item.description,
   },
   {
+    headerTitle: "Type",
+    item: (item) => {
+      switch (item.saleType) {
+        case SaleType.COLLECTION:
+          return "For Collection";
+        case SaleType.PRODUCT:
+          return "For Production";
+        case SaleType.ORDER:
+          return "For Order";
+      }
+    },
+  },
+  {
     headerTitle: "Sale",
     item: (item) => item.saleOff,
   },
@@ -71,8 +84,8 @@ const defaultColumns: IColumn<Sale>[] = [
     item: (item) => item.unit?.toLocaleUpperCase(),
   },
   {
-    headerTitle: "Max Sale (USD)",
-    item: (item) => item.maxOff,
+    headerTitle: "Apply Price (USD)",
+    item: (item) => item.applyPrice,
   },
   {
     headerTitle: "Start Date",

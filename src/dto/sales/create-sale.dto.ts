@@ -1,13 +1,17 @@
-import { SaleUnit } from "../../constanst";
+import { SaleType, SaleUnit } from "../../constanst";
 
 export interface ICreateSaleDto {
+  name: string;
+
   saleOff: number;
 
   startedDate: string;
 
   expiredDate: string;
 
-  maxOff: number;
+  applyPrice: number;
 
   unit: SaleUnit;
+
+  saleType: SaleType;
 }

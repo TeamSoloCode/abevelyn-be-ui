@@ -33,6 +33,7 @@ export const UpdateSale = memo((props: IUpdateSale) => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
     reset,
   } = useForm<IUpdateSaleDto>();
@@ -45,7 +46,7 @@ export const UpdateSale = memo((props: IUpdateSale) => {
       description,
       descriptionInFrench,
       descriptionInVietnamese,
-      maxOff,
+      applyPrice,
       saleOff,
       unit,
       expiredDate,
@@ -58,11 +59,11 @@ export const UpdateSale = memo((props: IUpdateSale) => {
         description,
         descriptionInFrench,
         descriptionInVietnamese,
-        maxOff,
+        applyPrice,
         saleOff,
         unit,
-        expiredDate,
-        startedDate,
+        expiredDate: moment(expiredDate).utc().toISOString(),
+        startedDate: moment(startedDate).utc().toISOString(),
       });
       isSuccess && props.close();
     },
@@ -156,8 +157,8 @@ export const UpdateSale = memo((props: IUpdateSale) => {
 
               <FieldNumber
                 label="Max Off"
-                name="maxOff"
-                defaultValue={setDefaultFieldEffect(selectedSale?.maxOff, "maxOff")}
+                name="applyPrice"
+                defaultValue={setDefaultFieldEffect(selectedSale?.applyPrice, "applyPrice")}
                 placeholder="Max Off"
                 unit="USD"
                 onValueChange={onNumberChange}
@@ -184,7 +185,7 @@ export const UpdateSale = memo((props: IUpdateSale) => {
                 showTimeInput
                 timeInputLabel="Time:"
                 dateFormat="MM/dd/yyyy h:mm aa"
-                minDate={startedDate || new Date()}
+                minDate={moment(startedDate || new Date()).toDate()}
               />
               <hr />
               <InputGroup as={Col} className="mb-2">

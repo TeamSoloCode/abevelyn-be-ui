@@ -3,7 +3,7 @@ import { saleApi } from "../client-api/api.client";
 import { ICreateSaleDto } from "../dto/sales/create-sale.dto";
 import { IUpdateSaleDto } from "../dto/sales/update-sale.dto";
 import { Sale } from "../models/sale.model";
-import { showError } from "../utils";
+import { showError, showSuccess } from "../utils";
 
 interface ISaleProviderProps {
   children?: any;
@@ -71,6 +71,7 @@ export const SaleContextProvider = (props: ISaleProviderProps) => {
       const result = await res.json();
       if (res.status == 201) {
         loadSales();
+        showSuccess(result?.message);
         return result?.data;
       }
       showError(result?.message);
@@ -85,6 +86,7 @@ export const SaleContextProvider = (props: ISaleProviderProps) => {
       const result = await res.json();
       if (res.status == 200) {
         loadSales();
+        showSuccess(result?.message);
         return result?.data;
       }
       showError(result?.message);

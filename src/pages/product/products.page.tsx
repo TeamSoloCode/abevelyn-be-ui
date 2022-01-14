@@ -5,13 +5,14 @@ import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
 import ProductContext from "../../context/product.context";
 import { CreateProduct } from "./create-product";
-import { AppRoutes } from "../../constanst";
+import { AppRoutes, DEFAULT_DATETIME_FORMAT } from "../../constanst";
 import { TSCTable, IColumn } from "../../components/TSCTable";
 import { Product } from "../../models/product.model";
 import { BrowserRouter as Router, Routes, Route, Link, Outlet, useNavigate } from "react-router-dom";
 import { clientApi, ClientApi } from "../../client-api/api.client";
 import map from "lodash.map";
 import numeral from "numeral";
+import moment from "moment";
 
 export const ProductsPage = React.memo(() => {
   const productContext = useContext(ProductContext);
@@ -69,13 +70,14 @@ const defaultColumns: IColumn<Product>[] = [
     headerTitle: "Sales",
     item: (item) => {
       return (
-        <div>
+        <div key={item.uuid}>
           <ListGroup as="ol" numbered style={{ maxWidth: 200 }}>
             {(item?.sales || []).map((sale) => {
               return (
-                <ListGroup.Item as="li">
-                  {sale.name} ({sale.saleOff} {sale.unit})<div>Start: {sale.startedDate}</div>
-                  <div>Expire: {sale.expiredDate}</div>
+                <ListGroup.Item as="li" key={sale.uuid}>
+                  {sale.name} ({sale.saleOff} {sale.unit})
+                  <div>Start: {moment(sale.startedDate).format(DEFAULT_DATETIME_FORMAT)}</div>
+                  <div>Expire: {moment(sale.expiredDate).format(DEFAULT_DATETIME_FORMAT)}</div>
                 </ListGroup.Item>
               );
             })}
@@ -107,10 +109,14 @@ const defaultColumns: IColumn<Product>[] = [
     headerTitle: "Collections",
     item: (item) => {
       return (
-        <div>
+        <div key={item.uuid}>
           <ListGroup as="ol" numbered>
             {map(item.collections, "name").map((name) => {
-              return <ListGroup.Item as="li">{name}</ListGroup.Item>;
+              return (
+                <ListGroup.Item as="li" key={name}>
+                  {name}
+                </ListGroup.Item>
+              );
             })}
           </ListGroup>
         </div>
@@ -121,10 +127,14 @@ const defaultColumns: IColumn<Product>[] = [
     headerTitle: "Materials",
     item: (item) => {
       return (
-        <div>
+        <div key={item.uuid}>
           <ListGroup as="ol" numbered>
             {map(item.materials, "name").map((name) => {
-              return <ListGroup.Item as="li">{name}</ListGroup.Item>;
+              return (
+                <ListGroup.Item as="li" key={name}>
+                  {name}
+                </ListGroup.Item>
+              );
             })}
           </ListGroup>
         </div>
@@ -153,11 +163,6 @@ const defaultColumns: IColumn<Product>[] = [
   },
   {
     headerTitle: "Create At",
-    item: (item) => item.createdAt,
-  },
-  {
-    headerTitle: "Update At",
-    item: (item) => item.updatedAt,
-    isHidden: true,
+    item: (item) => moment(item.createdAt).format(DEFAULT_DATETIME_FORMAT),
   },
 ];

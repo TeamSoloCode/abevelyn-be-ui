@@ -15,6 +15,14 @@ import { Option } from "../components/FieldSelect";
 import { ProductStatus } from "../models/product-status.model";
 import { IUpdateProductDto } from "../dto/product/update-product-req-dto";
 import { Sale } from "../models/sale.model";
+import { SaleType } from "../constanst";
+
+export interface FetchQuery {
+  limit?: number;
+  offset?: number;
+  order?: string;
+  cond?: string;
+}
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
 
@@ -152,8 +160,17 @@ export class ClientApi<C, U> {
     return apiUri + `/${imageName}`;
   }
 
-  protected fetchAvailable(): Promise<Response> {
-    return this.get(this.mainApi + "/fetch_available");
+  protected fetchAvailable(query?: FetchQuery): Promise<Response> {
+    const queryString = query
+      ? "?" +
+        Object.keys(query)
+          .map((key) => {
+            return key + "=" + query[key];
+          })
+          .join("&")
+      : "";
+
+    return this.get(this.mainApi + "/fetch_available" + queryString);
   }
 
   protected async loadDataAsOption(): Promise<Option[]> {
@@ -343,8 +360,8 @@ export class SaleApi extends ClientApi<any, any> {
   update = super.update;
   delete = super.delete;
 
-  async loadDataAsOption(): Promise<Option[]> {
-    const res = await this.fetchAvailable();
+  async loadOptionByType(saleType: SaleType): Promise<Option[]> {
+    const res = await this.fetchAvailable({ cond: `[["saleType", "=", "${saleType}"]]` });
     if (res.status == 200) {
       const result = await res.json();
       const data: Sale[] = result?.data || [];

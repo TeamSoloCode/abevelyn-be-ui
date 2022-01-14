@@ -15,7 +15,7 @@ import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.d
 import { collectionApi, saleApi } from "../client-api/api.client";
 import { FieldNumber } from "../components/FieldNumber";
 import { FieldSelect, Option } from "../components/FieldSelect";
-import { AppRoutes } from "../constanst";
+import { AppRoutes, SaleType } from "../constanst";
 import { SingleValue } from "react-select";
 import { Collection } from "../models/collection.model";
 
@@ -73,11 +73,11 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
   }, [setShowAlert]);
 
   const onOpenSaleMenuOption = () => {
-    return saleApi.loadDataAsOption();
+    return saleApi.loadOptionByType(SaleType.COLLECTION);
   };
 
   const loadSaleOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
-    const options = await saleApi.loadDataAsOption();
+    const options = await saleApi.loadOptionByType(SaleType.COLLECTION);
     const filteredOptions = options.filter((op) =>
       op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
     );

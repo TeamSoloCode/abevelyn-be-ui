@@ -55,7 +55,6 @@ interface IFieldSelect {
   loadOnMount?: boolean;
   defaultValue?: string | string[];
   addNewURL?: string;
-  hideAddNewButton?: boolean;
   loadDataFunction?: Function;
   isMulti?: any;
   loadOptions?: (input: string, callback: (options: Option[]) => void) => void;
@@ -72,7 +71,7 @@ export const FieldSelect = memo((props: IFieldSelect) => {
     (menuProps: MenuListProps<any, false, any>) => {
       return (
         <components.MenuList {...menuProps}>
-          {!props.hideAddNewButton && (
+          {props.addNewURL && (
             <a className="w-100 btn" href={`/${props.addNewURL}`} target="_blank">
               <Button className="mt-1 w-100">Add new</Button>
             </a>
@@ -81,7 +80,7 @@ export const FieldSelect = memo((props: IFieldSelect) => {
         </components.MenuList>
       );
     },
-    [props.hideAddNewButton]
+    [props.addNewURL]
   );
 
   useEffect(() => {

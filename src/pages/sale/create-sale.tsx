@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext } from "react";
+import React, { memo, useCallback, useContext, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -14,11 +14,14 @@ import { SingleValue } from "react-select";
 import SaleContext from "../../context/sale.context";
 import { ICreateSaleDto } from "../../dto/sales/create-sale.dto";
 import moment from "moment";
+import { FieldText } from "../../components/FieldText";
+import { SaleType, SaleUnit } from "../../constanst";
 
 interface ICreateMaterial {}
 
 export const CreateSale = memo((props: ICreateMaterial) => {
   const saleContext = useContext(SaleContext);
+  const [resetKey, setResetKey] = useState(Date.now());
   const state = saleContext?.state;
   const {
     register,
@@ -26,12 +29,24 @@ export const CreateSale = memo((props: ICreateMaterial) => {
     reset,
     setValue,
     getValues,
+    watch,
     formState: { errors },
   } = useForm<ICreateSaleDto>();
   const onSubmit: SubmitHandler<ICreateSaleDto> = useCallback(
-    async ({ expiredDate, startedDate, unit, saleOff, maxOff }) => {
-      const isSuccess = await saleContext?.createSale({ expiredDate, startedDate, unit, saleOff, maxOff });
-      isSuccess && reset();
+    async ({ expiredDate, startedDate, unit, saleOff, applyPrice, name, saleType }) => {
+      const isSuccess = await saleContext?.createSale({
+        expiredDate: moment(expiredDate).utc().toISOString(),
+        startedDate: moment(startedDate).utc().toISOString(),
+        unit,
+        saleOff,
+        applyPrice,
+        name,
+        saleType,
+      });
+      if (isSuccess) {
+        reset();
+        setResetKey(Date.now());
+      }
     },
     [saleContext?.createSale]
   );
@@ -39,6 +54,13 @@ export const CreateSale = memo((props: ICreateMaterial) => {
   const onChangeSaleUnit = useCallback(
     (newOption: SingleValue<Option>) => {
       newOption?.value && setValue("unit", newOption?.value, {});
+    },
+    [setValue]
+  );
+
+  const onChangeSaleType = useCallback(
+    (newOption: SingleValue<Option>) => {
+      newOption?.value && setValue("saleType", newOption?.value, {});
     },
     [setValue]
   );
@@ -77,9 +99,22 @@ export const CreateSale = memo((props: ICreateMaterial) => {
       </Modal.Header>
 
       <Modal.Body>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form key={resetKey} onSubmit={handleSubmit(onSubmit)}>
           <Row className="align-items-center">
-            <Col xs="auto">
+            <Col xs="12">
+              <FieldText label="Event name" placeholder="Event name" reactFormRegister={{ ...register("name") }} />
+              <hr />
+              <FieldSelect
+                label="Sale for"
+                placeholder="Select type"
+                defaultValue={"product"}
+                options={[
+                  { value: "product", label: "Production Sale" },
+                  { value: "collection", label: "Collection Sale" },
+                  { value: "order", label: "Order Sale" },
+                ]}
+                onChange={onChangeSaleType}
+              />
               <FieldSelect
                 label="Unit"
                 placeholder="Select Unit"
@@ -90,15 +125,18 @@ export const CreateSale = memo((props: ICreateMaterial) => {
                 ]}
                 onChange={onChangeSaleUnit}
               />
-              <FieldNumber label="Sale" name="saleOff" placeholder="Sale" onValueChange={onNumberChange} />
+              <FieldNumber label="Sale Off" name="saleOff" placeholder="Sale Off" onValueChange={onNumberChange} />
 
-              <FieldNumber
-                label="Max Off"
-                name="maxOff"
-                placeholder="Max Off"
-                unit="USD"
-                onValueChange={onNumberChange}
-              />
+              {watch().saleType === SaleType.ORDER && (
+                <FieldNumber
+                  label="Apply Price"
+                  name="applyPrice"
+                  placeholder="Apply Price"
+                  unit="USD"
+                  onValueChange={onNumberChange}
+                />
+              )}
+
               <hr />
               <FieldDate
                 label="Start Date"
@@ -116,7 +154,7 @@ export const CreateSale = memo((props: ICreateMaterial) => {
                 showTimeInput
                 timeInputLabel="Time:"
                 dateFormat="MM/dd/yyyy h:mm aa"
-                minDate={getValues().startedDate || new Date()}
+                minDate={moment(watch().startedDate || new Date()).toDate()}
               />
               <Button type="submit" className="mb-2">
                 Submit
