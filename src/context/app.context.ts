@@ -69,7 +69,7 @@ export const AppContextProvider = (props: IAppContextProps) => {
       if (token) {
         clientApi.verify_token().then((authenticated) => {
           if (authenticated == false) {
-            navigate("/");
+            location.reload();
             Cookie().removeAll();
           }
         });

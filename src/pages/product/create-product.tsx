@@ -66,7 +66,7 @@ export const CreateProduct = memo((props: ICreateProduct) => {
   }, []);
 
   const loadStatusOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
-    const options = await productStatusApi.loadProducStatusAsOption();
+    const options = await productStatusApi.loadDataAsOption();
     const filteredOptions = options.filter((op) =>
       op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
     );
@@ -74,26 +74,23 @@ export const CreateProduct = memo((props: ICreateProduct) => {
   }, []);
 
   const loadSizeOptions = useCallback(async (inputValue: string, callback: (options: Option[]) => void) => {
-    const options = await sizeApi.loadSizeAsOption();
+    const options = await sizeApi.loadDataAsOption();
     const filteredOptions = options.filter((op) =>
       op.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())
     );
     callback(filteredOptions);
   }, []);
 
-  const onOpenColorMenuOption = async () => {
-    const colorOptions = await colorApi.loadColorAsOption();
-    setColorOptions(colorOptions);
+  const onOpenSizeMenuOption = () => {
+    return sizeApi.loadDataAsOption();
   };
 
-  const onOpenSizeMenuOption = async () => {
-    const sizesOptions = await sizeApi.loadSizeAsOption();
-    setSizeOptions(sizesOptions);
+  const onOpenColorMenuOption = () => {
+    return colorApi.loadColorAsOption();
   };
 
-  const onOpenStatusMenuOption = async () => {
-    const statusOptions = await productStatusApi.loadProducStatusAsOption();
-    setStatusOptions(statusOptions);
+  const onOpenMaterialMenuOption = () => {
+    return productStatusApi.loadDataAsOption();
   };
 
   const onChangeStatus = useCallback(
@@ -147,7 +144,7 @@ export const CreateProduct = memo((props: ICreateProduct) => {
                 placeholder="Select Status"
                 addNewURL={AppRoutes.CREATE_PRODUCT_STATUS}
                 options={statusOptions}
-                onMenuOpen={onOpenStatusMenuOption}
+                loadDataFunction={onOpenMaterialMenuOption}
                 loadOptions={loadStatusOptions}
                 onChange={onChangeStatus}
               />
@@ -155,7 +152,7 @@ export const CreateProduct = memo((props: ICreateProduct) => {
                 label="Color"
                 placeholder="Select Color"
                 addNewURL={AppRoutes.CREATE_COLORS}
-                onMenuOpen={onOpenColorMenuOption}
+                loadDataFunction={onOpenColorMenuOption}
                 options={colorOptions}
                 loadOptions={loadColorOptions}
                 onChange={onChangeColor}
@@ -165,7 +162,7 @@ export const CreateProduct = memo((props: ICreateProduct) => {
                 placeholder="Select Size"
                 addNewURL={AppRoutes.CREATE_SIZE}
                 options={sizeOptions}
-                onMenuOpen={onOpenSizeMenuOption}
+                loadDataFunction={onOpenSizeMenuOption}
                 loadOptions={loadSizeOptions}
                 onChange={onChangeSize}
               />
