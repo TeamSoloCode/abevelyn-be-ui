@@ -280,8 +280,19 @@ export class CollectionApi extends ClientApi<ICreateCollectionDto, IUpdateCollec
   fetch = super.fetch;
   fetchById = super.fetchById;
   fetchAvailable = super.fetchAvailable;
-  create = super.create;
-  update = super.update;
+  createCollection = (createCollectionDto: ICreateCollectionDto): Promise<Response> => {
+    return this.postMultipart(ClientApi.APIs.COLLECTIONS, {
+      data: JSON.stringify(createCollectionDto),
+      image: createCollectionDto.image,
+    });
+  };
+  updateCollection = (id: string, updateCollectionDto: IUpdateCollectionDto): Promise<Response> => {
+    return this.postMultipart(
+      ClientApi.APIs.COLLECTIONS + `/${id}`,
+      { data: JSON.stringify(updateCollectionDto), image: updateCollectionDto.image },
+      "PATCH"
+    );
+  };
   delete = super.delete;
   loadDataAsOption = super.loadDataAsOption;
 }

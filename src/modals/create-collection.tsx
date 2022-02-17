@@ -9,6 +9,7 @@ import Modal from "react-bootstrap/Modal";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ICreateCollectionDto } from "../dto/collections/create-collection.req.dto";
 import CollectionContext from "../context/collection.context";
+import { FieldFile } from "../components/FieldFile";
 
 interface ICreateCollection {
   show: boolean;
@@ -21,17 +22,22 @@ export const CreateCollection = memo((props: ICreateCollection) => {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<ICreateCollectionDto>();
 
   const onSubmit: SubmitHandler<ICreateCollectionDto> = useCallback(
-    async ({ name }) => {
+    async ({ name, image }) => {
       if (!collectionContext?.createCollection) return;
-      const isSuccess = await collectionContext.createCollection({ name });
+      const isSuccess = await collectionContext.createCollection({ name, image });
       isSuccess && props.close();
     },
     [collectionContext.createCollection, props.close]
   );
+
+  React.useEffect(() => {
+    reset();
+  }, [props.show]);
 
   return (
     <Modal show={props.show} onHide={props.close}>
@@ -47,6 +53,7 @@ export const CreateCollection = memo((props: ICreateCollection) => {
                 <InputGroup.Text>Collection name</InputGroup.Text>
                 <FormControl placeholder="Collection name" {...register("name")} />
               </InputGroup>
+              <FieldFile label="Main Image" placeholder="Main Image" reactFormRegister={register("image")} />
               <Col xs="auto">
                 <Button type="submit" className="mb-2">
                   Submit

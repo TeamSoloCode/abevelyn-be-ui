@@ -11,6 +11,8 @@ export interface ICreateSaleDto {
 
   applyPrice: number;
 
+  maxOff: number;
+
   unit: SaleUnit;
 
   saleType: SaleType;

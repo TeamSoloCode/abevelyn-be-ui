@@ -20,6 +20,8 @@ export class Sale extends RootModel {
 
   applyPrice?: number;
 
+  maxOff?: number;
+
   saleType?: SaleType;
 
   unit?: SaleUnit;

@@ -16,4 +16,5 @@ export class Collection extends RootModel {
   descriptionInFrench?: string;
   descriptionInVietnames?: string;
   sales?: Sale[];
+  image?: string;
 }

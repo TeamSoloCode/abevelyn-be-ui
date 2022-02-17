@@ -55,7 +55,7 @@ interface IFieldSelect {
   loadOnMount?: boolean;
   defaultValue?: string | string[];
   addNewURL?: string;
-  loadDataFunction?: Function;
+  loadDataFunction?: () => Promise<Option[]>;
   isMulti?: any;
   loadOptions?: (input: string, callback: (options: Option[]) => void) => void;
   onChange?: (newValue: SingleValue<Option>) => void;

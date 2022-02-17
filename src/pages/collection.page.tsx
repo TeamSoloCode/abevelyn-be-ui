@@ -11,6 +11,7 @@ import { Collection } from "../models/collection.model";
 import moment from "moment";
 import { DEFAULT_DATETIME_FORMAT } from "../constanst";
 import ListGroup from "react-bootstrap/ListGroup";
+import { ClientApi, clientApi } from "../client-api/api.client";
 
 export const CollectionPage = React.memo(() => {
   const collectionContext = useContext(CollectionContext);
@@ -120,6 +121,18 @@ const defaultColumns: IColumn<Collection>[] = [
         ) : (
           <div className="btn btn-danger">Not Available</div>
         )}
+      </div>
+    ),
+  },
+  {
+    headerTitle: "Image",
+    item: (item) => (
+      <div className="rounded overflow-hidden" style={{ width: 150, height: 100 }}>
+        <img
+          width={"100%"}
+          height={"100%"}
+          src={clientApi.getImageURLByName(ClientApi.APIs.FETCH_IMAGE, item?.image || "")}
+        />
       </div>
     ),
   },

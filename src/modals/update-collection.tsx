@@ -12,12 +12,13 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { showError } from "../utils";
 import CollectionContext from "../context/collection.context";
 import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.dto";
-import { collectionApi, saleApi } from "../client-api/api.client";
+import { clientApi, ClientApi, collectionApi, saleApi } from "../client-api/api.client";
 import { FieldNumber } from "../components/FieldNumber";
 import { FieldSelect, Option } from "../components/FieldSelect";
 import { AppRoutes, SaleType } from "../constanst";
 import { SingleValue } from "react-select";
 import { Collection } from "../models/collection.model";
+import { FieldFile } from "../components/FieldFile";
 
 interface IUpdateCollection {
   show: boolean;
@@ -28,11 +29,11 @@ interface IUpdateCollection {
 export const UpdateCollection = memo((props: IUpdateCollection) => {
   const collectionContext = useContext(CollectionContext);
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
-  const [showAlert, setShowAlert] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<IUpdateCollectionDto>();
 
@@ -46,6 +47,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
       descriptionInFrench,
       descriptionInVietnames,
       saleIds,
+      image,
     }) => {
       if (!collectionContext?.updateCollection) return;
       const isSuccess = await collectionContext.updateCollection(props.collectionId, {
@@ -57,20 +59,17 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
         descriptionInFrench,
         descriptionInVietnames,
         saleIds,
+        image: image?.[0] ?? selectedCollection?.image,
       });
       isSuccess && props.close();
     },
-    [collectionContext.createCollection, props.close, props.collectionId]
+    [collectionContext.createCollection, props.close, props.collectionId, selectedCollection]
   );
 
   const defaultSales = useMemo<(string | undefined)[]>(() => {
     const sales = selectedCollection?.sales || [];
     return sales?.map((col) => col.uuid);
   }, [selectedCollection]);
-
-  const openConfirm = useCallback(async () => {
-    setShowAlert(true);
-  }, [setShowAlert]);
 
   const onOpenSaleMenuOption = () => {
     return saleApi.loadOptionByType(SaleType.COLLECTION);
@@ -96,6 +95,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
 
   useEffect(() => {
     if (!props.show) {
+      reset();
       return;
     }
 
@@ -109,8 +109,6 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
 
       showError(result?.message);
     })(props.collectionId);
-
-    setShowAlert(false);
   }, [props.collectionId, props.show]);
 
   if (!selectedCollection) {
@@ -199,6 +197,17 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
                   {...setValue("descriptionInVietnames", selectedCollection.descriptionInVietnames)}
                 />
               </InputGroup>
+              <hr />
+              <FieldFile
+                label="Main Image"
+                placeholder="Main Image"
+                defaultValue={
+                  selectedCollection?.image
+                    ? clientApi.getImageURLByName(ClientApi.APIs.FETCH_IMAGE, selectedCollection?.image)
+                    : undefined
+                }
+                reactFormRegister={register("image")}
+              />
               <Row>
                 <Col className="">
                   <Button type="submit" className="mb-2">

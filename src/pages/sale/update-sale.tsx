@@ -47,6 +47,7 @@ export const UpdateSale = memo((props: IUpdateSale) => {
       descriptionInFrench,
       descriptionInVietnamese,
       applyPrice,
+      maxOff,
       saleOff,
       unit,
       expiredDate,
@@ -60,6 +61,7 @@ export const UpdateSale = memo((props: IUpdateSale) => {
         descriptionInFrench,
         descriptionInVietnamese,
         applyPrice,
+        maxOff,
         saleOff,
         unit,
         expiredDate: moment(expiredDate).utc().toISOString(),
@@ -156,9 +158,18 @@ export const UpdateSale = memo((props: IUpdateSale) => {
               />
 
               <FieldNumber
-                label="Max Off"
+                label="Apply Price"
                 name="applyPrice"
                 defaultValue={setDefaultFieldEffect(selectedSale?.applyPrice, "applyPrice")}
+                placeholder="Apply Price"
+                unit="USD"
+                onValueChange={onNumberChange}
+              />
+
+              <FieldNumber
+                label="Max Off"
+                name="maxOff"
+                defaultValue={setDefaultFieldEffect(selectedSale?.maxOff, "maxOff")}
                 placeholder="Max Off"
                 unit="USD"
                 onValueChange={onNumberChange}

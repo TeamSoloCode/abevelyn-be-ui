@@ -137,6 +137,14 @@ export const CreateSale = memo((props: ICreateMaterial) => {
                 />
               )}
 
+              <FieldNumber
+                label="Max Off"
+                name="maxOFf"
+                placeholder="Max Off"
+                unit="USD"
+                onValueChange={onNumberChange}
+              />
+
               <hr />
               <FieldDate
                 label="Start Date"

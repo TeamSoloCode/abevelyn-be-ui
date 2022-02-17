@@ -88,6 +88,10 @@ const defaultColumns: IColumn<Sale>[] = [
     item: (item) => item.applyPrice,
   },
   {
+    headerTitle: "Max (USD)",
+    item: (item) => item.maxOff,
+  },
+  {
     headerTitle: "Start Date",
     item: (item) => item.startedDate,
   },

@@ -21,7 +21,7 @@ export const FieldFile = memo((props: IFieldFile) => {
   const [loading, setLoading] = useState<boolean>(false);
   const defaultId = useMemo(() => Date.now() + "", []);
   const [selectedImage, setSelectedImage] = useState<string>();
-
+  console.log("abcd", selectedImage);
   const onChange = useCallback(
     async (e) => {
       props?.onChange?.(e);
@@ -46,6 +46,7 @@ export const FieldFile = memo((props: IFieldFile) => {
           </Form.Label>
         </Col>
         <Form.Control
+          key={defaultId}
           id={props.id || defaultId}
           hidden={true}
           type="file"
