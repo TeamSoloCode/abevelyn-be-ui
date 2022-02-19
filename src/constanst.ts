@@ -1,5 +1,7 @@
 export enum AppRoutes {
   COLLECTIONS = "collections",
+  CREATE_COLLECTION = "create-collection",
+  UPDATE_COLLECTION = "update-collection",
 
   COLORS = "colors",
   CREATE_COLORS = "create-color",

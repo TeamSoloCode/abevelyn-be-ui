@@ -1,24 +1,23 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import CollectionContext, { CollectionContextProvider } from "../context/collection.context";
+import CollectionContext, { CollectionContextProvider } from "../../context/collection.context";
 import Table from "react-bootstrap/Table";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import get from "lodash.get";
-import { CreateCollection } from "../modals/create-collection";
-import { UpdateCollection } from "../modals/update-collection";
-import { IColumn, TSCTable } from "../components/TSCTable";
-import { Collection } from "../models/collection.model";
+import { CreateCollection } from "./create-collection";
+import { IColumn, TSCTable } from "../../components/TSCTable";
+import { Collection } from "../../models/collection.model";
 import moment from "moment";
-import { DEFAULT_DATETIME_FORMAT } from "../constanst";
+import { AppRoutes, DEFAULT_DATETIME_FORMAT } from "../../constanst";
 import ListGroup from "react-bootstrap/ListGroup";
-import { ClientApi, clientApi } from "../client-api/api.client";
+import { ClientApi, clientApi } from "../../client-api/api.client";
+import { Route, Routes, useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 export const CollectionPage = React.memo(() => {
   const collectionContext = useContext(CollectionContext);
   const { collections } = collectionContext.state;
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  let [selectedId, setSelectdId] = useState<string | undefined>(undefined);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!collectionContext?.loadCollection) return;
@@ -29,40 +28,24 @@ export const CollectionPage = React.memo(() => {
     return defaultColumns;
   }, []);
 
-  const openCreateModal = useCallback(() => {
-    setShowCreateModal(true);
-  }, [setShowCreateModal]);
-
-  const closeCreateModal = useCallback(() => {
-    setShowCreateModal(false);
-  }, [setShowCreateModal]);
-
-  const openUpdateModal = useCallback(() => {
-    setShowUpdateModal(true);
-  }, [setShowCreateModal]);
-
-  const closeUpdateModal = useCallback(() => {
-    setShowUpdateModal(false);
-  }, [setShowCreateModal]);
-
   const onClickRow = useCallback(
-    (collection: Collection) => {
-      setSelectdId(collection.uuid);
-      openUpdateModal();
+    (item: Collection) => {
+      navigate(`/${AppRoutes.UPDATE_COLLECTION}/${item.uuid}`);
     },
-    [openUpdateModal, setSelectdId, selectedId]
+    [navigate]
   );
 
   return (
     <div>
       <Col xs="auto">
-        <Button className="mb-2" onClick={openCreateModal}>
-          + New Collection
-        </Button>
+        <Link className="btn" to={AppRoutes.CREATE_COLLECTION}>
+          <Button className="mt-1">+ New Collection</Button>
+        </Link>
       </Col>
+      <Routes>
+        <Route path={AppRoutes.CREATE_COLLECTION} element={<CreateCollection />} />
+      </Routes>
       <TSCTable data={collections || []} columns={columns} onRowClick={onClickRow} />
-      <CreateCollection show={showCreateModal} close={closeCreateModal} />
-      {selectedId && <UpdateCollection collectionId={selectedId} show={showUpdateModal} close={closeUpdateModal} />}
     </div>
   );
 });

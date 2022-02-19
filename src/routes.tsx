@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef } from "react";
 import { AppRoutes } from "./constanst";
-import { CollectionPage } from "./pages/collection.page";
+import { CollectionPage } from "./pages/collection/collection.page";
 import { ColorsPage } from "./pages/color/colors.page";
 import { ProductStatusPage } from "./pages/product-status/product-status.page";
 import { ProductsPage } from "./pages/product/products.page";
@@ -21,13 +21,33 @@ import { UpdateMaterial } from "./pages/material/update-material";
 import { SaleContextProvider } from "./context/sale.context";
 import { SalePage } from "./pages/sale/sale.page";
 import { CreateSale } from "./pages/sale/create-sale";
+import { CreateCollection } from "./pages/collection/create-collection";
+import { UpdateCollection } from "./pages/collection/update-collection";
 
 export const routes = [
   {
-    path: AppRoutes.COLLECTIONS,
+    path: AppRoutes.COLLECTIONS + "/*",
     element: (
       <CollectionContextProvider>
         <CollectionPage />
+      </CollectionContextProvider>
+    ),
+  },
+
+  {
+    path: AppRoutes.CREATE_COLLECTION,
+    element: (
+      <CollectionContextProvider>
+        <CreateCollection />
+      </CollectionContextProvider>
+    ),
+  },
+
+  {
+    path: AppRoutes.UPDATE_COLLECTION + "/:collectionId",
+    element: (
+      <CollectionContextProvider>
+        <UpdateCollection />
       </CollectionContextProvider>
     ),
   },

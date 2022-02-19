@@ -2,6 +2,7 @@ import React, { memo, useCallback, useContext, useEffect, useMemo, useState } fr
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
@@ -9,26 +10,24 @@ import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { showError } from "../utils";
-import CollectionContext from "../context/collection.context";
-import { IUpdateCollectionDto } from "../dto/collections/update-collection.req.dto";
-import { clientApi, ClientApi, collectionApi, saleApi } from "../client-api/api.client";
-import { FieldNumber } from "../components/FieldNumber";
-import { FieldSelect, Option } from "../components/FieldSelect";
-import { AppRoutes, SaleType } from "../constanst";
 import { SingleValue } from "react-select";
-import { Collection } from "../models/collection.model";
-import { FieldFile } from "../components/FieldFile";
+import CollectionContext from "../../context/collection.context";
+import { Collection } from "../../models/collection.model";
+import { IUpdateCollectionDto } from "../../dto/collections/update-collection.req.dto";
+import { ClientApi, clientApi, collectionApi, saleApi } from "../../client-api/api.client";
+import { AppRoutes, SaleType } from "../../constanst";
+import { FieldSelect, Option } from "../../components/FieldSelect";
+import { showError } from "../../utils";
+import { FieldFile } from "../../components/FieldFile";
+import { useParams } from "react-router";
 
-interface IUpdateCollection {
-  show: boolean;
-  close: () => void;
-  collectionId: string;
-}
+interface IUpdateCollection {}
 
 export const UpdateCollection = memo((props: IUpdateCollection) => {
   const collectionContext = useContext(CollectionContext);
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
+  const { collectionId = "" } = useParams();
+  const [refreshToken, setRefreshToken] = React.useState(Date.now());
   const {
     register,
     handleSubmit,
@@ -49,8 +48,9 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
       saleIds,
       image,
     }) => {
-      if (!collectionContext?.updateCollection) return;
-      const isSuccess = await collectionContext.updateCollection(props.collectionId, {
+      if (!collectionContext?.updateCollection || !collectionId) return;
+
+      const isSuccess = await collectionContext.updateCollection(collectionId, {
         available,
         name,
         nameInFrench,
@@ -61,9 +61,10 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
         saleIds,
         image: image?.[0] ?? selectedCollection?.image,
       });
-      isSuccess && props.close();
+
+      isSuccess && setRefreshToken(Date.now());
     },
-    [collectionContext.createCollection, props.close, props.collectionId, selectedCollection]
+    [collectionContext.createCollection, collectionId, selectedCollection]
   );
 
   const defaultSales = useMemo<(string | undefined)[]>(() => {
@@ -94,10 +95,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
   );
 
   useEffect(() => {
-    if (!props.show) {
-      reset();
-      return;
-    }
+    if (!collectionId) return;
 
     (async (id: string) => {
       const response = await collectionApi.fetchById(id);
@@ -108,21 +106,18 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
       }
 
       showError(result?.message);
-    })(props.collectionId);
-  }, [props.collectionId, props.show]);
+    })(collectionId);
+  }, [collectionId, refreshToken]);
 
   if (!selectedCollection) {
     return <Spinner animation="border" variant="primary" />;
   }
 
   return (
-    <Modal show={props.show} onHide={props.close}>
-      <Modal.Dialog>
-        <Modal.Header closeButton>
-          <Modal.Title>Update Collection</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
+    <Col xs="9">
+      <Card className="m-1">
+        <Card.Body>
+          <Card.Title>Update Collection</Card.Title>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Col>
               <Row className="align-items-center">
@@ -218,8 +213,8 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
               </Row>
             </Col>
           </Form>
-        </Modal.Body>
-      </Modal.Dialog>
-    </Modal>
+        </Card.Body>
+      </Card>
+    </Col>
   );
 });
