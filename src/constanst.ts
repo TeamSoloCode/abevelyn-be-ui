@@ -27,6 +27,8 @@ export enum AppRoutes {
   CREATE_SALE = "create-sale",
   UPDATE_SALE = "update-sale",
 
+  USERS = "users",
+
   HOME = "home",
   SIGNIN = "signin",
 }
@@ -41,6 +43,18 @@ export enum SaleType {
   COLLECTION = "collection",
   PRODUCT = "product",
   COMBO = "combo",
+}
+
+export enum SignInType {
+  FACEBOOK = "facebook",
+  GOOGLE = "google",
+  REGISTER = "register",
+}
+
+export enum UserRoles {
+  ROOT = "root",
+  ADMIN = "admin",
+  USER = "user",
 }
 
 export const DEFAULT_DATETIME_FORMAT = "MM-DD-YYYY HH:mm";

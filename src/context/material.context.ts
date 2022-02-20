@@ -18,11 +18,11 @@ const INITIAL_STATE: IMaterialState = {
 };
 
 enum Actions {
-  LOAD_PRODUCT_STATUS = "loadMaterials",
+  LOAD_MATERIAL = "loadMaterials",
 }
 
 interface IActionLoadMaterials {
-  type: Actions.LOAD_PRODUCT_STATUS;
+  type: Actions.LOAD_MATERIAL;
   materials: Material[];
 }
 
@@ -41,7 +41,7 @@ export const MaterialContext = createContext<IMaterialContextValue | null>(null)
 
 const reducer = (state: IMaterialState, action: ActionType): IMaterialState => {
   switch (action.type) {
-    case Actions.LOAD_PRODUCT_STATUS: {
+    case Actions.LOAD_MATERIAL: {
       return { ...state, materials: action.materials };
     }
     default:
@@ -59,7 +59,7 @@ export const MaterialContextProvider = (props: IMaterialProviderProps) => {
     const res = await materialApi.fetch();
     const result = await res.json();
     if (res.status == 200) {
-      dispatch({ type: Actions.LOAD_PRODUCT_STATUS, materials: result?.data });
+      dispatch({ type: Actions.LOAD_MATERIAL, materials: result?.data });
     }
 
     showError(result?.message);

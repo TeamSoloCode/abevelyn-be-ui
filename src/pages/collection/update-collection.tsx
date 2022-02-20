@@ -32,7 +32,6 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
     register,
     handleSubmit,
     setValue,
-    reset,
     formState: { errors },
   } = useForm<IUpdateCollectionDto>();
 

@@ -15,7 +15,7 @@ import { Option } from "../components/FieldSelect";
 import { ProductStatus } from "../models/product-status.model";
 import { IUpdateProductDto } from "../dto/product/update-product-req-dto";
 import { Sale } from "../models/sale.model";
-import { SaleType } from "../constanst";
+import { SaleType, UserRoles } from "../constanst";
 
 export interface FetchQuery {
   limit?: number;
@@ -51,6 +51,7 @@ export class ClientApi<C, U> {
     MATERIAL: "/materials",
     LOGOUT: "/auth/logout",
     SALE: "/sales",
+    USERS: "/users",
     LOGIN_WITH_GOOGLE: "/auth/google",
   };
 
@@ -177,11 +178,11 @@ export class ClientApi<C, U> {
     const res = await this.fetchAvailable();
     if (res.status == 200) {
       const result = await res.json();
-      const data: ProductStatus[] = result?.data || [];
-      const options: Option[] = data.map((color) => {
+      const data: any[] = result?.data || [];
+      const options: Option[] = data.map((data) => {
         return {
-          label: color.name,
-          value: color.uuid,
+          label: data.name || data.username,
+          value: data.uuid,
         };
       });
 
@@ -390,6 +391,20 @@ export class SaleApi extends ClientApi<any, any> {
   }
 }
 
+export class UserApi extends ClientApi<any, any> {
+  constructor() {
+    super(ClientApi.APIs.USERS);
+  }
+
+  fetch = super.fetch;
+  fetchById = super.fetchById;
+  loadDataAsOption = super.loadDataAsOption;
+
+  updateUserRole = (userId: string, role: UserRoles) => {
+    return this.patch(ClientApi.APIs.USERS + `/${userId}`, { role });
+  };
+}
+
 export const clientApi = new ClientApi("");
 export const colorApi = new ColorApi();
 export const collectionApi = new CollectionApi();
@@ -398,3 +413,4 @@ export const sizeApi = new SizeApi();
 export const productApi = new ProductApi();
 export const materialApi = new MaterialApi();
 export const saleApi = new SaleApi();
+export const userApi = new UserApi();

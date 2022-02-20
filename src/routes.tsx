@@ -23,6 +23,8 @@ import { SalePage } from "./pages/sale/sale.page";
 import { CreateSale } from "./pages/sale/create-sale";
 import { CreateCollection } from "./pages/collection/create-collection";
 import { UpdateCollection } from "./pages/collection/update-collection";
+import { UsersContextProvider } from "./context/user.context";
+import { Accounts } from "./pages/accounts/account.page";
 
 export const routes = [
   {
@@ -150,6 +152,15 @@ export const routes = [
       <SaleContextProvider>
         <CreateSale />
       </SaleContextProvider>
+    ),
+  },
+
+  {
+    path: AppRoutes.USERS,
+    element: (
+      <UsersContextProvider>
+        <Accounts />
+      </UsersContextProvider>
     ),
   },
 ];

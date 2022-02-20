@@ -18,11 +18,11 @@ const INITIAL_STATE: ISaleState = {
 };
 
 enum Actions {
-  LOAD_PRODUCT_STATUS = "loadSales",
+  LOAD_SALES = "loadSales",
 }
 
 interface IActionLoadSales {
-  type: Actions.LOAD_PRODUCT_STATUS;
+  type: Actions.LOAD_SALES;
   sales: Sale[];
 }
 
@@ -41,7 +41,7 @@ export const SaleContext = createContext<ISaleContextValue | null>(null);
 
 const reducer = (state: ISaleState, action: ActionType): ISaleState => {
   switch (action.type) {
-    case Actions.LOAD_PRODUCT_STATUS: {
+    case Actions.LOAD_SALES: {
       return { ...state, sales: action.sales };
     }
     default:
@@ -59,7 +59,7 @@ export const SaleContextProvider = (props: ISaleProviderProps) => {
     const res = await saleApi.fetch();
     const result = await res.json();
     if (res.status == 200) {
-      dispatch({ type: Actions.LOAD_PRODUCT_STATUS, sales: result?.data });
+      dispatch({ type: Actions.LOAD_SALES, sales: result?.data });
     }
 
     showError(result?.message);

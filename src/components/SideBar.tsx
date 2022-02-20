@@ -19,6 +19,8 @@ export const SideBar = memo(() => {
       case AppRoutes.MATERIAL:
       case AppRoutes.SALE:
         return AppRoutes.PRODUCTS;
+      case AppRoutes.USERS:
+        return "accounts";
       default:
         return AppRoutes.HOME;
     }
@@ -55,7 +57,7 @@ export const SideBar = memo(() => {
         <Accordion.Item eventKey="accounts">
           <Accordion.Header>Account</Accordion.Header>
           <Accordion.Body>
-            <NavDropdown.Item href="#accounts">Accounts</NavDropdown.Item>
+            <NavDropdown.Item href={`/${AppRoutes.USERS}`}>Accounts</NavDropdown.Item>
             <NavDropdown.Item href="#address">Addresses</NavDropdown.Item>
           </Accordion.Body>
         </Accordion.Item>
