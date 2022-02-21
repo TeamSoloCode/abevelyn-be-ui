@@ -4,7 +4,7 @@ import Col from "react-bootstrap/Col";
 import { useNavigate } from "react-router";
 import { ClientApi, clientApi } from "../../client-api/api.client";
 import { IColumn, TSCTable } from "../../components/TSCTable";
-import { DEFAULT_DATETIME_FORMAT } from "../../constanst";
+import { AppRoutes, DEFAULT_DATETIME_FORMAT } from "../../constanst";
 import UsersContext from "../../context/user.context";
 import { User } from "../../models/user.model";
 
@@ -25,7 +25,7 @@ export const Accounts = React.memo(() => {
 
   const onClickRow = React.useCallback(
     (item: User) => {
-      //   navigate(`/${AppRoutes.UPDATE_COLLECTION}/${item.uuid}`);
+      navigate(`/${AppRoutes.UPDATE_USER}/${item.uuid}`);
     },
     [navigate]
   );

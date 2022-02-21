@@ -25,6 +25,7 @@ import { CreateCollection } from "./pages/collection/create-collection";
 import { UpdateCollection } from "./pages/collection/update-collection";
 import { UsersContextProvider } from "./context/user.context";
 import { Accounts } from "./pages/accounts/account.page";
+import { UpdateAccount } from "./pages/accounts/update-account.page";
 
 export const routes = [
   {
@@ -160,6 +161,15 @@ export const routes = [
     element: (
       <UsersContextProvider>
         <Accounts />
+      </UsersContextProvider>
+    ),
+  },
+
+  {
+    path: AppRoutes.UPDATE_USER + "/:userId",
+    element: (
+      <UsersContextProvider>
+        <UpdateAccount />
       </UsersContextProvider>
     ),
   },

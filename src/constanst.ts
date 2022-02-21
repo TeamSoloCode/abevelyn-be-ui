@@ -28,6 +28,7 @@ export enum AppRoutes {
   UPDATE_SALE = "update-sale",
 
   USERS = "users",
+  UPDATE_USER = "updateUser",
 
   HOME = "home",
   SIGNIN = "signin",

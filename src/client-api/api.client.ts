@@ -397,7 +397,9 @@ export class UserApi extends ClientApi<any, any> {
   }
 
   fetch = super.fetch;
-  fetchById = super.fetchById;
+  getUser = (userId: string) => {
+    return this.get(ClientApi.APIs.USERS + `/get-user/${userId}`);
+  };
   loadDataAsOption = super.loadDataAsOption;
 
   updateUserRole = (userId: string, role: UserRoles) => {

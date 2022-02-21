@@ -63,7 +63,7 @@ export const UpdateCollection = memo((props: IUpdateCollection) => {
 
       isSuccess && setRefreshToken(Date.now());
     },
-    [collectionContext.createCollection, collectionId, selectedCollection]
+    [collectionContext.updateCollection, collectionId, selectedCollection]
   );
 
   const defaultSales = useMemo<(string | undefined)[]>(() => {
