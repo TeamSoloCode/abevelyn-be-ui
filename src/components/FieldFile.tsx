@@ -8,13 +8,17 @@ import uploadImagePlaceholder from "../../assets/upload-image-placeholder.png";
 interface IFieldFile {
   label: string;
   id?: string;
-  placeholder: string;
+  placeholder?: string;
   defaultValue?: string;
-  reactFormRegister: any;
+  reactFormRegister?: any;
   required?: boolean;
   pathOnServer?: string;
   getUploadedFileURL?: (url: string) => void;
   onChange?: (e) => void;
+  flexColumns?: [number, number, number];
+  readonly?: boolean;
+  imgWidth?: number;
+  imgHeight?: number;
 }
 
 export const FieldFile = memo((props: IFieldFile) => {
@@ -33,15 +37,19 @@ export const FieldFile = memo((props: IFieldFile) => {
 
   return (
     <InputGroup className="field-file mb-2">
-      <Col xs="2">
+      <Col xs={`${props.flexColumns?.[0] || 2}`}>
         <InputGroup.Text>{props.label}</InputGroup.Text>
       </Col>
-      <Col xs="9">
+      <Col xs={`${props.flexColumns?.[1] || 9}`}>
         <Col>
-          <img className="field-file__image" src={selectedImage || props.defaultValue || uploadImagePlaceholder} />
+          <img
+            className="field-file__image"
+            style={{ width: props.imgWidth, height: props.imgHeight }}
+            src={selectedImage || props.defaultValue || uploadImagePlaceholder}
+          />
         </Col>
         <Col>
-          <Form.Label className="overflow-hidden" htmlFor={props.id || defaultId}>
+          <Form.Label hidden={props.readonly} className="overflow-hidden" htmlFor={props.id || defaultId}>
             <div className="btn btn-primary">Change file</div>
           </Form.Label>
         </Col>
@@ -59,7 +67,7 @@ export const FieldFile = memo((props: IFieldFile) => {
           //   isInvalid={!!errors.file}
         />
       </Col>
-      <Col xs="1">{loading && <Spinner animation="border" variant="success" />}</Col>
+      <Col xs={`${props.flexColumns?.[2] || 1}`}>{loading && <Spinner animation="border" variant="success" />}</Col>
     </InputGroup>
   );
 });

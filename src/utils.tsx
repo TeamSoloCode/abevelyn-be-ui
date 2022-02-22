@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { SingleValue } from "react-select";
 import { toast } from "react-toastify";
+import { ClientApi, clientApi } from "./client-api/api.client";
 import { Option } from "./components/FieldSelect";
 
 export function usePrevious(value) {
@@ -43,4 +44,13 @@ export const showSuccess = (message: string | string[]) => {
 
 export const findOptionByValue = (options: Option[], value?: string): SingleValue<Option> | undefined => {
   return options.find((op) => op.value === value);
+};
+
+export const getImageUrl = (url: string | undefined) => {
+  try {
+    if (!url || url.startsWith("http")) return url || "";
+    return clientApi.getImageURLByName(ClientApi.APIs.FETCH_IMAGE, url);
+  } catch (err) {
+    return "";
+  }
 };

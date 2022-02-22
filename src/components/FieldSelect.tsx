@@ -49,6 +49,7 @@ export interface Option {
 
 interface IFieldSelect {
   label: string;
+  flexColumns?: [number, number];
   placeholder?: string;
   options?: Option[];
   value?: Option;
@@ -127,10 +128,10 @@ export const FieldSelect = memo((props: IFieldSelect) => {
 
   return (
     <InputGroup className="mb-2 w-100">
-      <Col xs="2">
+      <Col xs={`${props.flexColumns?.[0] || 2}`}>
         <InputGroup.Text className="h-100">{props.label}</InputGroup.Text>
       </Col>
-      <Col xs="10">
+      <Col xs={`${props.flexColumns?.[1] || 10}`}>
         <AsyncSelect
           ref={(selectRef) => (ref.current = selectRef)}
           styles={customStyles}

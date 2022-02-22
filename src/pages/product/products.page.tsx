@@ -13,6 +13,7 @@ import { clientApi, ClientApi } from "../../client-api/api.client";
 import map from "lodash.map";
 import numeral from "numeral";
 import moment from "moment";
+import { getImageUrl } from "../../utils";
 
 export const ProductsPage = React.memo(() => {
   const productContext = useContext(ProductContext);
@@ -157,7 +158,7 @@ const defaultColumns: IColumn<Product>[] = [
     headerTitle: "Image",
     item: (item) => (
       <div className="rounded overflow-hidden" style={{ width: 150, height: 100 }}>
-        <img width={"100%"} height={"100%"} src={clientApi.getImageURLByName(ClientApi.APIs.FETCH_IMAGE, item.image)} />
+        <img width={"100%"} height={"100%"} src={getImageUrl(item.image)} />
       </div>
     ),
   },

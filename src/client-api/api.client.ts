@@ -397,13 +397,15 @@ export class UserApi extends ClientApi<any, any> {
   }
 
   fetch = super.fetch;
+
   getUser = (userId: string) => {
     return this.get(ClientApi.APIs.USERS + `/get-user/${userId}`);
   };
+
   loadDataAsOption = super.loadDataAsOption;
 
   updateUserRole = (userId: string, role: UserRoles) => {
-    return this.patch(ClientApi.APIs.USERS + `/${userId}`, { role });
+    return this.patch(ClientApi.APIs.USERS + `/change-user-role/${userId}`, { role });
   };
 }
 

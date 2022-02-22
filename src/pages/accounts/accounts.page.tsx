@@ -7,6 +7,7 @@ import { IColumn, TSCTable } from "../../components/TSCTable";
 import { AppRoutes, DEFAULT_DATETIME_FORMAT } from "../../constanst";
 import UsersContext from "../../context/user.context";
 import { User } from "../../models/user.model";
+import { getImageUrl } from "../../utils";
 
 export const Accounts = React.memo(() => {
   const userContext = React.useContext(UsersContext);
@@ -58,7 +59,7 @@ const defaultColumns: IColumn<User>[] = [
     headerTitle: "Image",
     item: (item) => (
       <div className="rounded overflow-hidden" style={{ width: 64, height: 64 }}>
-        <img width={"100%"} height={"100%"} src={item?.profile?.picture} />
+        <img width={"100%"} height={"100%"} src={getImageUrl(item?.profile?.picture)} />
       </div>
     ),
   },

@@ -9,6 +9,7 @@ interface IFieldDate {
   label: string;
   placeholder?: string;
   defaultValue?: Date;
+  flexColumns?: [number, number];
   timeInputLabel?: string;
   dateFormat?: string;
   name: string;
@@ -50,10 +51,10 @@ export const FieldDate = memo((props: IFieldDate) => {
 
   return (
     <InputGroup className="mb-2">
-      <Col xs="2">
+      <Col xs={`${props.flexColumns?.[0] || 2}`}>
         <InputGroup.Text>{props.label}</InputGroup.Text>
       </Col>
-      <Col xs="10">
+      <Col xs={`${props.flexColumns?.[1] || 10}`}>
         <DatePicker
           key={`${props.name}_${props.defaultValue}`}
           className="form-control"

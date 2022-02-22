@@ -4,14 +4,19 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
+import Spinner from "react-bootstrap/Spinner";
+
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { userApi } from "../../client-api/api.client";
 import { UserRoles } from "../../constanst";
 import UsersContext from "../../context/user.context";
 import { User } from "../../models/user.model";
-import { showError } from "../../utils";
+import { getImageUrl, showError } from "../../utils";
 import { FieldText } from "../../components/FieldText";
+import { FieldFile } from "../../components/FieldFile";
+import { FieldSelect, Option } from "../../components/FieldSelect";
+import { SingleValue } from "react-select";
 
 export const UpdateAccount = React.memo(() => {
   const { userId } = useParams();
@@ -30,8 +35,7 @@ export const UpdateAccount = React.memo(() => {
     async ({ role }) => {
       if (!userContext?.updateUserRole || !userId) return;
 
-      const isSuccess = await userApi.updateUserRole(userId, role);
-
+      const isSuccess = await userContext.updateUserRole(userId, role);
       isSuccess && setRefreshToken(Date.now());
     },
     [userContext?.updateUserRole, userId, selectedUser]
@@ -52,12 +56,29 @@ export const UpdateAccount = React.memo(() => {
     })(userId);
   }, [userId, refreshToken]);
 
+  const onChangeUserRole = React.useCallback(
+    (newOption: SingleValue<Option>) => {
+      newOption?.value && setValue("role", newOption?.value, {});
+    },
+    [setValue]
+  );
+  if (!selectedUser) return <Spinner animation="border" variant="success" />;
   return (
     <Col xs="9">
       <Card className="m-1">
         <Card.Body>
           <Card.Title>Update Collection</Card.Title>
           <Form onSubmit={handleSubmit(onSubmit)}>
+            <FieldSelect
+              label="Role"
+              placeholder="Select Role"
+              defaultValue={selectedUser?.role}
+              options={[
+                { value: UserRoles.ADMIN, label: "Admin" },
+                { value: UserRoles.USER, label: "User" },
+              ]}
+              onChange={onChangeUserRole}
+            />
             <Col>
               <FieldText label="Username" defaultValue={selectedUser?.username} disabled />
               <FieldText label="Email" defaultValue={selectedUser?.email} disabled />
@@ -78,6 +99,15 @@ export const UpdateAccount = React.memo(() => {
                     disabled
                   />
                 </Col>
+              </Row>
+              <Row>
+                <FieldFile
+                  readonly
+                  imgWidth={64}
+                  imgHeight={64}
+                  label="Picture"
+                  defaultValue={getImageUrl(selectedUser?.profile?.picture)}
+                />
               </Row>
               <Row>
                 <Col className="">

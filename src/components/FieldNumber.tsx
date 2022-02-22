@@ -18,18 +18,19 @@ interface IFieldNumber {
   suffix?: string;
   maxLength?: number;
   value?: number;
+  flexColumns?: [number, number];
   onValueChange?: (value: string | undefined, name: any) => void;
 }
 
 export const FieldNumber = memo((props: IFieldNumber) => {
   return (
     <InputGroup className="mb-2">
-      <Col xs="2">
+      <Col xs={`${props.flexColumns?.[0] || 2}`}>
         <InputGroup.Text>
           {props.label} {props.unit ? `( ${props.unit} )` : ""}
         </InputGroup.Text>
       </Col>
-      <Col xs="10">
+      <Col xs={`${props.flexColumns?.[1] || 10}`}>
         <CurrencyInput
           key={`${props.name} + ${props.defaultValue}`}
           className="form-control"
