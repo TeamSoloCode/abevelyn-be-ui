@@ -1,3 +1,4 @@
+import { CalculatePriceInfo } from "../utils";
 import { Collection } from "./collection.model";
 import { Color } from "./color.model";
 import { Material } from "./material.models";
@@ -65,6 +66,8 @@ export class Product extends RootModel {
   materials?: Material[];
 
   sales?: Sale[];
+
+  priceInfo?: CalculatePriceInfo;
 
   //   coupon?: Coupon;
 

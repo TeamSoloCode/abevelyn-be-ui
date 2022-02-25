@@ -195,7 +195,7 @@ export const UpdateSale = memo((props: IUpdateSale) => {
                 )}
                 showTimeInput
                 timeInputLabel="Time:"
-                dateFormat="MM/dd/yyyy h:mm aa"
+                dateFormat="MM-DD-YYYY HH:mm:ss"
                 minDate={moment(startedDate || new Date()).toDate()}
               />
               <hr />

@@ -4,6 +4,13 @@ import { toast } from "react-toastify";
 import { ClientApi, clientApi } from "./client-api/api.client";
 import { Option } from "./components/FieldSelect";
 
+export interface CalculatePriceInfo {
+  totalPrice: number;
+  totalSaleOffAsCurrency: number;
+  totalSaleOffAsPercentage: number;
+  calculatedPrice: number;
+}
+
 export function usePrevious(value) {
   // The ref object is a generic container whose current property is mutable ...
   // ... and can hold any value, similar to an instance property on a class

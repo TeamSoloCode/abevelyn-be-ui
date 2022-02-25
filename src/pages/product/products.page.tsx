@@ -65,7 +65,11 @@ const defaultColumns: IColumn<Product>[] = [
   },
   {
     headerTitle: "Price",
-    item: (item) => numeral(item.price).format("$0,0.00"),
+    item: (item) => numeral(item.priceInfo?.totalPrice).format("$0,0.00"),
+  },
+  {
+    headerTitle: "Sale Off Price",
+    item: (item) => numeral(item.priceInfo?.calculatedPrice).format("$0,0.00"),
   },
   {
     headerTitle: "Sales",
