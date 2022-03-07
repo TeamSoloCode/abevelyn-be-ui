@@ -178,6 +178,7 @@ module.exports = (passedInConfig = {}, { mode = "production" }) => {
         compress: false,
         historyApiFallback: true,
         hot: true,
+        port: 8000,
         allowedHosts: "all",
         watchFiles: ["src/**/*"],
         client: {

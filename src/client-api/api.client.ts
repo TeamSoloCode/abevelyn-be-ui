@@ -52,7 +52,7 @@ export class ClientApi<C, U> {
     LOGOUT: "/auth/logout",
     SALE: "/sales",
     USERS: "/users",
-    LOGIN_WITH_GOOGLE: "/auth/google",
+    LOGIN_WITH_GOOGLE: "/auth/google-admin",
   };
 
   private mainApi: string;
