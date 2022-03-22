@@ -74,7 +74,7 @@ export const AppContextProvider = (props: IAppContextProps) => {
           }
         });
       }
-    }, 10000);
+    }, 60000);
 
     return () => {
       clearInterval(intervalId);

@@ -19,6 +19,8 @@ export const SideBar = memo(() => {
       case AppRoutes.MATERIAL:
       case AppRoutes.SALE:
         return AppRoutes.PRODUCTS;
+      case AppRoutes.ORDER:
+        return "orders";
       case AppRoutes.USERS:
         return "accounts";
       default:
@@ -50,7 +52,7 @@ export const SideBar = memo(() => {
         <Accordion.Item eventKey="orders">
           <Accordion.Header>Order</Accordion.Header>
           <Accordion.Body>
-            <NavDropdown.Item href="#orders">Orders</NavDropdown.Item>
+            <NavDropdown.Item href={`/${AppRoutes.ORDER}`}>Orders</NavDropdown.Item>
           </Accordion.Body>
         </Accordion.Item>
 

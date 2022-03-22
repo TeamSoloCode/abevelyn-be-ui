@@ -15,7 +15,7 @@ import SaleContext from "../../context/sale.context";
 import { ICreateSaleDto } from "../../dto/sales/create-sale.dto";
 import moment from "moment";
 import { FieldText } from "../../components/FieldText";
-import { SaleType, SaleUnit } from "../../constanst";
+import { DEFAULT_DATETIME_FORMAT, SaleType, SaleUnit } from "../../constanst";
 
 interface ICreateMaterial {}
 
@@ -33,7 +33,7 @@ export const CreateSale = memo((props: ICreateMaterial) => {
     formState: { errors },
   } = useForm<ICreateSaleDto>();
   const onSubmit: SubmitHandler<ICreateSaleDto> = useCallback(
-    async ({ expiredDate, startedDate, unit, saleOff, applyPrice, name, saleType }) => {
+    async ({ expiredDate, startedDate, unit, saleOff, applyPrice, name, saleType, maxOff }) => {
       const isSuccess = await saleContext?.createSale({
         expiredDate: moment(expiredDate).utc().toISOString(),
         startedDate: moment(startedDate).utc().toISOString(),
@@ -42,6 +42,7 @@ export const CreateSale = memo((props: ICreateMaterial) => {
         applyPrice,
         name,
         saleType,
+        maxOff,
       });
       if (isSuccess) {
         reset();
@@ -152,7 +153,7 @@ export const CreateSale = memo((props: ICreateMaterial) => {
                 onValueChange={onStartDateChange}
                 showTimeInput
                 timeInputLabel="Time:"
-                dateFormat="MM/dd/yyyy h:mm aa"
+                dateFormat={DEFAULT_DATETIME_FORMAT}
                 minDate={new Date()}
               />
               <FieldDate
@@ -161,7 +162,7 @@ export const CreateSale = memo((props: ICreateMaterial) => {
                 onValueChange={onExpDateChange}
                 showTimeInput
                 timeInputLabel="Time:"
-                dateFormat="MM/dd/yyyy h:mm aa"
+                dateFormat={DEFAULT_DATETIME_FORMAT}
                 minDate={moment(watch().startedDate || new Date()).toDate()}
               />
               <Button type="submit" className="mb-2">

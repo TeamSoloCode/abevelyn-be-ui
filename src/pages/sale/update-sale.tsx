@@ -19,6 +19,7 @@ import { FieldNumber } from "../../components/FieldNumber";
 import { FieldSelect, Option } from "../../components/FieldSelect";
 import { SingleValue } from "react-select";
 import { FieldDate } from "../../components/FieldDate";
+import { DEFAULT_DATETIME_FORMAT } from "../../constanst";
 
 interface IUpdateSale {
   show: boolean;
@@ -64,9 +65,10 @@ export const UpdateSale = memo((props: IUpdateSale) => {
         maxOff,
         saleOff,
         unit,
-        expiredDate: moment(expiredDate).utc().toISOString(),
-        startedDate: moment(startedDate).utc().toISOString(),
+        expiredDate: moment(expiredDate).toISOString(),
+        startedDate: moment(startedDate).toISOString(),
       });
+
       isSuccess && props.close();
     },
     [saleContext?.updateSale, props.close, props.saleId]
@@ -179,10 +181,12 @@ export const UpdateSale = memo((props: IUpdateSale) => {
                 label="Start Date"
                 name="startDate"
                 onValueChange={onStartDateChange}
-                defaultValue={setDefaultFieldEffect(startedDate, "startedDate")}
+                defaultValue={setDefaultFieldEffect(
+                  selectedSale?.startedDate ? moment(selectedSale?.startedDate).toDate() : selectedSale?.startedDate,
+                  "startedDate"
+                )}
                 showTimeInput
                 timeInputLabel="Time:"
-                dateFormat="MM/dd/yyyy h:mm aa"
                 minDate={new Date()}
               />
               <FieldDate
@@ -195,7 +199,6 @@ export const UpdateSale = memo((props: IUpdateSale) => {
                 )}
                 showTimeInput
                 timeInputLabel="Time:"
-                dateFormat="MM-DD-YYYY HH:mm:ss"
                 minDate={moment(startedDate || new Date()).toDate()}
               />
               <hr />

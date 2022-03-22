@@ -4,6 +4,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import DatePicker from "react-datepicker";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import { DEFAULT_DATETIME_FORMAT } from "../constanst";
 
 interface IFieldDate {
   label: string;
@@ -63,7 +64,7 @@ export const FieldDate = memo((props: IFieldDate) => {
           onSelect={onSelectDate}
           placeholderText={props.placeholder}
           timeInputLabel={props.timeInputLabel}
-          dateFormat={props.dateFormat}
+          dateFormat={props.dateFormat || "MM-dd-yyyy hh:mm a"}
           showTimeInput={props.showTimeInput}
           minDate={props.minDate}
           withPortal={props.withPortal}

@@ -23,12 +23,15 @@ export enum AppRoutes {
   CREATE_MATERIAL = "create-material",
   UPDATE_MATERIAL = "update-material",
 
+  ORDER = "orders",
+  UPDATE_ORDER = "update-order",
+
   SALE = "sales",
   CREATE_SALE = "create-sale",
   UPDATE_SALE = "update-sale",
 
   USERS = "users",
-  UPDATE_USER = "updateUser",
+  UPDATE_USER = "update-user",
 
   HOME = "home",
   SIGNIN = "signin",
@@ -58,4 +61,13 @@ export enum UserRoles {
   USER = "user",
 }
 
-export const DEFAULT_DATETIME_FORMAT = "MM-DD-YYYY HH:mm";
+export enum OrderStatus {
+  PENDING = "pending",
+  SHIPPING = "shipping",
+  CANCELED = "cancel",
+  REJECTED = "rejected",
+  REFUNDED = "refunded",
+  COMPLETED = "completed",
+}
+
+export const DEFAULT_DATETIME_FORMAT = "MM-DD-yyyy hh:mm a";

@@ -22,6 +22,7 @@ export interface FetchQuery {
   offset?: number;
   order?: string;
   cond?: string;
+  [key: string]: any;
 }
 
 type HttpMethod = "POST" | "GET" | "PATCH" | "DELETE";
@@ -52,6 +53,7 @@ export class ClientApi<C, U> {
     LOGOUT: "/auth/logout",
     SALE: "/sales",
     USERS: "/users",
+    ORDERS: "/orders",
     LOGIN_WITH_GOOGLE: "/auth/google-admin",
   };
 
@@ -373,7 +375,7 @@ export class SaleApi extends ClientApi<any, any> {
   delete = super.delete;
 
   async loadOptionByType(saleType: SaleType): Promise<Option[]> {
-    const res = await this.fetchAvailable({ cond: `[["saleType", "=", "${saleType}"]]` });
+    const res = await this.fetchAvailable({ type: `${saleType}` });
     if (res.status == 200) {
       const result = await res.json();
       const data: Sale[] = result?.data || [];
@@ -409,6 +411,18 @@ export class UserApi extends ClientApi<any, any> {
   };
 }
 
+export class OrderApi extends ClientApi<any, any> {
+  constructor() {
+    super(ClientApi.APIs.ORDERS);
+  }
+
+  fetch = super.fetch;
+  fetchById = super.fetchById;
+  fetchAvailable = super.fetchAvailable;
+  create = super.create;
+  update = super.update;
+}
+
 export const clientApi = new ClientApi("");
 export const colorApi = new ColorApi();
 export const collectionApi = new CollectionApi();
@@ -416,5 +430,6 @@ export const productStatusApi = new ProductStatusApi();
 export const sizeApi = new SizeApi();
 export const productApi = new ProductApi();
 export const materialApi = new MaterialApi();
+export const orderApi = new OrderApi();
 export const saleApi = new SaleApi();
 export const userApi = new UserApi();

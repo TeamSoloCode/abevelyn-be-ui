@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from "re
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import moment from "moment";
-import { AppRoutes, SaleType } from "../../constanst";
+import { AppRoutes, DEFAULT_DATETIME_FORMAT, SaleType } from "../../constanst";
 import { IColumn, TSCTable } from "../../components/TSCTable";
 import { UpdateSale } from "./update-sale";
 import SaleContext from "../../context/sale.context";
@@ -93,14 +93,14 @@ const defaultColumns: IColumn<Sale>[] = [
   },
   {
     headerTitle: "Start Date",
-    item: (item) => item.startedDate,
+    item: (item) => moment(item.startedDate).format(DEFAULT_DATETIME_FORMAT),
   },
   {
     headerTitle: "Expired Date",
-    item: (item) => item.expiredDate,
+    item: (item) => moment(item.expiredDate).format(DEFAULT_DATETIME_FORMAT),
   },
   {
     headerTitle: "Create At",
-    item: (item) => item.createdAt,
+    item: (item) => moment(item.createdAt).format(DEFAULT_DATETIME_FORMAT),
   },
 ];

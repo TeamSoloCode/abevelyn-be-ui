@@ -26,6 +26,9 @@ import { UpdateCollection } from "./pages/collection/update-collection";
 import { UsersContextProvider } from "./context/user.context";
 import { Accounts } from "./pages/accounts/accounts.page";
 import { UpdateAccount } from "./pages/accounts/update-account.page";
+import { OrderPage } from "./pages/order/orders.page";
+import { OrderContextProvider } from "./context/order.context";
+import { UpdateSale } from "./pages/sale/update-sale";
 
 export const routes = [
   {
@@ -155,6 +158,14 @@ export const routes = [
       </SaleContextProvider>
     ),
   },
+  // {
+  //   path: AppRoutes.UPDATE_SALE,
+  //   element: (
+  //     <SaleContextProvider>
+  //       <UpdateSale />
+  //     </SaleContextProvider>
+  //   ),
+  // },
 
   {
     path: AppRoutes.USERS,
@@ -171,6 +182,15 @@ export const routes = [
       <UsersContextProvider>
         <UpdateAccount />
       </UsersContextProvider>
+    ),
+  },
+
+  {
+    path: AppRoutes.ORDER,
+    element: (
+      <OrderContextProvider>
+        <OrderPage />
+      </OrderContextProvider>
     ),
   },
 ];
